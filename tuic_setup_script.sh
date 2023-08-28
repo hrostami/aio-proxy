@@ -118,9 +118,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Generate and print URLs
-IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3%2Cspdy%2F3.1&allow_insecure=1"
+IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic"
 
-IPV6_URL="tuic://$UUID:$PASSWORD@[$IPV6]:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3%2Cspdy%2F3.1&allow_insecure=1"
+IPV6_URL="tuic://$UUID:$PASSWORD@[$IPV6]:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic"
 
 echo "----------------config info-----------------"
 echo -e "\e[1;33mUUID: $UUID\e[0m"

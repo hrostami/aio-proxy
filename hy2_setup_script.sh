@@ -216,7 +216,7 @@ echo -e "\e[1;33mIPv4: $IPV4\e[0m"
 echo -e "\e[1;33mIPv6: $IPV6\e[0m"
 echo "--------------------------------------------"
 echo
-echo "----------------V2rayN Config IPv-----------------"
+echo "----------------V2rayN Config IPv6-----------------"
 echo -e "\e[1;33m$v2rayN_config\e[0m"
 echo "--------------------------------------------"
 echo

@@ -169,8 +169,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Create URLs
-IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria"
-IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria"
+IPV4_URL="hysteria2://$password@$IPv4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
+IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
 
 # Print URLs
 echo "----------------config info-----------------"

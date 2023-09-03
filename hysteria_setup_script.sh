@@ -26,7 +26,7 @@ if [ -d "$user_directory" ]; then
     # Check if the config.json file exists
     if [ -f "$user_directory/config.json" ]; then
         # Read the port and obfuscation password from config.json
-        port=$(jq -r '.listen' "$user_directory/config.json")
+        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
         password=$(jq -r '.obfs' "$user_directory/config.json")
     else
         echo "Error: config.json file not found in Hysteria directory."
@@ -57,9 +57,7 @@ fi
 
 # Detect the latest version of the GitHub repository
 latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
-clear
-echo "--------------------------------------------------------------------------------"
-echo -e "\e[1;33mInstalling hysteria ver $latest_version\e[0m"
+echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
 echo "--------------------------------------------------------------------------------"
 sleep 2
 
@@ -141,8 +139,10 @@ echo "--------------------------------------------"
 echo
 echo "----------------Hysteria Config IPv4-----------------"
 echo -e "\e[1;33m$IPV4_URL\e[0m"
+qrencode -t ANSIUTF8 "$IPV4_URL"
 echo "--------------------------------------------"
 echo
 echo "-----------------Hysteria Config IPv6----------------"
 echo -e "\e[1;33m$IPV6_URL\e[0m"
+qrencode -t ANSIUTF8 "$IPV6_URL"
 echo "--------------------------------------------"

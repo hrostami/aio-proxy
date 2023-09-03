@@ -1,4 +1,28 @@
 #!/bin/bash
+# install requirements
+if ! command -v qrencode &> /dev/null; then
+    echo "qrencode is not installed. Installing..."    
+    sudo apt-get install qrencode -y
+    
+    # Check if installation was successful
+    if [ $? -eq 0 ]; then
+        echo "qrencode is now installed."
+    else
+        echo "Error: Failed to install qrencode."
+    fi
+else
+    echo "qrencode is already installed."
+fi
+
+if ! command -v jq &>/dev/null; then
+    echo "Installing jq..."
+    if ! sudo apt-get install jq -y; then
+        echo "Error: Failed to install jq."
+        exit 1
+    fi
+    echo "jq installed successfully."
+fi
+
 
 # Function to display the menu
 display_menu() {

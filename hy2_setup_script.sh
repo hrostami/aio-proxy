@@ -217,7 +217,6 @@ echo "--------------------------------------------"
 echo
 echo "----------------V2rayN Config IPv-----------------"
 echo -e "\e[1;33m$v2rayN_config\e[0m"
-qrencode -t ANSIUTF8 "$v2rayN_configL"
 echo "--------------------------------------------"
 echo
 echo "----------------Nekobox Config IPv4-----------------"

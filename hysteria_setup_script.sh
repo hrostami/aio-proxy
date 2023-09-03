@@ -16,16 +16,52 @@ else
     user_directory="/home/$USER/hy"
 fi
 
-# Prompt user for port and password
-read -p "Enter the listening port: " port
-read -p "Enter the obfuscation password: " password
+# Check if Hysteria directory exists
+if [ -d "$user_directory" ]; then
+    clear
+    echo "--------------------------------------------------------------------------------"
+    echo -e "\e[1;33mHysteria directory already exists. Checking for latest version..\e[0m"
+    echo "--------------------------------------------------------------------------------"
+    sleep 2
+    # Check if the config.json file exists
+    if [ -f "$user_directory/config.json" ]; then
+        # Read the port and obfuscation password from config.json
+        port=$(jq -r '.listen' "$user_directory/config.json")
+        password=$(jq -r '.obfs' "$user_directory/config.json")
+    else
+        echo "Error: config.json file not found in Hysteria directory."
+        return
+    fi
+else
+    # Prompt user for port and password
+    read -p "Enter the listening port: " port
+    read -p "Enter the obfuscation password: " password
 
-# Create the directory
-mkdir -p "$user_directory"
-cd "$user_directory"
+    # Create the directory
+    mkdir -p "$user_directory"
+
+    # Create the hysteria configuration file
+    cat << EOF > config.json
+    {
+    "listen": ":$port",
+    "cert": "$user_directory/ca.crt",
+    "key": "$user_directory/ca.key",
+    "obfs": "$password",
+    "recv_window_conn": 3407872,
+    "recv_window": 13631488,
+    "disable_mtu_discovery": true,
+    "resolver": "https://223.5.5.5/dns-query"
+    }
+EOF
+fi
 
 # Detect the latest version of the GitHub repository
 latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+clear
+echo "--------------------------------------------------------------------------------"
+echo -e "\e[1;33mInstalling hysteria ver $latest_version\e[0m"
+echo "--------------------------------------------------------------------------------"
+sleep 2
 
 # Detect architecture and download the appropriate file
 architecture=$(uname -m)
@@ -39,50 +75,41 @@ fi
 # Provide execute permissions to the downloaded file
 chmod 755 hysteria-linux-amd64
 
-# Generate encryption keys
-openssl ecparam -genkey -name prime256v1 -out ca.key
-openssl req -new -x509 -days 36500 -key ca.key -out ca.crt -subj "/CN=bing.com"
+# Generate encryption keys if they don't exist
+if [ ! -f "$user_directory/ca.key" ] || [ ! -f "$user_directory/ca.crt" ]; then
+    openssl ecparam -genkey -name prime256v1 -out "$user_directory/ca.key"
+    openssl req -new -x509 -days 36500 -key "$user_directory/ca.key" -out "$user_directory/ca.crt" -subj "/CN=bing.com"
+fi
 
-# Create the hysteria configuration file
-cat << EOF > config.json
-{
-  "listen": ":$port",
-  "cert": "$user_directory/ca.crt",
-  "key": "$user_directory/ca.key",
-  "obfs": "$password",
-  "recv_window_conn": 3407872,
-  "recv_window": 13631488,
-  "disable_mtu_discovery": true,
-  "resolver": "https://223.5.5.5/dns-query"
-}
+# Create a systemd service for hysteria if it doesn't exist
+if [ ! -f "/etc/systemd/system/hy.service" ]; then
+    cat << EOF > /etc/systemd/system/hy.service
+    [Unit]
+    After=network.target nss-lookup.target
+
+    [Service]
+    User=root
+    WorkingDirectory=$user_directory
+    CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+    AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+    ExecStart=$user_directory/hysteria-linux-amd64 -c $user_directory/config.json server
+    ExecReload=/bin/kill -HUP $MAINPID
+    Restart=always
+    RestartSec=5
+    LimitNOFILE=infinity
+
+    [Install]
+    WantedBy=multi-user.target
 EOF
 
-# Create a systemd service for hysteria
-cat << EOF > /etc/systemd/system/hy.service
-[Unit]
-After=network.target nss-lookup.target
+    # Reload systemd and enable the service
+    systemctl daemon-reload
+    systemctl enable hy
+fi
 
-[Service]
-User=root
-WorkingDirectory=$user_directory
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
-AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
-ExecStart=$user_directory/hysteria-linux-amd64 -c $user_directory/config.json server
-ExecReload=/bin/kill -HUP $MAINPID
-Restart=always
-RestartSec=5
-LimitNOFILE=infinity
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Reload systemd and enable the service
-systemctl daemon-reload
-systemctl enable hy
-
-# Start the hysteria service and display its status
-systemctl start hy
+# Restart the hysteria service and display its status
+systemctl restart hy
 
 # Get public IPs
 IPV4=$(curl -s https://v4.ident.me)

@@ -6,10 +6,15 @@ This script automates setting up TUIC and hysteria  on Linux according to [iSega
 
 To use the script:
 
-1. Run this command to download and run the script
+1. Run this command if it's first time running this script(بار اول):
    ```
    git clone https://github.com/hrostami/aio-proxy.git && cd aio-proxy && sudo bash setup_menu.sh
    ```
+   or this one if you've already downloaded the script(دفعات بعد):
+    ```
+   cd aio-proxy && git pull origin && sudo bash setup_menu.sh
+   ```
+   
 2. Choose from the menu which protocol you want to install
 
 3. Follow the prompts to enter a port number and password

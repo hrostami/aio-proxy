@@ -126,8 +126,10 @@ echo "--------------------------------------------"
 echo
 echo "----------------Tuic Config IPv4-----------------"
 echo -e "\e[1;33m$IPV4_URL\e[0m"
+qrencode -t ANSIUTF8 "$IPV4_URL"
 echo "--------------------------------------------"
 echo
 echo "-----------------Tuic Config IPv6----------------"
 echo -e "\e[1;33m$IPV6_URL\e[0m"
+qrencode -t ANSIUTF8 "$IPV6_URL"
 echo "--------------------------------------------"

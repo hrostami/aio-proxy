@@ -202,7 +202,7 @@ http:
   listen: 127.0.0.1:10809"
 
 # Create URLs
-IPV4_URL="hysteria2://$password@$IPv4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
+IPV4_URL="hysteria2://$password@$IPV4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
 IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
 
 # Print URLs

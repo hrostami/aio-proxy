@@ -168,6 +168,38 @@ if [ $? -ne 0 ]; then
     return
 fi
 
+# V2rayN config
+v2rayN_config="server: $IPV6:$port
+auth: $password
+transport:
+  type: udp
+  udp:
+    hopInterval: 30s
+obfs:
+  type: salamander
+  salamander:
+    password: $password
+tls:
+  sni: google.com
+  insecure: true
+bandwidth:
+  up: 100 mbps
+  down: 100 mbps
+quic:
+  initStreamReceiveWindow: 8388608
+  maxStreamReceiveWindow: 8388608
+  initConnReceiveWindow: 20971520
+  maxConnReceiveWindow: 20971520
+  maxIdleTimeout: 30s
+  keepAlivePeriod: 10s
+  disablePathMTUDiscovery: false
+fastOpen: true
+lazy: true
+socks5:
+  listen: 127.0.0.1:10808
+http:
+  listen: 127.0.0.1:10809"
+
 # Create URLs
 IPV4_URL="hysteria2://$password@$IPv4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
 IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2"
@@ -183,12 +215,17 @@ echo -e "\e[1;33mIPv4: $IPV4\e[0m"
 echo -e "\e[1;33mIPv6: $IPV6\e[0m"
 echo "--------------------------------------------"
 echo
-echo "----------------Hysteria Config IPv4-----------------"
+echo "----------------V2rayN Config IPv-----------------"
+echo -e "\e[1;33m$v2rayN_config\e[0m"
+qrencode -t ANSIUTF8 "$v2rayN_configL"
+echo "--------------------------------------------"
+echo
+echo "----------------Nekobox Config IPv4-----------------"
 echo -e "\e[1;33m$IPV4_URL\e[0m"
 qrencode -t ANSIUTF8 "$IPV4_URL"
 echo "--------------------------------------------"
 echo
-echo "-----------------Hysteria Config IPv6----------------"
+echo "-----------------Nekobox Config IPv6----------------"
 echo -e "\e[1;33m$IPV6_URL\e[0m"
 qrencode -t ANSIUTF8 "$IPV6_URL"
 echo "--------------------------------------------"

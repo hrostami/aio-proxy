@@ -26,8 +26,9 @@ if [ -d "$user_directory" ]; then
     # Check if the config.json file exists
     if [ -f "$user_directory/config.json" ]; then
         # Read the port and obfuscation password from config.json
-        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
-        password=$(jq -r '.obfs' "$user_directory/config.json")
+        port=$(jq -r '.listen' <<< "$(< "$user_directory/config.json")")
+        password=$(jq -r '.obfs.salamander.password' <<< "$(< "$user_directory/config.json")")
+
     else
         echo "Error: config.json file not found in Hysteria directory."
         return

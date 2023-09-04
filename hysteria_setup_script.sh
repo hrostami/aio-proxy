@@ -56,7 +56,8 @@ EOF
 fi
 
 # Detect the latest version of the GitHub repository
-latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+# latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+latest_version="v1.3.5"
 echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
 echo "--------------------------------------------------------------------------------"
 sleep 2

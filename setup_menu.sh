@@ -157,7 +157,7 @@ show_tuic_configs() {
         echo "TUIC directory does not exist. Please install TUIC first."
     fi
 }
-change_parameters() {
+change_tuic_parameters() {
     # Define TUIC_FOLDER and CONFIG_FILE locally within the function
     local TUIC_FOLDER
     local CONFIG_FILE
@@ -272,7 +272,7 @@ while true; do
                         run_tuic_setup
                         ;;
                     2) # Change Parameters
-                        # Add code for changing parameters here
+                        change_tuic_parameters
                         ;;
                     3) # Show Configs
                         show_tuic_configs

@@ -148,13 +148,48 @@ show_tuic_configs() {
         PASSWORD=$(jq -r ".users[\"$UUID\"]" "$CONFIG_FILE")
 
         # Display the configuration values
-        echo "UUID: $UUID"
-        echo "Password: $PASSWORD"
-        echo "Port: $PORT"
-        echo "Congestion Control: $CONGESTION_CONTROL"
+        # Get public IPs
+        IPV4=$(curl -s https://v4.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv4 address"
+            return
+        fi
+
+        IPV6=$(curl -s https://v6.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv6 address" 
+            return
+        fi
+        # Generate and print URLs
+        IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic"
+
+        IPV6_URL="tuic://$UUID:$PASSWORD@[$IPV6]:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic"
+
+        echo "----------------config info-----------------"
+        echo -e "\e[1;33mUUID: $UUID\e[0m"
+        echo -e "\e[1;33mPassword: $PASSWORD\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------IP and Port-----------------"
+        echo -e "\e[1;33mPort: $PORT\e[0m"
+        echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+        echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------Tuic Config IPv4-----------------"
+        echo -e "\e[1;33m$IPV4_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV4_URL"
+        echo "--------------------------------------------"
+        echo
+        echo "-----------------Tuic Config IPv6----------------"
+        echo -e "\e[1;33m$IPV6_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV6_URL"
+        echo "--------------------------------------------"
+        read -p "Press Enter to continue..."
 
     else
         echo "TUIC directory does not exist. Please install TUIC first."
+        read -p "Press Enter to continue..."
     fi
 }
 change_tuic_parameters() {

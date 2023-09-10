@@ -187,7 +187,7 @@ change_hy_parameters() {
     read -p "Press Enter to continue..."
 }
 
-delete_hysteria_proxy() {
+delete_hysteria() {
     clear
     echo "Deleting Hysteria Proxy..."
     sleep 2
@@ -204,7 +204,7 @@ run_hysteria_v2_setup() {
     bash hy2_setup_script.sh  # Use the actual script name and path
     read -p "Press Enter to continue..."
 }
-delete_hysteria_v2_proxy() {
+delete_hysteria_v2() {
     clear
     echo "Deleting Hysteria v2 Proxy..."
     sleep 2
@@ -334,7 +334,7 @@ change_tuic_parameters() {
         read -p "Press Enter to continue..."
     fi
 }
-delete_tuic_proxy() {
+delete_tuic() {
     clear
     echo "Deleting Tuic Proxy..."
     sleep 2

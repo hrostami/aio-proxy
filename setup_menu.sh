@@ -227,8 +227,12 @@ change_tuic_parameters() {
         mv tmp_config.json "$CONFIG_FILE"
         
         echo "Parameters updated successfully."
+        systemctl restart tuic
+        show_tuic_configs
+        read -p "Press Enter to continue..."
     else
         echo "TUIC directory does not exist. Please install TUIC first."
+        read -p "Press Enter to continue..."
     fi
 }
 delete_tuic_proxy() {

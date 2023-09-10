@@ -147,7 +147,7 @@ show_hy_configs() {
 
 change_hy_parameters() {
     local user_directory
-    
+
     if [ "$EUID" -eq 0 ]; then
         user_directory="/root/hy"
     else
@@ -193,6 +193,120 @@ run_hysteria_v2_setup() {
     echo "Running Hysteria v2 Setup..."
     sleep 2
     bash hy2_setup_script.sh
+    read -p "Press Enter to continue..."
+}
+change_hy2_parameters() {
+    local user_directory
+
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy2"
+    else
+        user_directory="/home/$USER/hy2"
+    fi
+
+    if [ -d "$user_directory" ]; then
+        echo "Hysteria directory exists. You can change parameters here."
+        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+        password=$(jq -r '.obfs.salamander.password' "$user_directory/config.json")
+        read -p "Enter a new listening port [$port]: " new_port
+        read -p "Enter a new obfuscation password [$password]: " new_password
+        jq ".listen = \":${new_port:-$port}\" | .obfs.salamander.password = \"$new_password\"" "$user_directory/config.json" > tmp_config.json
+        mv tmp_config.json "$user_directory/config.json"
+        systemctl restart hy2
+        echo "Parameters updated successfully."
+        show_hy2_configs
+    else
+        echo "Hysteria directory does not exist. Please install Hysteria first."
+    fi
+
+    read -p "Press Enter to continue..."
+}
+show_hy2_configs() {
+    local user_directory
+
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy2"
+    else
+        user_directory="/home/$USER/hy2"
+    fi
+
+    if [ -d "$user_directory" ]; then
+        echo "Hysteria directory exists. Here are the current configurations:"
+        password=$(jq -r '.obfs.salamander.password' "$user_directory/config.json")
+        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+        IPV4=$(curl -s https://v4.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv4 address"
+            return
+        fi
+
+        IPV6=$(curl -s https://v6.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv6 address" 
+            return
+        fi
+
+        v2rayN_config="server: $IPV6:$port
+        auth: $password
+        transport:
+        type: udp
+        udp:
+            hopInterval: 30s
+        obfs:
+        type: salamander
+        salamander:
+            password: $password
+        tls:
+        sni: google.com
+        insecure: true
+        bandwidth:
+        up: 100 mbps
+        down: 100 mbps
+        quic:
+        initStreamReceiveWindow: 8388608
+        maxStreamReceiveWindow: 8388608
+        initConnReceiveWindow: 20971520
+        maxConnReceiveWindow: 20971520
+        maxIdleTimeout: 30s
+        keepAlivePeriod: 10s
+        disablePathMTUDiscovery: false
+        fastOpen: true
+        lazy: true
+        socks5:
+        listen: 127.0.0.1:10808
+        http:
+        listen: 127.0.0.1:10809"
+
+        IPV4_URL="hysteria2://$password@$IPV4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv4"
+        IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv6"
+
+        echo "----------------config info-----------------"
+        echo -e "\e[1;33mPassword: $password\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------IP and Port-----------------"
+        echo -e "\e[1;33mPort: $port\e[0m"
+        echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+        echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------V2rayN Config IPv6-----------------"
+        echo -e "\e[1;33m$v2rayN_config\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------Nekobox Config IPv4-----------------"
+        echo -e "\e[1;33m$IPV4_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV4_URL"
+        echo "--------------------------------------------"
+        echo
+        echo "-----------------Nekobox Config IPv6----------------"
+        echo -e "\e[1;33m$IPV6_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV6_URL"
+        echo "--------------------------------------------"
+    else
+        echo "Hysteria directory does not exist. Please install Hysteria first."
+    fi
+
     read -p "Press Enter to continue..."
 }
 delete_hysteria_v2() {
@@ -360,10 +474,10 @@ while true; do
                         run_hysteria_v2_setup
                         ;;
                     2) # Change Parameters
-                        # Add code for changing parameters here
+                        change_hy2_parameters
                         ;;
                     3) # Show Configs
-                        # Add code for showing configs here
+                        show_hy2_configs
                         ;;
                     4) # Delete
                         delete_hysteria_v2

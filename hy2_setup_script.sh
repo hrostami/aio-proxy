@@ -40,6 +40,7 @@ else
 
     # Create the directory
     mkdir -p "$user_directory"
+    cd "$user_directory"
 
     # Create the hysteria configuration file (config.json) with variables
 cat << EOF > "$user_directory/config.json"
@@ -107,6 +108,8 @@ latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/
 echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
 echo "--------------------------------------------------------------------------------"
 sleep 2
+
+rm hysteria-linux-amd64
 
 # Detect architecture and download the appropriate file
 architecture=$(uname -m)

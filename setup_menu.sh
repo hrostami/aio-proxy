@@ -369,6 +369,7 @@ while true; do
                         delete_hysteria
                         ;;
                     0) # Back to Main Menu
+                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;
@@ -394,6 +395,7 @@ while true; do
                         delete_hysteria_v2
                         ;;
                     0) # Back to Main Menu
+                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;
@@ -419,6 +421,7 @@ while true; do
                         delete_tuic
                         ;;
                     0) # Back to Main Menu
+                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;

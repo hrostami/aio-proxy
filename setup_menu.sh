@@ -88,6 +88,105 @@ run_hysteria_setup() {
     bash hysteria_setup_script.sh
     read -p "Press Enter to continue..."
 }
+
+show_hy_configs() {
+    # Determine the user directory based on the user
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy"
+    else
+        user_directory="/home/$USER/hy"
+    fi
+
+    # Check if the directory exists
+    if [ -d "$user_directory" ]; then
+        # Directory exists, you can add code here to show configs
+        echo "Here are the current configurations:"
+        
+        # Fetch the current configuration values from config.json
+        password=$(jq -r '.obfs' "$user_directory/config.json")
+        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+        
+        # show configs
+
+        IPV4=$(curl -s https://v4.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv4 address"
+            return
+        fi
+
+        IPV6=$(curl -s https://v6.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv6 address" 
+            return
+        fi
+
+        IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria"
+        IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria"
+
+        echo "----------------config info-----------------"
+        echo -e "\e[1;33mPassword: $password\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------IP and Port-----------------"
+        echo -e "\e[1;33mPort: $port\e[0m"
+        echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+        echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+        echo "--------------------------------------------"
+        echo
+        echo "----------------Hysteria Config IPv4-----------------"
+        echo -e "\e[1;33m$IPV4_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV4_URL"
+        echo "--------------------------------------------"
+        echo
+        echo "-----------------Hysteria Config IPv6----------------"
+        echo -e "\e[1;33m$IPV6_URL\e[0m"
+        qrencode -t ANSIUTF8 "$IPV6_URL"
+        echo "--------------------------------------------"
+    else
+        echo "Hysteria directory does not exist. Please install Hysteria first."
+    fi
+
+    # Prompt for any input to continue
+    read -p "Press Enter to continue..."
+}
+
+change_hy_parameters() {
+    # Determine the user directory based on the user
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy"
+    else
+        user_directory="/home/$USER/hy"
+    fi
+
+    # Check if the directory exists
+    if [ -d "$user_directory" ]; then
+        # Directory exists, you can add code here to change parameters
+        echo "Hysteria directory exists. You can change parameters here."
+        
+        # Fetch the current configuration values from config.json
+        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+        password=$(jq -r '.obfs' "$user_directory/config.json")
+        
+        # Prompt for new values
+        read -p "Enter a new listening port [$port]: " new_port
+        read -p "Enter a new obfuscation password [$password]: " new_password
+        
+        # Update the config.json file with the new or existing values
+        jq ".listen = \":${new_port:-$port}\" | .obfs = \"$new_password\"" "$user_directory/config.json" > tmp_config.json
+        mv tmp_config.json "$user_directory/config.json"
+
+        systemctl restart hy
+
+        echo "Parameters updated successfully."
+        show_hy_configs
+    else
+        echo "Hysteria directory does not exist. Please install Hysteria first."
+    fi
+
+    # Prompt for any input to continue
+    read -p "Press Enter to continue..."
+}
+
 delete_hysteria_proxy() {
     clear
     echo "Deleting Hysteria Proxy..."
@@ -139,7 +238,7 @@ show_tuic_configs() {
     # Check if TUIC directory exists
     if [ -d "$TUIC_FOLDER" ]; then
         # Directory exists, you can add code here to show configs
-        echo "TUIC directory exists. Here are the current configurations:"
+        echo "Here are the current configurations:"
         
         # Fetch relevant configuration values using jq
         PORT=$(jq -r '.server' "$CONFIG_FILE" | awk -F ':' '{print $NF}')
@@ -261,10 +360,10 @@ while true; do
                         run_hysteria_setup
                         ;;
                     2) # Change Parameters
-                        # Add code for changing parameters here
+                        change_hy_parameters
                         ;;
                     3) # Show Configs
-                        # Add code for showing configs here
+                        show_hy_configs
                         ;;
                     4) # Delete
                         delete_hysteria

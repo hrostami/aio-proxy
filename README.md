@@ -2,11 +2,19 @@
 
 This script automates setting up TUIC and hysteria  on Linux according to [iSegaro's tuic tutorial](https://telegra.ph/How-to-start-the-TUIC-v5-protocol-with-iSegaro-08-26) and [iSegaro's hysteria tutorial](https://telegra.ph/How-run-Hysteria-Protocol-with-iSegaro-04-07)
 
+## Features
+- Hysteria
+- Hysteria V2
+- Tuic
+- Reverse TLS Tunnel( Thanks to [Radkesvat](https://github.com/radkesvat/ReverseTlsTunnel) and [Peyman](https://github.com/Ptechgithub/ReverseTlsTunnel) )
+- Different Panels( [X-Ui by Alireza](https://github.com/alireza0/x-ui), [X-Ui Sanaei](https://github.com/MHSanaei/3x-ui) and [RealityEZPZ by Aleskxyz](https://github.com/aleskxyz/reality-ezpz)
+
+   
 ## Usage
 
 To use the script:
 
-1. Run this command if it's first time running this script(بار اول):
+1. Run this command:
    ```
    bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/aio.sh)
    ```

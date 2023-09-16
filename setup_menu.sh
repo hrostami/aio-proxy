@@ -95,7 +95,141 @@ run_hysteria_setup() {
     clear
     echo "Running Hysteria Setup..."
     sleep 2
-    bash hysteria_setup_script.sh
+    #!/bin/bash
+
+    apt-get update 
+    apt-get install wget nano -y
+    apt-get install net-tools -y
+
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy"
+    else
+        user_directory="/home/$USER/hy"
+    fi
+
+    if [ -d "$user_directory" ]; then
+        clear
+        echo "--------------------------------------------------------------------------------"
+        echo -e "\e[1;33mHysteria directory already exists. Checking for latest version..\e[0m"
+        echo "--------------------------------------------------------------------------------"
+        sleep 2
+
+        if [ -f "$user_directory/config.json" ]; then
+            port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+            password=$(jq -r '.obfs' "$user_directory/config.json")
+        else
+            echo "Error: config.json file not found in Hysteria directory."
+            return
+        fi
+    else
+        read -p "Enter the listening port: " port
+        read -p "Enter the obfuscation password: " password
+
+        mkdir -p "$user_directory"
+        cd "$user_directory"
+
+        cat << EOF > "$user_directory/config.json"
+        {
+        "listen": ":$port",
+        "cert": "$user_directory/ca.crt",
+        "key": "$user_directory/ca.key",
+        "obfs": "$password",
+        "recv_window_conn": 3407872,
+        "recv_window": 13631488,
+        "disable_mtu_discovery": true,
+        "resolver": "https://223.5.5.5/dns-query"
+        }
+EOF
+    fi
+
+    # latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+    latest_version="v1.3.5"
+    echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
+    echo "--------------------------------------------------------------------------------"
+    sleep 2
+
+    rm hysteria-linux-amd64
+
+    architecture=$(uname -m)
+    if [ "$architecture" = "x86_64" ]; then
+        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-amd64"
+    else
+        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-arm"
+        mv hysteria-linux-arm hysteria-linux-amd64
+    fi
+
+    chmod 755 hysteria-linux-amd64
+
+    # Generate encryption keys if they don't exist
+    if [ ! -f "$user_directory/ca.key" ] || [ ! -f "$user_directory/ca.crt" ]; then
+        openssl ecparam -genkey -name prime256v1 -out "$user_directory/ca.key"
+        openssl req -new -x509 -days 36500 -key "$user_directory/ca.key" -out "$user_directory/ca.crt" -subj "/CN=bing.com"
+    fi
+
+    # Create a systemd service for hysteria if it doesn't exist
+    if [ ! -f "/etc/systemd/system/hy.service" ]; then
+        cat << EOF > /etc/systemd/system/hy.service
+        [Unit]
+        After=network.target nss-lookup.target
+
+        [Service]
+        User=root
+        WorkingDirectory=$user_directory
+        CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        ExecStart=$user_directory/hysteria-linux-amd64 -c $user_directory/config.json server
+        ExecReload=/bin/kill -HUP $MAINPID
+        Restart=always
+        RestartSec=5
+        LimitNOFILE=infinity
+
+        [Install]
+        WantedBy=multi-user.target
+EOF
+
+        systemctl daemon-reload
+        systemctl enable hy
+    fi
+
+
+    systemctl restart hy
+
+    # show configs
+
+    IPV4=$(curl -s https://v4.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv4 address"
+        return
+    fi
+
+    IPV6=$(curl -s https://v6.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv6 address" 
+        return
+    fi
+
+    IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv4"
+    IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv6"
+
+    echo "----------------config info-----------------"
+    echo -e "\e[1;33mPassword: $password\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------IP and Port-----------------"
+    echo -e "\e[1;33mPort: $port\e[0m"
+    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------Hysteria Config IPv4-----------------"
+    echo -e "\e[1;33m$IPV4_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV4_URL"
+    echo "--------------------------------------------"
+    echo
+    echo "-----------------Hysteria Config IPv6----------------"
+    echo -e "\e[1;33m$IPV6_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV6_URL"
+    echo "--------------------------------------------"
     read -p "Press Enter to continue..."
 }
 
@@ -203,7 +337,221 @@ run_hysteria_v2_setup() {
     clear
     echo "Running Hysteria v2 Setup..."
     sleep 2
-    bash hy2_setup_script.sh
+    #!/bin/bash
+
+    apt-get update 
+
+    apt-get install wget nano -y
+
+    apt-get install net-tools -y
+
+    if [ "$EUID" -eq 0 ]; then
+        user_directory="/root/hy2"
+    else
+        user_directory="/home/$USER/hy2"
+    fi
+
+    if [ -d "$user_directory" ]; then
+        clear
+        echo "--------------------------------------------------------------------------------"
+        echo -e "\e[1;33mHysteria directory already exists. Checking for latest version..\e[0m"
+        echo "--------------------------------------------------------------------------------"
+        sleep 2
+
+        if [ -f "$user_directory/config.json" ]; then
+            port=$(jq -r '.listen' <<< "$(< "$user_directory/config.json")" | cut -c 2-)
+            password=$(jq -r '.obfs.salamander.password' <<< "$(< "$user_directory/config.json")")
+
+        else
+            echo "Error: config.json file not found in Hysteria directory."
+            return
+        fi
+    else
+        read -p "Enter the listening port: " port
+        read -p "Enter the obfuscation password: " password
+
+        mkdir -p "$user_directory"
+        cd "$user_directory"
+
+    cat << EOF > "$user_directory/config.json"
+    {
+    "listen": ":$port",
+    "tls": {
+        "cert": "$user_directory/ca.crt",
+        "key": "$user_directory/ca.key"
+    },
+    "obfs": {
+        "type": "salamander",
+        "salamander": {
+        "password": "$password"
+        }
+    },
+    "auth": {
+        "type": "password",
+        "password": "$password"
+    },
+    "quic": {
+        "initStreamReceiveWindow": 8388608,
+        "maxStreamReceiveWindow": 8388608,
+        "initConnReceiveWindow": 20971520,
+        "maxConnReceiveWindow": 20971520,
+        "maxIdleTimeout": "60s",
+        "maxIncomingStreams": 1024,
+        "disablePathMTUDiscovery": false
+    },
+    "bandwidth": {
+        "up": "1 gbps",
+        "down": "1 gbps"
+    },
+    "ignoreClientBandwidth": false,
+    "disableUDP": false,
+    "udpIdleTimeout": "60s",
+    "resolver": {
+        "type": "udp",
+        "tcp": {
+        "addr": "8.8.8.8:53",
+        "timeout": "4s"
+        },
+        "udp": {
+        "addr": "8.8.4.4:53",
+        "timeout": "4s"
+        },
+        "tls": {
+        "addr": "1.1.1.1:853",
+        "timeout": "10s",
+        "sni": "cloudflare-dns.com",
+        "insecure": false
+        },
+        "https": {
+        "addr": "1.1.1.1:443",
+        "timeout": "10s",
+        "sni": "cloudflare-dns.com",
+        "insecure": false
+        }
+    }
+    }
+EOF
+    fi
+
+    latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+    echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
+    echo "--------------------------------------------------------------------------------"
+    sleep 2
+
+    rm hysteria-linux-amd64
+
+    architecture=$(uname -m)
+    if [ "$architecture" = "x86_64" ]; then
+        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-amd64"
+    else
+        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-arm"
+        mv hysteria-linux-arm hysteria-linux-amd64
+    fi
+
+    chmod 755 hysteria-linux-amd64
+
+    if [ ! -f "$user_directory/ca.key" ] || [ ! -f "$user_directory/ca.crt" ]; then
+        openssl ecparam -genkey -name prime256v1 -out "$user_directory/ca.key"
+        openssl req -new -x509 -days 36500 -key "$user_directory/ca.key" -out "$user_directory/ca.crt" -subj "/CN=bing.com"
+    fi
+
+    if [ ! -f "/etc/systemd/system/hy2.service" ]; then
+        cat << EOF > /etc/systemd/system/hy2.service
+        [Unit]
+        After=network.target nss-lookup.target
+
+        [Service]
+        User=root
+        WorkingDirectory=$user_directory
+        CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        ExecStart=$user_directory/hysteria-linux-amd64 -c $user_directory/config.json server
+        ExecReload=/bin/kill -HUP $MAINPID
+        Restart=always
+        RestartSec=5
+        LimitNOFILE=infinity
+
+        [Install]
+        WantedBy=multi-user.target
+EOF
+
+        systemctl daemon-reload
+        systemctl enable hy2
+    fi
+
+
+    systemctl restart hy2
+
+    IPV4=$(curl -s https://v4.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv4 address"
+        return
+    fi
+
+    IPV6=$(curl -s https://v6.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv6 address" 
+        return
+    fi
+
+    v2rayN_config="server: $IPV6:$port
+    auth: $password
+    transport:
+    type: udp
+    udp:
+        hopInterval: 30s
+    obfs:
+    type: salamander
+    salamander:
+        password: $password
+    tls:
+    sni: google.com
+    insecure: true
+    bandwidth:
+    up: 100 mbps
+    down: 100 mbps
+    quic:
+    initStreamReceiveWindow: 8388608
+    maxStreamReceiveWindow: 8388608
+    initConnReceiveWindow: 20971520
+    maxConnReceiveWindow: 20971520
+    maxIdleTimeout: 30s
+    keepAlivePeriod: 10s
+    disablePathMTUDiscovery: false
+    fastOpen: true
+    lazy: true
+    socks5:
+    listen: 127.0.0.1:10808
+    http:
+    listen: 127.0.0.1:10809"
+
+    IPV4_URL="hysteria2://$password@$IPV4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv4"
+    IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv6"
+
+    echo "----------------config info-----------------"
+    echo -e "\e[1;33mPassword: $password\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------IP and Port-----------------"
+    echo -e "\e[1;33mPort: $port\e[0m"
+    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------V2rayN Config IPv6-----------------"
+    echo -e "\e[1;33m$v2rayN_config\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------Nekobox Config IPv4-----------------"
+    echo -e "\e[1;33m$IPV4_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV4_URL"
+    echo "--------------------------------------------"
+    echo
+    echo "-----------------Nekobox Config IPv6----------------"
+    echo -e "\e[1;33m$IPV6_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV6_URL"
+    echo "--------------------------------------------"
+
     read -p "Press Enter to continue..."
 }
 change_hy2_parameters() {
@@ -335,7 +683,221 @@ run_tuic_setup() {
     clear
     echo "Running Tuic Setup..."
     sleep 2
-    bash tuic_setup_script.sh
+    #!/bin/bash
+
+    # Determine the appropriate TUIC_FOLDER based on the user
+    if [ "$EUID" -eq 0 ]; then
+        TUIC_FOLDER="/root/tuic"
+        WORKING_DIR="/root"
+    else
+        TUIC_FOLDER="$HOME/tuic"
+        WORKING_DIR="$HOME"
+    fi
+
+    CONFIG_FILE="$TUIC_FOLDER/config.json"
+
+    # Detect server architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+        TUIC_ARCH="x86_64-unknown-linux-gnu"
+    elif [ "$ARCH" = "aarch64" ]; then
+        TUIC_ARCH="aarch64-unknown-linux-gnu"
+    else
+        echo "Unsupported architecture: $ARCH"
+        exit 1
+    fi
+
+    # Fetch all releases from the GitHub API
+    ALL_VERSIONS=$(curl -s "https://api.github.com/repos/EAimTY/tuic/releases" | jq -r '.[].tag_name')
+
+    # Find the latest TUIC server version
+    LATEST_SERVER_VERSION=""
+    for VERSION in $ALL_VERSIONS; do
+        if [[ "$VERSION" == *"tuic-server-"* && "$VERSION" =~ ^tuic-server-[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            LATEST_SERVER_VERSION=$VERSION
+            break
+        fi
+    done
+
+    if [ -z "$LATEST_SERVER_VERSION" ]; then
+        echo "No TUIC server version found in GitHub releases."
+        exit 1
+    fi
+
+    # Construct the URL for the latest TUIC server binary
+    TUIC_URL="https://github.com/EAimTY/tuic/releases/download/$LATEST_SERVER_VERSION/$LATEST_SERVER_VERSION-$TUIC_ARCH"
+
+    # Check if TUIC directory exists
+    if [ -d "$TUIC_FOLDER" ]; then
+        systemctl stop tuic
+        clear
+        echo "--------------------------------------------------------------------------------"
+        echo -e "\e[1;33m TUIC directory already exists. Checking for latest version..\e[0m"
+        echo "--------------------------------------------------------------------------------"
+        sleep 2
+        # Directory exists, download the latest version of TUIC
+        cd "$TUIC_FOLDER"
+
+        echo -e "\e[1;33m---> Installing $LATEST_SERVER_VERSION\e[0m"
+        echo "--------------------------------------------------------------------------------"
+        sleep 2
+
+        # Construct the URL for the latest TUIC server binary
+        TUIC_URL="https://github.com/EAimTY/tuic/releases/download/$LATEST_SERVER_VERSION/$LATEST_SERVER_VERSION-$TUIC_ARCH"
+
+        # Download the latest TUIC server binary
+        wget -O tuic-server "$TUIC_URL"
+        chmod 755 tuic-server
+
+        # Get password, port, and congestion from config file
+        PORT=$(jq -r '.server' "$CONFIG_FILE" | awk -F ':' '{print $NF}')
+        CONGESTION_CONTROL=$(jq -r '.congestion_control' "$CONFIG_FILE")
+        UUID=$(jq -r '.users | keys[0]' "$CONFIG_FILE")
+        PASSWORD=$(jq -r ".users[\"$UUID\"]" "$CONFIG_FILE")
+
+        # Restart the service
+        systemctl restart tuic
+
+    else
+        # Update packages
+        apt update
+        apt install nano net-tools uuid-runtime wget openssl -y
+
+        # Create TUIC directory and navigate to it
+        mkdir -p "$TUIC_FOLDER"
+        cd "$TUIC_FOLDER"
+
+        
+        # Download the latest TUIC server binary
+        clear
+        echo "--------------------------------------------------------------------------------"
+        echo -e "\e[1;33m---> Installing $LATEST_SERVER_VERSION\e[0m"
+        echo "--------------------------------------------------------------------------------"
+        sleep 2
+
+        wget -O tuic-server "$TUIC_URL"
+        chmod 755 tuic-server
+
+        # Generate certificate
+        openssl ecparam -genkey -name prime256v1 -out "$TUIC_FOLDER/ca.key"
+        openssl req -new -x509 -days 36500 -key "$TUIC_FOLDER/ca.key" -out "$TUIC_FOLDER/ca.crt" -subj "/CN=bing.com"
+
+        # Generate random UUID
+        UUID=$(uuidgen)
+
+        # Prompt for port
+        read -p "Enter port number: " PORT
+
+        # Prompt for password
+        read -p "Enter a password for the server: " PASSWORD
+
+        # Prompt for congestion control
+        OPTIONS=("cubic" "new_reno" "bbr")
+        PS3='Select congestion control: '
+        select OPT in "${OPTIONS[@]}"
+        do
+            CONGESTION_CONTROL=$OPT
+            break
+        done
+
+        # Create config file
+        cat <<EOF >"$CONFIG_FILE"
+        {
+        "server": "[::]:$PORT",
+        "users": {
+        "${UUID}": "$PASSWORD"
+        },
+        "certificate": "$TUIC_FOLDER/ca.crt",
+        "private_key": "$TUIC_FOLDER/ca.key",
+        "congestion_control": "$CONGESTION_CONTROL",
+        "alpn": ["h3", "spdy/3.1"],
+        "udp_relay_ipv6": true,
+        "zero_rtt_handshake": false,
+        "dual_stack": true,
+        "auth_timeout": "3s",
+        "task_negotiation_timeout": "3s",
+        "max_idle_time": "10s",
+        "max_external_packet_size": 1500,
+        "send_window": 16777216,
+        "receive_window": 8388608,
+        "gc_interval": "3s",
+        "gc_lifetime": "15s",
+        "log_level": "warn"
+        }
+EOF
+
+        # Determine the user for the service
+        SERVICE_USER="root"
+        if [ "$EUID" -ne 0 ]; then
+            SERVICE_USER="$USER"
+        fi
+
+        cat <<EOF > /etc/systemd/system/tuic.service
+        [Unit]
+        Description=tuic service
+        After=network.target nss-lookup.target
+
+        [Service]
+        User=$SERVICE_USER
+        WorkingDirectory=$WORKING_DIR
+        CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
+        ExecStart=$WORKING_DIR/tuic/tuic-server -c $WORKING_DIR/tuic/config.json
+        Restart=on-failure
+        RestartSec=10
+        LimitNOFILE=infinity
+
+        [Install]
+        WantedBy=multi-user.target
+EOF
+
+
+        # Reload and start service
+        systemctl daemon-reload
+        systemctl enable tuic
+        systemctl start tuic
+
+
+    fi
+
+    # Get public IPs
+    IPV4=$(curl -s https://v4.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv4 address"
+        return
+    fi
+
+    IPV6=$(curl -s https://v6.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv6 address" 
+        return
+    fi
+
+    # Generate and print URLs
+    IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic IPv4"
+
+    IPV6_URL="tuic://$UUID:$PASSWORD@[$IPV6]:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic IPv6"
+
+    echo "----------------config info-----------------"
+    echo -e "\e[1;33mUUID: $UUID\e[0m"
+    echo -e "\e[1;33mPassword: $PASSWORD\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------IP and Port-----------------"
+    echo -e "\e[1;33mPort: $PORT\e[0m"
+    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+    echo "--------------------------------------------"
+    echo
+    echo "----------------Tuic Config IPv4-----------------"
+    echo -e "\e[1;33m$IPV4_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV4_URL"
+    echo "--------------------------------------------"
+    echo
+    echo "-----------------Tuic Config IPv6----------------"
+    echo -e "\e[1;33m$IPV6_URL\e[0m"
+    qrencode -t ANSIUTF8 "$IPV6_URL"
+    echo "--------------------------------------------"
     read -p "Press Enter to continue..."
 }
 show_tuic_configs() {
@@ -503,7 +1065,6 @@ while true; do
                         delete_hysteria
                         ;;
                     0) # Back to Main Menu
-                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;
@@ -529,7 +1090,6 @@ while true; do
                         delete_hysteria_v2
                         ;;
                     0) # Back to Main Menu
-                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;
@@ -555,7 +1115,6 @@ while true; do
                         delete_tuic
                         ;;
                     0) # Back to Main Menu
-                        cd "../aio-proxy"
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;

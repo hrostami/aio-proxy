@@ -1124,6 +1124,7 @@ while true; do
         4) # Tunnel
             while true; do
                 run_tunnel_setup
+                break
             done
             ;;
         5) # Install Panels

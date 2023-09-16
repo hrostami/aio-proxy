@@ -8,7 +8,7 @@ To use the script:
 
 1. Run this command if it's first time running this script(بار اول):
    ```
-   bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/unstable/aio.sh)
+   bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/aio.sh)
    ```
    
 2. Choose from the menu which protocol you want to install

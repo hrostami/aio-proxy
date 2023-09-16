@@ -1036,7 +1036,7 @@ install_reality_ezpz() {
     clear
     echo "Installing RealityEZPZ by Aleskxyz..."
     sleep 2
-    bash <(curl -sL https://raw.githubusercontent.com/aleskxyz/reality-ezpz/master/reality-ezpz.sh)
+    bash <(curl -sL https://raw.githubusercontent.com/aleskxyz/reality-ezpz/master/reality-ezpz.sh) -m
     read -p "Press Enter to continue..."
 }
 

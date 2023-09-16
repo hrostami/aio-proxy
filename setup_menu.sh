@@ -24,7 +24,7 @@ if ! command -v jq &>/dev/null; then
     echo "jq installed successfully."
 fi
 
-# Function to display the main menu
+# ----------------------------------------Show Menus------------------------------------------------
 display_main_menu() {
     clear
     echo "**********************************************"
@@ -33,11 +33,12 @@ display_main_menu() {
     echo "1. Hysteria"
     echo "2. Hysteria v2"
     echo "3. Tuic"
+    echo "4. Tunnel"
+    echo "5. Install Panels"
     echo "0. Exit"
     echo "**********************************************"
 }
 
-# Function to display the Hysteria sub-menu
 display_hysteria_menu() {
     clear
     echo "**********************************************"
@@ -51,7 +52,6 @@ display_hysteria_menu() {
     echo "**********************************************"
 }
 
-# Function to display the Hysteria v2 sub-menu
 display_hysteria_v2_menu() {
     clear
     echo "**********************************************"
@@ -65,7 +65,6 @@ display_hysteria_v2_menu() {
     echo "**********************************************"
 }
 
-# Function to display the Tuic sub-menu
 display_tuic_menu() {
     clear
     echo "**********************************************"
@@ -79,6 +78,17 @@ display_tuic_menu() {
     echo "**********************************************"
 }
 
+display_install_panels_menu() {
+    clear
+    echo "**********************************************"
+    echo -e "\033[1;32m     Install Panels Menu\033[0m"
+    echo "**********************************************"
+    echo "1. X-UI Alireza"
+    echo "2. X-UI Sanaei"
+    echo "3. RealityEZPZ by Aleskxyz"
+    echo "0. Back to Main Menu"
+    echo "**********************************************"
+}
 
 # ----------------------------------------Hysteria stuff------------------------------------------------
 run_hysteria_setup() {
@@ -187,6 +197,7 @@ delete_hysteria() {
     systemctl disable hy
     read -p "Press Enter to continue..."
 }
+
 # ----------------------------------------Hysteria V2 stuff------------------------------------------------
 run_hysteria_v2_setup() {
     clear
@@ -318,6 +329,7 @@ delete_hysteria_v2() {
     systemctl disable hy2
     read -p "Press Enter to continue..."
 }
+
 # ----------------------------------------TUIC stuff------------------------------------------------
 run_tuic_setup() {
     clear
@@ -432,6 +444,40 @@ delete_tuic() {
     read -p "Press Enter to continue..."
 }
 
+# ----------------------------------------Tunnel stuff------------------------------------------------
+run_tunnel_setup() {
+    clear
+    echo "Running Tunnel Setup..."
+    bash <(curl -fsSL https://raw.githubusercontent.com/Ptechgithub/ReverseTlsTunnel/main/RtTunnel.sh)
+    sleep 2
+    read -p "Press Enter to continue..."
+}
+
+# ----------------------------------------Install Panels stuff------------------------------------------------
+install_x_ui_alireza() {
+    clear
+    echo "Installing X-UI Alireza..."
+    sleep 2
+    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh)
+    read -p "Press Enter to continue..."
+}
+
+install_x_ui_sanaei() {
+    clear
+    echo "Installing X-UI Sanaei..."
+    sleep 2
+    bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+    read -p "Press Enter to continue..."
+}
+
+install_reality_ezpz() {
+    clear
+    echo "Installing RealityEZPZ by Aleskxyz..."
+    sleep 2
+    bash <(curl -sL https://raw.githubusercontent.com/aleskxyz/reality-ezpz/master/reality-ezpz.sh)
+    read -p "Press Enter to continue..."
+}
+
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
@@ -510,6 +556,33 @@ while true; do
                         ;;
                     0) # Back to Main Menu
                         cd "../aio-proxy"
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+        4) # Tunnel
+            while true; do
+                run_tunnel_setup
+            done
+            ;;
+        5) # Install Panels
+            while true; do
+                display_install_panels_menu
+                read -p "Enter your choice: " install_panels_choice
+
+                case $install_panels_choice in
+                    1) # X-UI Alireza
+                        install_x_ui_alireza
+                        ;;
+                    2) # X-UI Sanaei
+                        install_x_ui_sanaei
+                        ;;
+                    3) # RealityEZPZ by Aleskxyz
+                        install_reality_ezpz
+                        ;;
+                    0) # Back to Main Menu
                         break
                         ;;
                     *) echo "Invalid choice. Please select a valid option." ;;

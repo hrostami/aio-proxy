@@ -205,44 +205,6 @@ EOF
 
 
     systemctl restart hy
-
-    # show configs
-
-    IPV4=$(curl -s https://v4.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv4 address"
-        return
-    fi
-
-    IPV6=$(curl -s https://v6.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv6 address" 
-        return
-    fi
-
-    IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv4"
-    IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv6"
-
-    echo "----------------config info-----------------"
-    echo -e "\e[1;33mPassword: $password\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------IP and Port-----------------"
-    echo -e "\e[1;33mPort: $port\e[0m"
-    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
-    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------Hysteria Config IPv4-----------------"
-    echo -e "\e[1;33m$IPV4_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV4_URL"
-    echo "--------------------------------------------"
-    echo
-    echo "-----------------Hysteria Config IPv6----------------"
-    echo -e "\e[1;33m$IPV6_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV6_URL"
-    echo "--------------------------------------------"
-    read -p "Press Enter to continue..."
 }
 
 show_hy_configs() {
@@ -260,6 +222,9 @@ show_hy_configs() {
         password=$(jq -r '.obfs' "$user_directory/config.json")
         port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
         
+        
+        systemctl stop wg-quick@wgcf
+
         IPV4=$(curl -s https://v4.ident.me)
         if [ $? -ne 0 ]; then
             echo "Error: Failed to get IPv4 address"
@@ -271,6 +236,8 @@ show_hy_configs() {
             echo "Error: Failed to get IPv6 address" 
             return
         fi
+
+        systemctl restart wg-quick@wgcf
 
         IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv4"
         IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv6"
@@ -493,78 +460,6 @@ EOF
 
 
     systemctl restart hy2
-
-    IPV4=$(curl -s https://v4.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv4 address"
-        return
-    fi
-
-    IPV6=$(curl -s https://v6.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv6 address" 
-        return
-    fi
-
-    v2rayN_config="server: $IPV6:$port
-    auth: $password
-    transport:
-    type: udp
-    udp:
-        hopInterval: 30s
-    obfs:
-    type: salamander
-    salamander:
-        password: $password
-    tls:
-    sni: google.com
-    insecure: true
-    bandwidth:
-    up: 100 mbps
-    down: 100 mbps
-    quic:
-    initStreamReceiveWindow: 8388608
-    maxStreamReceiveWindow: 8388608
-    initConnReceiveWindow: 20971520
-    maxConnReceiveWindow: 20971520
-    maxIdleTimeout: 30s
-    keepAlivePeriod: 10s
-    disablePathMTUDiscovery: false
-    fastOpen: true
-    lazy: true
-    socks5:
-    listen: 127.0.0.1:10808
-    http:
-    listen: 127.0.0.1:10809"
-
-    IPV4_URL="hysteria2://$password@$IPV4:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv4"
-    IPV6_URL="hysteria2://$password@[$IPV6]:$port/?insecure=1&obfs=salamander&obfs-password=$password&sni=google.com#HysteriaV2 IPv6"
-
-    echo "----------------config info-----------------"
-    echo -e "\e[1;33mPassword: $password\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------IP and Port-----------------"
-    echo -e "\e[1;33mPort: $port\e[0m"
-    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
-    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------V2rayN Config IPv6-----------------"
-    echo -e "\e[1;33m$v2rayN_config\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------Nekobox Config IPv4-----------------"
-    echo -e "\e[1;33m$IPV4_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV4_URL"
-    echo "--------------------------------------------"
-    echo
-    echo "-----------------Nekobox Config IPv6----------------"
-    echo -e "\e[1;33m$IPV6_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV6_URL"
-    echo "--------------------------------------------"
-
-    read -p "Press Enter to continue..."
 }
 change_hy2_parameters() {
     local user_directory
@@ -605,6 +500,9 @@ show_hy2_configs() {
         echo "Hysteria directory exists. Here are the current configurations:"
         password=$(jq -r '.obfs.salamander.password' "$user_directory/config.json")
         port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
+        
+        systemctl stop wg-quick@wgcf
+
         IPV4=$(curl -s https://v4.ident.me)
         if [ $? -ne 0 ]; then
             echo "Error: Failed to get IPv4 address"
@@ -616,6 +514,8 @@ show_hy2_configs() {
             echo "Error: Failed to get IPv6 address" 
             return
         fi
+
+        systemctl restart wg-quick@wgcf
 
         v2rayN_config="server: $IPV6:$port
         auth: $password
@@ -871,46 +771,6 @@ EOF
 
 
     fi
-
-    # Get public IPs
-    IPV4=$(curl -s https://v4.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv4 address"
-        return
-    fi
-
-    IPV6=$(curl -s https://v6.ident.me)
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to get IPv6 address" 
-        return
-    fi
-
-    # Generate and print URLs
-    IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic IPv4"
-
-    IPV6_URL="tuic://$UUID:$PASSWORD@[$IPV6]:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic IPv6"
-
-    echo "----------------config info-----------------"
-    echo -e "\e[1;33mUUID: $UUID\e[0m"
-    echo -e "\e[1;33mPassword: $PASSWORD\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------IP and Port-----------------"
-    echo -e "\e[1;33mPort: $PORT\e[0m"
-    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
-    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
-    echo "--------------------------------------------"
-    echo
-    echo "----------------Tuic Config IPv4-----------------"
-    echo -e "\e[1;33m$IPV4_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV4_URL"
-    echo "--------------------------------------------"
-    echo
-    echo "-----------------Tuic Config IPv6----------------"
-    echo -e "\e[1;33m$IPV6_URL\e[0m"
-    qrencode -t ANSIUTF8 "$IPV6_URL"
-    echo "--------------------------------------------"
-    read -p "Press Enter to continue..."
 }
 show_tuic_configs() {
     local TUIC_FOLDER
@@ -932,6 +792,8 @@ show_tuic_configs() {
         UUID=$(jq -r '.users | keys[0]' "$CONFIG_FILE")
         PASSWORD=$(jq -r ".users[\"$UUID\"]" "$CONFIG_FILE")
 
+        systemctl stop wg-quick@wgcf
+
         IPV4=$(curl -s https://v4.ident.me)
         if [ $? -ne 0 ]; then
             echo "Error: Failed to get IPv4 address"
@@ -943,6 +805,8 @@ show_tuic_configs() {
             echo "Error: Failed to get IPv6 address" 
             return
         fi
+
+        systemctl restart wg-quick@wgcf
 
         IPV4_URL="tuic://$UUID:$PASSWORD@$IPV4:$PORT/?congestion_control=$CONGESTION_CONTROL&udp_relay_mode=native&alpn=h3,spdy/3.1&allow_insecure=1#Tuic IPv4"
 
@@ -1085,6 +949,7 @@ while true; do
                 case $hysteria_choice in
                     1) # Install/Update
                         run_hysteria_setup
+                        show_hy_configs
                         ;;
                     2) # Change Parameters
                         change_hy_parameters
@@ -1110,6 +975,7 @@ while true; do
                 case $hysteria_v2_choice in
                     1) # Install/Update
                         run_hysteria_v2_setup
+                        show_hy2_configs
                         ;;
                     2) # Change Parameters
                         change_hy2_parameters
@@ -1135,6 +1001,7 @@ while true; do
                 case $tuic_choice in
                     1) # Install/Update
                         run_tuic_setup
+                        show_tuic_configs
                         ;;
                     2) # Change Parameters
                         change_tuic_parameters

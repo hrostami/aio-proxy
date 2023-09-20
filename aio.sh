@@ -87,6 +87,8 @@ display_install_panels_menu() {
     echo "1. X-UI Alireza"
     echo "2. X-UI Sanaei"
     echo "3. RealityEZPZ by Aleskxyz"
+    echo "4. Hiddify"
+    echo "5. Marzban"
     echo "0. Back to Main Menu"
     echo "**********************************************"
 }
@@ -930,6 +932,20 @@ install_reality_ezpz() {
     read -p "Press Enter to continue..."
 }
 
+install_hiddify() {
+    clear
+    echo "Installing Hiddify..."
+    sudo apt update&&sudo apt install curl&& sudo bash -c "$(curl -Lfo- https://raw.githubusercontent.com/hiddify/hiddify-config/main/common/download_install.sh)"
+    sleep 2
+    read -p "Press Enter to continue..."
+}
+install_marzban() {
+    clear
+    echo "Installing Marzban..."
+    sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
+    sleep 2
+    read -p "Press Enter to continue..."
+}
 # ----------------------------------------Warp stuff------------------------------------------------
 install_warp() {
     echo "Installing Warp..."
@@ -1053,6 +1069,12 @@ while true; do
                         ;;
                     3) # RealityEZPZ by Aleskxyz
                         install_reality_ezpz
+                        ;;
+                    4) # RealityEZPZ by Aleskxyz
+                        install_hiddify
+                        ;;
+                    5) # Marzban
+                        install_marzban
                         ;;
                     0) # Back to Main Menu
                         break

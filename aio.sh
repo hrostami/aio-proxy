@@ -93,8 +93,22 @@ display_install_panels_menu() {
 
 display_warp_menu() {
     clear
+    IPV4=$(curl -s https://v4.ident.me)
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to get IPv4 address"
+            return
+        fi
+
+    IPV6=$(curl -s https://v6.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv6 address" 
+        return
+    fi
     echo "**********************************************"
     echo -e "\033[1;32m     Warp Menu\033[0m"
+    echo "**********************************************"
+    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
+    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
     echo "**********************************************"
     echo "1. Install"
     echo "2. Disable"

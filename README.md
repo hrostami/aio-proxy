@@ -1,6 +1,6 @@
-# AIO Auto Proxy Setup
+# All-In-One Proxy Tools
 
-This script automates setting up TUIC and hysteria  on Linux according to [iSegaro's tuic tutorial](https://telegra.ph/How-to-start-the-TUIC-v5-protocol-with-iSegaro-08-26) and [iSegaro's hysteria tutorial](https://telegra.ph/How-run-Hysteria-Protocol-with-iSegaro-04-07)
+This script automates setting up TUIC and hysteria and other proxy-related tools in Linux according to [iSegaro's tuic tutorial](https://telegra.ph/How-to-start-the-TUIC-v5-protocol-with-iSegaro-08-26) and [iSegaro's hysteria tutorial](https://telegra.ph/How-run-Hysteria-Protocol-with-iSegaro-04-07)
 
 ## Features
 - Hysteria
@@ -17,6 +17,10 @@ This script automates setting up TUIC and hysteria  on Linux according to [iSega
 To use the script:
 
 1. Run this command:
+   ```
+   bash <(curl -sL https://bit.ly/aio-proxy)
+   ```
+   or
    ```
    bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/aio.sh)
    ```

@@ -322,7 +322,7 @@ delete_hysteria() {
     clear
     echo "Deleting Hysteria Proxy..."
     sleep 2
-    rm -r ../hy
+    rm -r ~/hy
     systemctl stop hy
     systemctl disable hy
     read -p "Press Enter to continue..."
@@ -601,7 +601,7 @@ delete_hysteria_v2() {
     clear
     echo "Deleting Hysteria v2 Proxy..."
     sleep 2
-    rm -r ../hy2
+    rm -r ~/hy2
     systemctl stop hy2
     systemctl disable hy2
     read -p "Press Enter to continue..."
@@ -893,7 +893,7 @@ delete_tuic() {
     clear
     echo "Deleting Tuic Proxy..."
     sleep 2
-    rm -r ../tuic
+    rm -r ~/tuic
     systemctl stop tuic
     systemctl disable tuic
     read -p "Press Enter to continue..."

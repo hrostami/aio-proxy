@@ -315,7 +315,6 @@ change_hy_parameters() {
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
 
-    read -p "Press Enter to continue..."
 }
 
 delete_hysteria() {
@@ -502,7 +501,6 @@ change_hy2_parameters() {
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
 
-    read -p "Press Enter to continue..."
 }
 show_hy2_configs() {
     local user_directory
@@ -887,7 +885,6 @@ change_tuic_parameters() {
     else
         echo "TUIC directory does not exist. Please install TUIC first."
     fi
-    read -p "Press Enter to continue..."
 }
 delete_tuic() {
     clear
@@ -984,6 +981,7 @@ while true; do
                         ;;
                     2) # Change Parameters
                         change_hy_parameters
+                        show_hy_configs
                         ;;
                     3) # Show Configs
                         show_hy_configs
@@ -1010,6 +1008,7 @@ while true; do
                         ;;
                     2) # Change Parameters
                         change_hy2_parameters
+                        show_hy2_configs
                         ;;
                     3) # Show Configs
                         show_hy2_configs
@@ -1036,6 +1035,7 @@ while true; do
                         ;;
                     2) # Change Parameters
                         change_tuic_parameters
+                        show_tuic_configs
                         ;;
                     3) # Show Configs
                         show_tuic_configs

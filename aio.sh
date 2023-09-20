@@ -35,6 +35,7 @@ display_main_menu() {
     echo "3. Tuic"
     echo "4. Tunnel"
     echo "5. Install Panels"
+    echo "6. Warp"
     echo "0. Exit"
     echo "**********************************************"
 }
@@ -90,6 +91,17 @@ display_install_panels_menu() {
     echo "**********************************************"
 }
 
+display_warp_menu() {
+    clear
+    echo "**********************************************"
+    echo -e "\033[1;32m     Warp Menu\033[0m"
+    echo "**********************************************"
+    echo "1. Install"
+    echo "2. Disable"
+    echo "3. Enable"
+    echo "0. Back to Main Menu"
+    echo "**********************************************"
+}
 # ----------------------------------------Hysteria stuff------------------------------------------------
 run_hysteria_setup() {
     clear
@@ -1040,6 +1052,25 @@ install_reality_ezpz() {
     read -p "Press Enter to continue..."
 }
 
+# ----------------------------------------Warp stuff------------------------------------------------
+install_warp() {
+    echo "Installing Warp..."
+    bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/warp.sh)
+    read -p "Press Enter to continue..."
+}
+
+disable_warp() {
+    echo "Disabling Warp..."
+    systemctl stop wg-quick@wgcf
+    read -p "Press Enter to continue..."
+}
+
+enable_warp() {
+    echo "Enabling Warp..."
+    systemctl restart wg-quick@wgcf
+    read -p "Press Enter to continue..."
+}
+
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
@@ -1141,6 +1172,28 @@ while true; do
                         ;;
                     3) # RealityEZPZ by Aleskxyz
                         install_reality_ezpz
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+        6) # Warp
+            while true; do
+                display_warp_menu
+                read -p "Enter your choice: " warp_choice
+
+                case $warp_choice in
+                    1) # Install
+                        install_warp
+                        ;;
+                    2) # Disable
+                        disable_warp
+                        ;;
+                    3) # Enable
+                        enable_warp
                         ;;
                     0) # Back to Main Menu
                         break

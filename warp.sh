@@ -686,22 +686,22 @@ sleep 2 && ShowSOCKS5 && S5menu
 WGCFmenu(){
 name=`screen -ls | grep '(Detached)' | awk '{print $1}' | awk -F "." '{print $2}'`
 [[ $name =~ "up" ]] && keepup="WARP monitoring is on" || keepup="WARP monitoring is off"
-white "------------------------------------------------ ----------------------------------"
+white "-----------------------------------------------------------------------------------"
 white "Option 1: The current IPV4 takeover VPS outbound situation is as follows ($keepup)"
 white " ${WARPIPv4Status}"
-white "------------------------------------------------ ----------------------------------"
+white "-----------------------------------------------------------------------------------"
 white "Option 1: The current IPV6 takeover VPS outbound situation is as follows ($keepup)"
 white " ${WARPIPv6Status}"
-white "------------------------------------------------ ----------------------------------"
+white "-----------------------------------------------------------------------------------"
 if [[ "$WARPIPv4Status" == *"does not exist"* && "$WARPIPv6Status" == *"does not exist"* ]]; then
 yellow "Both IPV4 and IPV6 do not exist! It is recommended to use the cf shortcut to enter again after exiting. If it persists, it is recommended to uninstall and reinstall solution one"
 fi
 }
 S5menu(){
-white "------------------------------------------------ ----------------------------------------"
+white "-----------------------------------------------------------------------------------------"
 white "Option 2: The current Socks5-WARP official client local agent situation is as follows"
 blue " ${S5Status}"
-white "------------------------------------------------ ----------------------------------------"
+white "-----------------------------------------------------------------------------------------"
 }
 reswarp(){
 unreswarp
@@ -1252,7 +1252,7 @@ green "Currently WARP-GO has installed kernel version number: ${loVERSION}, whic
 start_menu(){
 ShowWGCF;ShowSOCKS5
 clear
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "${bblue} ░██     ░██      ░██ ██ ██         ░█${plain}█   ░██     ░██   ░██     ░█${red}█   ░██${plain}  "
 echo -e "${bblue}  ░██   ░██      ░██    ░░██${plain}        ░██  ░██      ░██  ░██${red}      ░██  ░██${plain}   "
 echo -e "${bblue}   ░██ ░██      ░██ ${plain}                ░██ ██        ░██ █${red}█        ░██ ██  ${plain}   "
@@ -1263,15 +1263,15 @@ echo
 white "Yongge Github project: github.com/yonggekkk"
 white "Yongge blogger's blog: ygkkk.blogspot.com"
 white "Brother Yong YouTube channel: www.youtube.com/@ygkkk"
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow "Choose a realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
 yellow "Enter script shortcut: cf"
-white " ================================================ ================="
+white " =================================================================="
 green " 1. Option 1: Install/Switch WARP-GO"
 [[ $cpu != amd64* ]] && red " 2. Option 2: Install Socks5-WARP (only supports amd64 architecture, currently option 2 is not available)" || green " 2. Option 2: Install Socks5-WARP"
 green " 3. Option 3: Generate WARP-Wireguard configuration file and QR code"
 green " 4. Uninstall WARP"
-white "------------------------------------------------ ------------------"
+white "-------------------------------------------------------------------"
 green " 5. Close, enable/restart WARP"
 green " 6. WARP other options"
 green " 7. WARP three-type account upgrade/switch"
@@ -1279,7 +1279,7 @@ green " 8. Update CFwarp installation script"
 green " 9. Update WARP-GO kernel"
 green " 10. Replace the current WARP-GO kernel with the WGCF-WARP kernel"
 green " 0. Exit script "
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 cfwarpshow
 if [[ $(type -P warp-go) ]] && [[ -f '/usr/bin/cf' ]]; then
 loVERSION="$(/usr/local/bin/warp-go -v | sed -n 1p | awk '{print $1}' | awk -F"/" '{print $NF}')"
@@ -1291,7 +1291,7 @@ echo -e "The current WARP-GO installed kernel version number is: ${bblue}${loVER
 echo -e "The latest WARP-GO kernel version number detected: ${yellow}${wgVERSION}${plain}, you can choose 9 for update"
 fi
 fi
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white "The VPS system information is as follows:"
 white " Operating system: $(blue "$op") \c" && white " Kernel version: $(blue "$version") \c" && white " CPU architecture: $(blue "$cpu") \c" && white "Virtualization type: $(blue "$vi")"
 WGCFmenu
@@ -1769,7 +1769,7 @@ cwg && ONEWARPGO
 start_menu(){
 ShowWGCF;ShowSOCKS5
 clear
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "${bblue} ░██     ░██      ░██ ██ ██         ░█${plain}█   ░██     ░██   ░██     ░█${red}█   ░██${plain}  "
 echo -e "${bblue}  ░██   ░██      ░██    ░░██${plain}        ░██  ░██      ░██  ░██${red}      ░██  ░██${plain}   "
 echo -e "${bblue}   ░██ ░██      ░██ ${plain}                ░██ ██        ░██ █${red}█        ░██ ██  ${plain}   "
@@ -1780,24 +1780,24 @@ echo
 white "Yongge Github project: github.com/yonggekkk"
 white "Yongge blogger's blog: ygkkk.blogspot.com"
 white "Brother Yong YouTube channel: www.youtube.com/@ygkkk"
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow "Choose a realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
 yellow "Enter script shortcut: cf"
-white " ================================================ ================="
+white " =================================================================="
 green " 1. Solution 1: Install/Switch WGCF-WARP"
 [[ $cpu != amd64* ]] && red " 2. Option 2: Install Socks5-WARP (only supports amd64 architecture, currently option 2 is not available)" || green " 2. Option 2: Install Socks5-WARP"
 green " 3. Option 3: Generate WARP-Wireguard configuration file and QR code"
 green " 4. Uninstall WARP"
-white "------------------------------------------------ ------------------"
+white "-------------------------------------------------------------------"
 green " 5. Close, enable/restart WARP"
 green " 6. WARP other options"
 green " 7. WARP three-type account upgrade/switch"
 green " 8. Update CFwarp installation script"
 green " 9. Change the current WGCF-WARP core replaced by WARP-GO core"
 green " 0. Exit script "
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 cfwarpshow
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white "The VPS system information is as follows:"
 white " Operating system: $(blue "$op") \c" && white " Kernel version: $(blue "$version") \c" && white " CPU architecture: $(blue "$cpu") \c" && white "Virtualization type: $(blue "$vi")"
 WGCFmenu
@@ -1833,7 +1833,7 @@ fi
 startCFwarp(){
 checkyl
 clear
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "${bblue} ░██     ░██      ░██ ██ ██         ░█${plain}█   ░██     ░██   ░██     ░█${red}█   ░██${plain}  "
 echo -e "${bblue}  ░██   ░██      ░██    ░░██${plain}        ░██  ░██      ░██  ░██${red}      ░██  ░██${plain}   "
 echo -e "${bblue}   ░██ ░██      ░██ ${plain}                ░██ ██        ░██ █${red}█        ░██ ██  ${plain}   "
@@ -1844,13 +1844,13 @@ echo
 white "Yongge Github project: github.com/yonggekkk"
 white "Yongge blogger's blog: ygkkk.blogspot.com"
 white "Brother Yong YouTube channel: www.youtube.com/@ygkkk"
-green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~"
+green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow " Tips: You can choose options 1 and 2, and support switching between each other"
-white " ================================================ ================="
+white " =================================================================="
 green " 1. Select the wgcf kernel to install WARP (by default, a warp+ account of more than 20 million GB is directly generated)"
 green " 2. Select warp-go kernel to install WARP"
 green "0. Exit script"
-white " ================================================ ================="
+white " =================================================================="
 echo
 readp "Please enter a number:" Input
 case "$Input" in

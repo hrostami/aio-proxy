@@ -310,7 +310,6 @@ change_hy_parameters() {
         systemctl restart hy
 
         echo "Parameters updated successfully."
-        show_hy_configs
     else
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
@@ -496,7 +495,6 @@ change_hy2_parameters() {
         mv tmp_config.json "$user_directory/config.json"
         systemctl restart hy2
         echo "Parameters updated successfully."
-        show_hy2_configs
     else
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
@@ -881,7 +879,6 @@ change_tuic_parameters() {
         
         echo "Parameters updated successfully."
         systemctl restart tuic
-        show_tuic_configs
     else
         echo "TUIC directory does not exist. Please install TUIC first."
     fi

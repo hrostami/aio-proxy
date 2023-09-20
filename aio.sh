@@ -36,6 +36,7 @@ display_main_menu() {
     echo "4. Tunnel"
     echo "5. Install Panels"
     echo "6. Warp"
+    echo "7. Show Ports in use"
     echo "0. Exit"
     echo "**********************************************"
 }
@@ -1104,6 +1105,16 @@ while true; do
                     *) echo "Invalid choice. Please select a valid option." ;;
                 esac
             done
+            ;;
+        7) # show ports in use
+            echo "Ports in use and their corresponding processes:"
+            echo "----------------------------------------------"
+
+            # Get the list of ports and their corresponding processes
+            sudo ss -tulpn | awk '{if(NR>1) print $5, $7}' | column -t
+
+            echo "----------------------------------------------"
+            read -p "Press Enter to continue..."
             ;;
         0) # Exit
             clear

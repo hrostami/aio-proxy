@@ -1107,6 +1107,7 @@ while true; do
             done
             ;;
         7) # show ports in use
+            clear
             echo "Ports in use and their corresponding processes:"
             echo "----------------------------------------------"
 

@@ -18,6 +18,10 @@ To use the script:
 
 1. Run this command:
    ```
+   bash <(curl -sL https://bit.ly/aio-proxy)
+   ```
+   or
+   ```
    bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/aio.sh)
    ```
    

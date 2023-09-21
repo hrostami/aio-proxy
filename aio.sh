@@ -76,9 +76,13 @@ display_hysteria_menu() {
     yellow "                Hysteria Menu                 "
     echo "**********************************************"
     green "1. Install/Update"
+    echo
     green "2. Change Parameters"
+    echo
     green "3. Show Configs"
+    echo
     green "4. Delete"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
 }
@@ -89,9 +93,13 @@ display_hysteria_v2_menu() {
     yellow "               Hysteria V2 Menu               "
     echo "**********************************************"
     green "1. Install/Update"
+    echo
     green "2. Change Parameters"
+    echo
     green "3. Show Configs"
+    echo
     green "4. Delete"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
 }
@@ -102,9 +110,13 @@ display_tuic_menu() {
     yellow "                   Tuic Menu                  "
     echo "**********************************************"
     green "1. Install/Update"
+    echo
     green "2. Change Parameters"
+    echo
     green "3. Show Configs"
+    echo
     green "4. Delete"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
 }
@@ -115,10 +127,15 @@ display_install_panels_menu() {
     yellow "                  Panels Menu                  "
     echo "**********************************************"
     green "1. X-UI Alireza"
+    echo
     green "2. X-UI Sanaei"
+    echo
     green "3. RealityEZPZ by Aleskxyz"
+    echo
     green "4. Hiddify"
+    echo
     green "5. Marzban"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
 }
@@ -129,8 +146,11 @@ display_warp_menu() {
     yellow "                  Warp Menu                  "
     echo "**********************************************"
     green "1. Install"
+    echo
     green "2. Disable"
+    echo
     green "3. Enable"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
     white "Getting current IPs, please wait..."

@@ -139,8 +139,9 @@ display_warp_menu() {
         echo "Error: Failed to get IPv6 address" 
         return
     fi
-    red "IPv4: $IPV4"
-    red "IPv6: $IPV6"
+    white "Getting current IPs, please wait..."
+    echo -e "${plain}IPv4:${yellow} $IPV4"
+    echo -e "${plain}IPv6:${yellow} $IPV6"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------

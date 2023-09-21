@@ -11,7 +11,7 @@ blue(){ echo -e "\033[36m\033[01m$1\033[0m";}
 white(){ echo -e "\033[37m\033[01m$1\033[0m";}
 bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
 rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
-readp(){ read -p "$(yellow "$1")" $2;}
+readp(){ readp "$(yellow "$1")" $2;}
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."
@@ -45,12 +45,12 @@ display_main_menu() {
     bblue "            ██╔══██║██║██║   ██║             "
     bblue "            ██║  ██║██║╚██████╔╝             "
     bblue "            ╚═╝  ╚═╝╚═╝ ╚═════╝              "
-    bblue "            All-in-one Proxy Tool            "
-    plain "              Created by Hosy                "
-    bblue "                                             "
+    bblue "           All-in-one Proxy Tool             "
+    white "              Created by Hosy                "
+    white "---------------------------------------------"
     white " Github: github.com/hrostami"
     white " Twitter: twitter.com/hosy000"
-    echo "**********************************************"
+    white "---------------------------------------------"
     yellow "                  Main Menu                   "
     echo "**********************************************"
     green "1. Hysteria"
@@ -60,60 +60,60 @@ display_main_menu() {
     green "5. Install Panels"
     green "6. Warp"
     green "7. Show Ports in use"
-    red "0. Exit"
+    green "0. Exit"
     echo "**********************************************"
 }
 
 display_hysteria_menu() {
     clear
     echo "**********************************************"
-    echo -e "\033[1;32m     Hysteria Menu\033[0m"
+    yellow "                Hysteria Menu                 "
     echo "**********************************************"
-    echo "1. Install/Update"
-    echo "2. Change Parameters"
-    echo "3. Show Configs"
-    echo "4. Delete"
-    echo "0. Back to Main Menu"
+    green "1. Install/Update"
+    green "2. Change Parameters"
+    green "3. Show Configs"
+    green "4. Delete"
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 
 display_hysteria_v2_menu() {
     clear
     echo "**********************************************"
-    echo -e "\033[1;32m     Hysteria v2 Menu\033[0m"
+    yellow "               Hysteria V2 Menu               "
     echo "**********************************************"
-    echo "1. Install/Update"
-    echo "2. Change Parameters"
-    echo "3. Show Configs"
-    echo "4. Delete"
-    echo "0. Back to Main Menu"
+    green "1. Install/Update"
+    green "2. Change Parameters"
+    green "3. Show Configs"
+    green "4. Delete"
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 
 display_tuic_menu() {
     clear
     echo "**********************************************"
-    echo -e "\033[1;32m     Tuic Menu\033[0m"
+    yellow "                   Tuic Menu                  "
     echo "**********************************************"
-    echo "1. Install/Update"
-    echo "2. Change Parameters"
-    echo "3. Show Configs"
-    echo "4. Delete"
-    echo "0. Back to Main Menu"
+    green "1. Install/Update"
+    green "2. Change Parameters"
+    green "3. Show Configs"
+    green "4. Delete"
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 
 display_install_panels_menu() {
     clear
     echo "**********************************************"
-    echo -e "\033[1;32m     Install Panels Menu\033[0m"
+    yellow "                  Panels Menu                  "
     echo "**********************************************"
-    echo "1. X-UI Alireza"
-    echo "2. X-UI Sanaei"
-    echo "3. RealityEZPZ by Aleskxyz"
-    echo "4. Hiddify"
-    echo "5. Marzban"
-    echo "0. Back to Main Menu"
+    green "1. X-UI Alireza"
+    green "2. X-UI Sanaei"
+    green "3. RealityEZPZ by Aleskxyz"
+    green "4. Hiddify"
+    green "5. Marzban"
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 
@@ -131,15 +131,15 @@ display_warp_menu() {
         return
     fi
     echo "**********************************************"
-    echo -e "\033[1;32m     Warp Menu\033[0m"
+    yellow "                   Warp Menu                  "
     echo "**********************************************"
     echo -e "\e[1;33mIPv4: $IPV4\e[0m"
     echo -e "\e[1;33mIPv6: $IPV6\e[0m"
     echo "**********************************************"
-    echo "1. Install"
-    echo "2. Disable"
-    echo "3. Enable"
-    echo "0. Back to Main Menu"
+    green "1. Install"
+    green "2. Disable"
+    green "3. Enable"
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------
@@ -174,8 +174,8 @@ run_hysteria_setup() {
             return
         fi
     else
-        read -p "Enter the listening port: " port
-        read -p "Enter the obfuscation password: " password
+        readp "Enter the listening port: " port
+        readp "Enter the obfuscation password: " password
 
         mkdir -p "$user_directory"
         cd "$user_directory"
@@ -305,7 +305,7 @@ show_hy_configs() {
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
 
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 change_hy_parameters() {
@@ -323,8 +323,8 @@ change_hy_parameters() {
         port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
         password=$(jq -r '.obfs' "$user_directory/config.json")
         
-        read -p "Enter a new listening port [$port]: " new_port
-        read -p "Enter a new obfuscation password [$password]: " new_password
+        readp "Enter a new listening port [$port]: " new_port
+        readp "Enter a new obfuscation password [$password]: " new_password
         
         # Update the config.json file with the new or existing values
         jq ".listen = \":${new_port:-$port}\" | .obfs = \"$new_password\"" "$user_directory/config.json" > tmp_config.json
@@ -346,7 +346,7 @@ delete_hysteria() {
     rm -r ~/hy
     systemctl stop hy
     systemctl disable hy
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 # ----------------------------------------Hysteria V2 stuff------------------------------------------------
@@ -384,8 +384,8 @@ run_hysteria_v2_setup() {
             return
         fi
     else
-        read -p "Enter the listening port: " port
-        read -p "Enter the obfuscation password: " password
+        readp "Enter the listening port: " port
+        readp "Enter the obfuscation password: " password
 
         mkdir -p "$user_directory"
         cd "$user_directory"
@@ -512,8 +512,8 @@ change_hy2_parameters() {
         echo "Hysteria directory exists. You can change parameters here."
         port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
         password=$(jq -r '.obfs.salamander.password' "$user_directory/config.json")
-        read -p "Enter a new listening port [$port]: " new_port
-        read -p "Enter a new obfuscation password [$password]: " new_password
+        readp "Enter a new listening port [$port]: " new_port
+        readp "Enter a new obfuscation password [$password]: " new_password
         jq ".listen = \":${new_port:-$port}\" | .obfs.salamander.password = \"$new_password\"" "$user_directory/config.json" > tmp_config.json
         mv tmp_config.json "$user_directory/config.json"
         systemctl restart hy2
@@ -614,7 +614,7 @@ show_hy2_configs() {
         echo "Hysteria directory does not exist. Please install Hysteria first."
     fi
 
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 delete_hysteria_v2() {
     clear
@@ -623,7 +623,7 @@ delete_hysteria_v2() {
     rm -r ~/hy2
     systemctl stop hy2
     systemctl disable hy2
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 # ----------------------------------------TUIC stuff------------------------------------------------
@@ -734,10 +734,10 @@ run_tuic_setup() {
         UUID=$(uuidgen)
 
         # Prompt for port
-        read -p "Enter port number: " PORT
+        readp "Enter port number: " PORT
 
         # Prompt for password
-        read -p "Enter a password for the server: " PASSWORD
+        readp "Enter a password for the server: " PASSWORD
 
         # Prompt for congestion control
         OPTIONS=("cubic" "new_reno" "bbr")
@@ -871,7 +871,7 @@ show_tuic_configs() {
     else
         echo "TUIC directory does not exist. Please install TUIC first."
     fi
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 change_tuic_parameters() {
     local TUIC_FOLDER
@@ -893,9 +893,9 @@ change_tuic_parameters() {
         UUID=$(jq -r '.users | keys[0]' "$CONFIG_FILE")
         PASSWORD=$(jq -r ".users[\"$UUID\"]" "$CONFIG_FILE")
         
-        read -p "Enter a new port number [$PORT]: " NEW_PORT
-        read -p "Enter a new congestion control [$CONGESTION_CONTROL]: " NEW_CONGESTION
-        read -p "Enter a new password [$PASSWORD]: " NEW_PASSWORD
+        readp "Enter a new port number [$PORT]: " NEW_PORT
+        readp "Enter a new congestion control [$CONGESTION_CONTROL]: " NEW_CONGESTION
+        readp "Enter a new password [$PASSWORD]: " NEW_PASSWORD
         
         jq ".server = \"[::]:${NEW_PORT:-$PORT}\" | .congestion_control = \"${NEW_CONGESTION:-$CONGESTION_CONTROL}\" | .users[\"$UUID\"] = \"${NEW_PASSWORD:-$PASSWORD}\"" "$CONFIG_FILE" > tmp_config.json
         mv tmp_config.json "$CONFIG_FILE"
@@ -913,7 +913,7 @@ delete_tuic() {
     rm -r ~/tuic
     systemctl stop tuic
     systemctl disable tuic
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 # ----------------------------------------Tunnel stuff------------------------------------------------
@@ -922,7 +922,7 @@ run_tunnel_setup() {
     echo "Running Tunnel Setup..."
     bash <(curl -fsSL https://raw.githubusercontent.com/Ptechgithub/ReverseTlsTunnel/main/RtTunnel.sh)
     sleep 2
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 # ----------------------------------------Install Panels stuff------------------------------------------------
@@ -931,7 +931,7 @@ install_x_ui_alireza() {
     echo "Installing X-UI Alireza..."
     sleep 2
     bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh)
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 install_x_ui_sanaei() {
@@ -939,7 +939,7 @@ install_x_ui_sanaei() {
     echo "Installing X-UI Sanaei..."
     sleep 2
     bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 install_reality_ezpz() {
@@ -947,7 +947,7 @@ install_reality_ezpz() {
     echo "Installing RealityEZPZ by Aleskxyz..."
     sleep 2
     bash <(curl -sL https://raw.githubusercontent.com/aleskxyz/reality-ezpz/master/reality-ezpz.sh) -m
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 install_hiddify() {
@@ -955,32 +955,32 @@ install_hiddify() {
     echo "Installing Hiddify..."
     sudo apt update&&sudo apt install curl&& sudo bash -c "$(curl -Lfo- https://raw.githubusercontent.com/hiddify/hiddify-config/main/common/download_install.sh)"
     sleep 2
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 install_marzban() {
     clear
     echo "Installing Marzban..."
     sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban.sh)" @ install
     sleep 2
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 # ----------------------------------------Warp stuff------------------------------------------------
 install_warp() {
     echo "Installing Warp..."
     bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/warp.sh)
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 disable_warp() {
     echo "Disabling Warp..."
     systemctl stop wg-quick@wgcf
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 enable_warp() {
     echo "Enabling Warp..."
     systemctl restart wg-quick@wgcf
-    read -p "Press Enter to continue..."
+    readp "Press Enter to continue..."
 }
 
 # ----------------------------------------Menu options------------------------------------------------
@@ -992,7 +992,7 @@ while true; do
         1) # Hysteria
             while true; do
                 display_hysteria_menu
-                read -p "Enter your choice: " hysteria_choice
+                readp "Enter your choice: " hysteria_choice
 
                 case $hysteria_choice in
                     1) # Install/Update
@@ -1019,7 +1019,7 @@ while true; do
         2) # Hysteria v2
             while true; do
                 display_hysteria_v2_menu
-                read -p "Enter your choice: " hysteria_v2_choice
+                readp "Enter your choice: " hysteria_v2_choice
 
                 case $hysteria_v2_choice in
                     1) # Install/Update
@@ -1046,7 +1046,7 @@ while true; do
         3) # Tuic
             while true; do
                 display_tuic_menu
-                read -p "Enter your choice: " tuic_choice
+                readp "Enter your choice: " tuic_choice
 
                 case $tuic_choice in
                     1) # Install/Update
@@ -1079,7 +1079,7 @@ while true; do
         5) # Install Panels
             while true; do
                 display_install_panels_menu
-                read -p "Enter your choice: " install_panels_choice
+                readp "Enter your choice: " install_panels_choice
 
                 case $install_panels_choice in
                     1) # X-UI Alireza
@@ -1107,7 +1107,7 @@ while true; do
         6) # Warp
             while true; do
                 display_warp_menu
-                read -p "Enter your choice: " warp_choice
+                readp "Enter your choice: " warp_choice
 
                 case $warp_choice in
                     1) # Install
@@ -1135,7 +1135,7 @@ while true; do
             sudo ss -tulpn | awk '{if(NR>1) print $5, $7}' | column -t
 
             echo "----------------------------------------------"
-            read -p "Press Enter to continue..."
+            readp "Press Enter to continue..."
             ;;
         0) # Exit
             clear

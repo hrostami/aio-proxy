@@ -57,10 +57,15 @@ display_main_menu() {
     green "1. Hysteria"
     green "2. Hysteria v2"
     green "3. Tuic"
-    green "4. Tunnel"
+    echo
+    green "4. Reverse TLS Tunnel"
+    echo
     green "5. Install Panels"
+    echo
     green "6. Warp"
+    echo
     green "7. Show Ports in use"
+    echo
     green "0. Exit"
     echo "**********************************************"
 }

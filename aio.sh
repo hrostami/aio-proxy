@@ -1,5 +1,16 @@
 #!/bin/bash
-
+red='\033[0;31m'
+bblue='\033[0;34m'
+yellow='\033[0;33m'
+green='\033[0;32m'
+plain='\033[0m'
+red(){ echo -e "\033[31m\033[01m$1\033[0m";}
+green(){ echo -e "\033[32m\033[01m$1\033[0m";}
+yellow(){ echo -e "\033[33m\033[01m$1\033[0m";}
+blue(){ echo -e "\033[36m\033[01m$1\033[0m";}
+white(){ echo -e "\033[37m\033[01m$1\033[0m";}
+bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
+rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."
@@ -26,7 +37,14 @@ fi
 
 # ----------------------------------------Show Menus------------------------------------------------
 display_main_menu() {
-    clear
+    clear 
+    echo "             █████╗ ██╗ ██████╗               ";
+    echo "            ██╔══██╗██║██╔═══██╗              ";
+    echo "            ███████║██║██║   ██║              ";
+    echo "            ██╔══██║██║██║   ██║              ";
+    echo "            ██║  ██║██║╚██████╔╝              ";
+    echo "            ╚═╝  ╚═╝╚═╝ ╚═════╝               ";
+    echo "                                              ";
     echo "**********************************************"
     echo -e "\033[1;32m     Main Menu\033[0m"
     echo "**********************************************"

@@ -11,7 +11,8 @@ blue(){ echo -e "\033[36m\033[01m$1\033[0m";}
 white(){ echo -e "\033[37m\033[01m$1\033[0m";}
 bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
 rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
-readp(){ readp "$(yellow "$1")" $2;}
+readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
+readp(){ read -p "$(yellow "$1")" $2;}
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."

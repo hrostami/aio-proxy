@@ -11,6 +11,7 @@ blue(){ echo -e "\033[36m\033[01m$1\033[0m";}
 white(){ echo -e "\033[37m\033[01m$1\033[0m";}
 bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
 rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
+readp(){ read -p "$(yellow "$1")" $2;}
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."
@@ -48,13 +49,13 @@ display_main_menu() {
     echo "**********************************************"
     yellow "                Main Menu                   "
     echo "**********************************************"
-    echo "1. Hysteria"
-    echo "2. Hysteria v2"
-    echo "3. Tuic"
-    echo "4. Tunnel"
-    echo "5. Install Panels"
-    echo "6. Warp"
-    echo "7. Show Ports in use"
+    green "1. Hysteria"
+    green "2. Hysteria v2"
+    green "3. Tuic"
+    green "4. Tunnel"
+    green "5. Install Panels"
+    green "6. Warp"
+    green "7. Show Ports in use"
     red "0. Exit"
     echo "**********************************************"
 }
@@ -981,7 +982,7 @@ enable_warp() {
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
-    read -p "Enter your choice: " main_choice
+    readp "Enter your choice: " main_choice
 
     case $main_choice in
         1) # Hysteria

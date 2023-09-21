@@ -128,6 +128,7 @@ display_warp_menu() {
     green "3. Enable"
     green "0. Back to Main Menu"
     echo "**********************************************"
+    white "Getting current IPs, please wait..."
     IPV4=$(curl -s https://v4.ident.me)
         if [ $? -ne 0 ]; then
             echo "Error: Failed to get IPv4 address"
@@ -139,9 +140,8 @@ display_warp_menu() {
         echo "Error: Failed to get IPv6 address" 
         return
     fi
-    white "Getting current IPs, please wait..."
-    echo -e "${plain}IPv4:${yellow} $IPV4"
-    echo -e "${plain}IPv6:${yellow} $IPV6"
+    echo -e "${plain}IPv4:${red} $IPV4${plain}"
+    echo -e "${plain}IPv6:${red} $IPV6${plain}"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------

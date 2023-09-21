@@ -989,7 +989,7 @@ while true; do
     display_main_menu
     readp "Enter your choice: " main_choice
 
-    case $main_choice in
+    case "$main_choice" in
         1) # Hysteria
             while true; do
                 display_hysteria_menu

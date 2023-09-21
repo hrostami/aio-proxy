@@ -132,10 +132,10 @@ display_warp_menu() {
         return
     fi
     echo "**********************************************"
-    yellow "                   Warp Menu                  "
+    yellow "                  Warp Menu                  "
     echo "**********************************************"
-    echo -e "\e[1;33mIPv4: $IPV4\e[0m"
-    echo -e "\e[1;33mIPv6: $IPV6\e[0m"
+    red "IPv4: $IPV4"
+    red "IPv6: $IPV6"
     echo "**********************************************"
     green "1. Install"
     green "2. Disable"

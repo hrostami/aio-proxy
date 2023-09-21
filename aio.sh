@@ -120,6 +120,14 @@ display_install_panels_menu() {
 
 display_warp_menu() {
     clear
+    echo "**********************************************"
+    yellow "                  Warp Menu                  "
+    echo "**********************************************"
+    green "1. Install"
+    green "2. Disable"
+    green "3. Enable"
+    green "0. Back to Main Menu"
+    echo "**********************************************"
     IPV4=$(curl -s https://v4.ident.me)
         if [ $? -ne 0 ]; then
             echo "Error: Failed to get IPv4 address"
@@ -131,16 +139,8 @@ display_warp_menu() {
         echo "Error: Failed to get IPv6 address" 
         return
     fi
-    echo "**********************************************"
-    yellow "                  Warp Menu                  "
-    echo "**********************************************"
     red "IPv4: $IPV4"
     red "IPv6: $IPV6"
-    echo "**********************************************"
-    green "1. Install"
-    green "2. Disable"
-    green "3. Enable"
-    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------

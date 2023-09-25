@@ -128,9 +128,9 @@ display_tuic_menu() {
 display_reality_menu() {
     clear
     white "---------------------------------------------"
-    white "The script for RealityEZPZ is created by @Aleskxyz"
-    white "Please check out and star his Github repo"
-    white " Github: github.com/aleskxyz/reality-ezpz"
+    echo -e "${plain}The script for RealityEZPZ is created by ${yellow}@Aleskxyz${plain}"
+    echo -e "Please check out and ${yellow}star ${plain}his Github repo"
+    yellow " github.com/aleskxyz/reality-ezpz"
     white "---------------------------------------------"
     echo
     echo "**********************************************"
@@ -238,9 +238,9 @@ display_warp_menu() {
 display_telegram_menu() {
     clear
     white "---------------------------------------------"
-    white "This part's script is created by @HirbodBehnam"
-    white "Please check out and star his Github repo"
-    white "github.com/HirbodBehnam/MTProtoProxyInstaller"
+    echo -e "This part's script is created by ${yellow}@HirbodBehnam${plain}"
+    echo -e "Please check out and ${yellow}star ${plain}his Github repo"
+    yellow "github.com/HirbodBehnam/MTProtoProxyInstaller"
     white "---------------------------------------------"
     echo
     echo "**********************************************"

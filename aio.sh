@@ -1116,14 +1116,14 @@ modify_delete_ssh_user() {
 
             sshd_config_file="/etc/ssh/sshd_config"
 
-            if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" '"Match Address 0.0.0.0/0"'; then
-                add_or_modify_line "$sshd_config_file" '"Match Address 0.0.0.0/0"'
-                add_or_modify_line "$sshd_config_file" '"AllowTcpForwarding yes"'
-                add_or_modify_line "$sshd_config_file" '"PasswordAuthentication yes"'
+            if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" 'Match Address 0.0.0.0/0'; then
+                add_or_modify_line "$sshd_config_file" 'Match Address 0.0.0.0/0'
+                add_or_modify_line "$sshd_config_file" 'AllowTcpForwarding yes'
+                add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
             fi
 
             allow_users_line="\"AllowUsers $username@*:$port\""
-            add_or_modify_line "$sshd_config_file" "$allow_users_line"
+            add_or_modify_line "$sshd_config_file" $allow_users_line
 
             sudo systemctl restart ssh
 

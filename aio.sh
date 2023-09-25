@@ -172,7 +172,7 @@ display_juicity_menu() {
 display_ssh_menu() {
     clear
     echo "**********************************************"
-    yellow "                   SSH Menu  5                "
+    yellow "                   SSH Menu                  "
     echo "**********************************************"
     green "1. Add user"
     echo
@@ -1099,16 +1099,16 @@ modify_delete_ssh_user() {
         port_from_config=$(grep -Eo "Match User $username Address \*:(\d+)" "$sshd_config_file" | grep -Eo "\d+")
         port=${port_from_config:-22}
     fi
-    echo "port from config= $port or $port_from_config"
+    yellow "Port from config= $port"
     sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
     sudo sed -i "/port $port/d" "$sshd_config_file"
+    echo
+    rred "Select an option:"
+    green "1) Modify user"
+    green "2) Delete user"
+    readp "Enter your choice: " choice
 
-    echo "Select an option:"
-    echo "1) Modify user"
-    echo "2) Delete user"
-    read -p "Enter your choice: " choice
-
-    case $choice in
+    case "$choice" in
         1)  # Modify user
             read -s -p "Enter the new password: " password
             echo
@@ -1131,7 +1131,7 @@ modify_delete_ssh_user() {
 
         2)  # Delete user
             sudo userdel -r "$username"
-            echo "User deleted."
+            red "User deleted."
             ;;
         *)
             echo "Invalid choice."

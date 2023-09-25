@@ -68,7 +68,7 @@ display_main_menu() {
     echo
     green "9. Warp                  10. Telegram Proxy"
     echo
-    green "11. Show used Ports           "
+    green "11. Show used Ports      12. Quota Manager"
     echo
     rred "0. Exit"
     echo "----------------------------------------------"
@@ -174,7 +174,7 @@ display_ssh_menu() {
     echo "**********************************************"
     yellow "                   SSH Menu                  "
     echo "**********************************************"
-    green "1. Install/Update"
+    green "1. Add user"
     echo
     green "2. Change Parameters"
     echo
@@ -1031,6 +1031,112 @@ delete_tuic() {
     readp "Press Enter to continue..."
 }
 
+# ----------------------------------------SSH stuff------------------------------------------------
+contains_substring() {
+    string="$1"
+    substring="$2"
+    if [[ "$string" == *"$substring"* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+add_or_modify_line() {
+    file="$1"
+    line="$2"
+
+    if jq -e --arg line "$line" '.[] | contains([$line])' "$file" > /dev/null; then
+        echo "Line already exists in $file"
+    else
+        echo "$line" | jq --arg line "$line" '. += [$line]' > "$file.tmp" && mv "$file.tmp" "$file"
+        echo "Added line to $file"
+    fi
+}
+add_ssh_user() {
+    read -p "Enter the username: " username
+    read -s -p "Enter the password: " password
+    echo
+    read -p "Enter the SSH port (press Enter to use default 22): " port
+
+    if [ -z "$port" ]; then
+        port=22
+    fi
+
+    sudo useradd "$username" -M -s /bin/false
+    echo "$username:$password" | sudo chpasswd
+
+    sshd_config_file="/etc/ssh/sshd_config"
+
+    if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" '"Match Address 0.0.0.0/0"'; then
+        add_or_modify_line "$sshd_config_file" '"Match Address 0.0.0.0/0"'
+        add_or_modify_line "$sshd_config_file" '"AllowTcpForwarding yes"'
+        add_or_modify_line "$sshd_config_file" '"PasswordAuthentication yes"'
+    fi
+
+    allow_users_line="\"AllowUsers $username@*:$port\""
+    add_or_modify_line "$sshd_config_file" "$allow_users_line"
+
+    sudo systemctl restart ssh
+
+    echo "Configuration completed and SSH service restarted."
+
+}
+
+modify_delete_ssh_user() {
+
+    read -p "Enter the username: " username
+
+    user_exists=$(getent passwd "$username")
+    if [ -z "$user_exists" ]; then
+        echo "User not found."
+        exit 1
+    fi
+
+    echo "Select an option:"
+    echo "1) Modify user"
+    echo "2) Delete user"
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        1)  # Modify user
+            read -s -p "Enter the new password: " password
+            echo
+            read -p "Enter the new SSH port (press Enter to keep current port): " port
+
+            if [ -z "$port" ]; then
+                port=22
+            fi
+
+            sudo usermod -p "$(echo "$password" | openssl passwd -1 -stdin)" "$username"
+
+            sshd_config_file="/etc/ssh/sshd_config"
+
+            if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" '"Match Address 0.0.0.0/0"'; then
+                add_or_modify_line "$sshd_config_file" '"Match Address 0.0.0.0/0"'
+                add_or_modify_line "$sshd_config_file" '"AllowTcpForwarding yes"'
+                add_or_modify_line "$sshd_config_file" '"PasswordAuthentication yes"'
+            fi
+
+            allow_users_line="\"AllowUsers $username@*:$port\""
+            add_or_modify_line "$sshd_config_file" "$allow_users_line"
+
+            sudo systemctl restart ssh
+
+            echo "User modified and SSH service restarted."
+            ;;
+
+        2)  # Delete user
+            sudo userdel -r "$username"
+            echo "User deleted."
+            ;;
+        *)
+            echo "Invalid choice."
+            ;;
+    esac
+
+}
+
 # ----------------------------------------Tunnel stuff------------------------------------------------
 run_tunnel_setup() {
     clear
@@ -1098,6 +1204,111 @@ enable_warp() {
     readp "Press Enter to continue..."
 }
 
+# ----------------------------------------Quota stuff------------------------------------------------
+run_quota_manager() {
+    #!/bin/bash
+
+    # Function to check if a command is available
+    command_exists() {
+        command -v "$1" >/dev/null 2>&1
+    }
+
+    # Function to create or update rules.json
+    create_or_update_rules_json() {
+        local user_port=$1
+        local proxy_port=$2
+        local quota_gb=$3
+        local simultaneous=$4
+        local rules_json="quota-manager/rules.json"
+
+        if [ ! -e "$rules_json" ]; then
+            echo '{
+    "SaveDuration": 600,
+    "Rules": []
+    }' > "$rules_json"
+        fi
+
+        jq ".Rules += [{
+        \"Listen\": $user_port,
+        \"Forward\": \"127.0.0.1:$proxy_port\",
+        \"Quota\": $((quota_gb * 1073741824)),
+        \"Simultaneous\": $simultaneous
+        }]" "$rules_json" > "$rules_json.tmp" && mv "$rules_json.tmp" "$rules_json"
+    }
+
+    # Detect system architecture
+    architecture=$(uname -m)
+    if [ "$architecture" == "x86_64" ]; then
+        architecture="amd64"
+    fi
+
+    # Modify the download link based on architecture
+    download_link="https://github.com/HirbodBehnam/PortForwarder/releases/download/v1.5.0/PortForwarder-v1.5.0-linux-$architecture.tar.gz"
+
+    # Create the quota-manager directory if it doesn't exist
+    if [ ! -d "quota-manager" ]; then
+        mkdir "quota-manager"
+    fi
+
+    # Check if PortForwarder archive exists, if not, download it
+    if [ ! -f "quota-manager/PortForwarder-v1.5.0-linux-$architecture.tar.gz" ]; then
+        wget -P "quota-manager" "$download_link"
+    fi
+
+    # Check if rules.json exists, if not, create it
+    create_or_update_rules_json 0 0 0 0
+
+    # Check if tmux is installed, if not, install it
+    if ! command_exists tmux; then
+        sudo apt-get update
+        sudo apt-get install -y tmux
+    fi
+
+    # Grab all user ports and proxy ports
+    user_ports=()
+    proxy_ports=()
+    while IFS= read -r line; do
+        listen_port=$(jq -r '.Listen' <<< "$line")
+        forward_port=$(jq -r '.Forward' <<< "$line")
+        user_ports+=("$listen_port")
+        proxy_ports+=("${forward_port##*:}")
+    done < "quota-manager/rules.json"
+
+    # Prompt user to choose a port
+    PS3="Choose a port or enter a new one: "
+    options=("${user_ports[@]}" "New Port")
+    select choice in "${options[@]}"; do
+        if [ "$choice" == "New Port" ]; then
+            read -p "Enter the new user port: " new_user_port
+            read -p "Enter the proxy port: " proxy_port
+            read -p "Enter the quota (GB): " quota_gb
+            read -p "Enter the simultaneous connection limit: " simultaneous
+
+            create_or_update_rules_json "$new_user_port" "$proxy_port" "$quota_gb" "$simultaneous"
+            break
+        elif [[ " ${user_ports[@]} " =~ " $choice " ]]; then
+            index=$((REPLY - 1))
+            read -p "Modify port $choice (y/n)? " modify
+            if [ "$modify" == "y" ]; then
+                read -p "Enter the new user port: " new_user_port
+                read -p "Enter the proxy port: " proxy_port
+                read -p "Enter the quota (GB): " quota_gb
+                read -p "Enter the simultaneous connection limit: " simultaneous
+
+                create_or_update_rules_json "$new_user_port" "$proxy_port" "$quota_gb" "$simultaneous"
+                break
+            fi
+        fi
+    done
+
+    # Kill the existing PortForwarder if running
+    tmux kill-session -t PortForwarder 2>/dev/null
+
+    # Run PortForwarder in the background using tmux
+    cd quota-manager || exit
+    tmux new -d -s PortForwarder "./PortForwarder"  # Adjust the actual command as needed
+
+}
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
@@ -1259,16 +1470,19 @@ while true; do
                 readp "Enter your choice: " ssh_choice
 
                 case "$ssh_choice" in
-                    1) # Install/Update
-                        run_ssh_setup
-                        show_ssh_configs
+                    1) # Add user
+                        add_ssh_user
+                        readp "Press Enter to continue..."
                         ;;
-                    2) # Change Parameters
-                        change_ssh_parameters
-                        show_ssh_configs
+                    2) # Modify or Delete user
+                        modify_delete_ssh_user
+                        readp "Press Enter to continue..."
                         ;;
-                    3) # Show Configs
-                        show_ssh_configs
+                    3) # Show all users
+                        users=$(awk -F':' '{if ($3 > 0 && $1 != "root") print $1}' /etc/passwd)
+                        echo "Users (excluding root):"
+                        echo "$users"
+                        readp "Press Enter to continue..."
                         ;;
                     4) # Delete
                         delete_ssh
@@ -1375,6 +1589,11 @@ while true; do
             sudo ss -tulpn | awk '{if(NR>1) print $5, $7}' | column -t
 
             echo "----------------------------------------------"
+            readp "Press Enter to continue..."
+            ;;
+        12)
+            clear
+            run_quota_manager
             readp "Press Enter to continue..."
             ;;
         0) # Exit

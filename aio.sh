@@ -51,20 +51,19 @@ display_main_menu() {
     white "---------------------------------------------"
     white " Github: github.com/hrostami"
     white " Twitter: twitter.com/hosy000"
-    white "---------------------------------------------"
+    echo "**********************************************"
     yellow "                  Main Menu                   "
     echo "**********************************************"
-    green "1. Hysteria"
-    green "2. Hysteria v2"
-    green "3. Tuic"
     echo
-    green "4. Reverse TLS Tunnel"
+    red "-------------------Protocols------------------"
+    green "1. Hysteria              2.Hysteria V2"
+    green "3. Tuic                  4.Reality"
+    green "5. Juicity               6.SSH"
     echo
-    green "5. Install Panels"
-    echo
-    green "6. Warp"
-    echo
-    green "7. Show Ports in use"
+    red "---------------------Tools--------------------"
+    green "7. Reverse TLS Tunnel    8. Install Panels"
+    green "9. Warp                  10. Telegram Proxy"
+    green "11. Show Ports           "
     echo
     green "0. Exit"
     echo "**********************************************"
@@ -108,6 +107,57 @@ display_tuic_menu() {
     clear
     echo "**********************************************"
     yellow "                   Tuic Menu                  "
+    echo "**********************************************"
+    green "1. Install/Update"
+    echo
+    green "2. Change Parameters"
+    echo
+    green "3. Show Configs"
+    echo
+    green "4. Delete"
+    echo
+    green "0. Back to Main Menu"
+    echo "**********************************************"
+}
+
+display_reality_menu() {
+    clear
+    echo "**********************************************"
+    yellow "                   Reality Menu                  "
+    echo "**********************************************"
+    green "1. Install/Update"
+    echo
+    green "2. Change Parameters"
+    echo
+    green "3. Show Configs"
+    echo
+    green "4. Delete"
+    echo
+    green "0. Back to Main Menu"
+    echo "**********************************************"
+}
+
+display_juicity_menu() {
+    clear
+    echo "**********************************************"
+    yellow "                   Juicity Menu                  "
+    echo "**********************************************"
+    green "1. Install/Update"
+    echo
+    green "2. Change Parameters"
+    echo
+    green "3. Show Configs"
+    echo
+    green "4. Delete"
+    echo
+    green "0. Back to Main Menu"
+    echo "**********************************************"
+}
+
+display_ssh_menu() {
+    clear
+    echo "**********************************************"
+    yellow "                   SSH Menu                  "
     echo "**********************************************"
     green "1. Install/Update"
     echo
@@ -167,6 +217,23 @@ display_warp_menu() {
     fi
     echo -e "${plain}IPv4:${red} $IPV4${plain}"
     echo -e "${plain}IPv6:${red} $IPV6${plain}"
+    echo "**********************************************"
+}
+
+display_telegram_menu() {
+    clear
+    echo "**********************************************"
+    yellow "                Telegram Menu                  "
+    echo "**********************************************"
+    green "1. Python(for 1 core/lowend servers)"
+    echo
+    green "2. Official Method"
+    echo
+    green "3. Golang"
+    echo
+    green "4. Erlang"
+    echo
+    green "0. Back to Main Menu"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------
@@ -1097,13 +1164,103 @@ while true; do
                 esac
             done
             ;;
-        4) # Tunnel
+        4) # Reality
+            while true; do
+                display_reality_menu
+                readp "Enter your choice: " reality_choice
+
+                case $reality_choice in
+                    1) # Install tcp
+                        bash <(curl -sL https://bit.ly/realityez) -t tcp -d www.datadoghq.com
+                        ;;
+                    2) # Install grpc
+                        bash <(curl -sL https://bit.ly/realityez) -t grpc -d www.datadoghq.com
+                        ;;
+                    3) # Show Configs
+                        bash <(curl -sL https://bit.ly/realityez)
+                        ;;
+                    4) # Change port
+                        readp "Please enter port number: " port
+                        bash <(curl -sL https://bit.ly/realityez) --port $port 
+                        ;;
+                    5) # Change SNI
+                        readp "Please enter new SNI: " sni
+                        bash <(curl -sL https://bit.ly/realityez) -d "$sni"
+                        ;;
+                    6) # Delete
+                        bash <(curl -sL https://bit.ly/realityez) -u
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+
+        5) # Juicity
+            while true; do
+                display_juicity_menu
+                readp "Enter your choice: " juicity_choice
+
+                case $juicity_choice in
+                    1) # Install/Update
+                        run_juicity_setup
+                        show_juicity_configs
+                        ;;
+                    2) # Change Parameters
+                        change_juicity_parameters
+                        show_juicity_configs
+                        ;;
+                    3) # Show Configs
+                        show_juicity_configs
+                        ;;
+                    4) # Delete
+                        delete_juicity
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+
+        6) # SSH
+            while true; do
+                display_ssh_menu
+                readp "Enter your choice: " ssh_choice
+
+                case $ssh_choice in
+                    1) # Install/Update
+                        run_ssh_setup
+                        show_ssh_configs
+                        ;;
+                    2) # Change Parameters
+                        change_ssh_parameters
+                        show_ssh_configs
+                        ;;
+                    3) # Show Configs
+                        show_ssh_configs
+                        ;;
+                    4) # Delete
+                        delete_ssh
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+
+        7) # Tunnel
             while true; do
                 run_tunnel_setup
                 break
             done
             ;;
-        5) # Install Panels
+        8) # Install Panels
             while true; do
                 display_install_panels_menu
                 readp "Enter your choice: " install_panels_choice
@@ -1131,7 +1288,7 @@ while true; do
                 esac
             done
             ;;
-        6) # Warp
+        9) # Warp
             while true; do
                 display_warp_menu
                 readp "Enter your choice: " warp_choice
@@ -1153,7 +1310,32 @@ while true; do
                 esac
             done
             ;;
-        7) # show ports in use
+        10) # Telegram Proxy
+            while true; do
+                display_telegram_menu
+                readp "Enter your choice: " telegram_choice
+
+                case $telegram_choice in
+                    1) # Python
+                        install_telegram_proxy_python
+                        ;;
+                    2) # Official Method
+                        install_telegram_proxy_official
+                        ;;
+                    3) # Golang
+                        install_telegram_proxy_golang
+                        ;;
+                    4) # Erlang
+                        install_telegram_proxy_erlang
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+        11) # show ports in use
             clear
             echo "Ports in use and their corresponding processes:"
             echo "----------------------------------------------"

@@ -172,7 +172,7 @@ display_juicity_menu() {
 display_ssh_menu() {
     clear
     echo "**********************************************"
-    yellow "                   SSH Menu                  "
+    yellow "                   SSH Menu  2                "
     echo "**********************************************"
     green "1. Add user"
     echo
@@ -1044,9 +1044,10 @@ add_or_modify_line() {
     file="$1"
     line="$2"
 
-    # Check if the line already exists and modify it if necessary
+    # Check if the line already exists
     if grep -q "^$line" "$file"; then
-        sudo sed -i "s/^$line/$line/" "$file"
+        # Modify the line if it exists
+        sudo sed -i "s/^$line.*/$line/" "$file"
         echo "Modified line in $file"
     else
         # Add the line if it doesn't exist
@@ -1054,6 +1055,7 @@ add_or_modify_line() {
         echo "Added line to $file"
     fi
 }
+
 
 add_ssh_user() {
     read -p "Enter the username: " username
@@ -1076,8 +1078,8 @@ add_ssh_user() {
         add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
     fi
 
-    allow_users_line="\"AllowUsers $username@*:$port\""
-    add_or_modify_line "$sshd_config_file" '$allow_users_line'
+    allow_users_line="AllowUsers $username@*:$port"
+    add_or_modify_line "$sshd_config_file" "$allow_users_line"
 
     sudo systemctl restart ssh
 
@@ -1120,8 +1122,9 @@ modify_delete_ssh_user() {
                 add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
             fi
 
-            allow_users_line="\"AllowUsers $username@*:$port\""
-            add_or_modify_line "$sshd_config_file" '$allow_users_line'
+            #allow_users_line="\"AllowUsers $username@*:$port\""
+            allow_users_line="AllowUsers $username@*:$port"
+            add_or_modify_line "$sshd_config_file" "$allow_users_line"
 
             sudo systemctl restart ssh
 

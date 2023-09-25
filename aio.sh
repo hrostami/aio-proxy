@@ -180,7 +180,7 @@ display_ssh_menu() {
     echo
     green "3. Show all users"
     echo
-    green "4. Delete"
+    green "4. Del"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
@@ -1046,14 +1046,16 @@ add_or_modify_line() {
     file="$1"
     line="$2"
 
-    if grep -qF "$line" "$file"; then
-        echo "Line already exists in $file"
+    # Check if the line already exists and modify it if necessary
+    if grep -q "^$line" "$file"; then
+        sudo sed -i "s/^$line/$line/" "$file"
+        echo "Modified line in $file"
     else
+        # Add the line if it doesn't exist
         echo "$line" | sudo tee -a "$file" > /dev/null
         echo "Added line to $file"
     fi
 }
-
 
 add_ssh_user() {
     read -p "Enter the username: " username
@@ -1070,14 +1072,14 @@ add_ssh_user() {
 
     sshd_config_file="/etc/ssh/sshd_config"
 
-    if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" '"Match Address 0.0.0.0/0"'; then
-        add_or_modify_line "$sshd_config_file" '"Match Address 0.0.0.0/0"'
-        add_or_modify_line "$sshd_config_file" '"AllowTcpForwarding yes"'
-        add_or_modify_line "$sshd_config_file" '"PasswordAuthentication yes"'
+    if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" 'Match Address 0.0.0.0/0'; then
+        add_or_modify_line "$sshd_config_file" 'Match Address 0.0.0.0/0'
+        add_or_modify_line "$sshd_config_file" 'AllowTcpForwarding yes'
+        add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
     fi
 
     allow_users_line="\"AllowUsers $username@*:$port\""
-    add_or_modify_line "$sshd_config_file" "$allow_users_line"
+    add_or_modify_line "$sshd_config_file" $allow_users_line
 
     sudo systemctl restart ssh
 

@@ -1176,23 +1176,29 @@ while true; do
                 case $reality_choice in
                     1) # Install tcp
                         bash <(curl -sL https://bit.ly/realityez) -t tcp -d www.datadoghq.com
+                        readp "Press Enter to continue..."
                         ;;
                     2) # Install grpc
                         bash <(curl -sL https://bit.ly/realityez) -t grpc -d www.datadoghq.com
+                        readp "Press Enter to continue..."
                         ;;
                     3) # Show Configs
                         bash <(curl -sL https://bit.ly/realityez)
+                        readp "Press Enter to continue..."
                         ;;
                     4) # Change port
                         readp "Please enter port number: " port
                         bash <(curl -sL https://bit.ly/realityez) --port $port 
+                        readp "Press Enter to continue..."
                         ;;
                     5) # Change SNI
                         readp "Please enter new SNI: " sni
                         bash <(curl -sL https://bit.ly/realityez) -d "$sni"
+                        readp "Press Enter to continue..."
                         ;;
                     6) # Delete
                         bash <(curl -sL https://bit.ly/realityez) -u
+                        readp "Press Enter to continue..."
                         ;;
                     0) # Back to Main Menu
                         break

@@ -68,10 +68,10 @@ display_main_menu() {
     echo
     green "9. Warp                  10. Telegram Proxy"
     echo
-    green "11. Show Ports           "
+    green "11. Show used Ports           "
     echo
-    green "0. Exit"
-    echo "**********************************************"
+    rred "0. Exit"
+    echo "----------------------------------------------"
 }
 
 display_hysteria_menu() {

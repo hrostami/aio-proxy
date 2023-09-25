@@ -68,7 +68,7 @@ display_main_menu() {
     echo
     green "9. Warp                  10. Telegram Proxy"
     echo
-    green "11. Show used Ports      12. Quota Manager"
+    green "11. Show used Ports      "
     echo
     rred "0. Exit"
     echo "----------------------------------------------"
@@ -1208,111 +1208,6 @@ enable_warp() {
     readp "Press Enter to continue..."
 }
 
-# ----------------------------------------Quota stuff------------------------------------------------
-run_quota_manager() {
-    #!/bin/bash
-
-    # Function to check if a command is available
-    command_exists() {
-        command -v "$1" >/dev/null 2>&1
-    }
-
-    # Function to create or update rules.json
-    create_or_update_rules_json() {
-        local user_port=$1
-        local proxy_port=$2
-        local quota_gb=$3
-        local simultaneous=$4
-        local rules_json="quota-manager/rules.json"
-
-        if [ ! -e "$rules_json" ]; then
-            echo '{
-    "SaveDuration": 600,
-    "Rules": []
-    }' > "$rules_json"
-        fi
-
-        jq ".Rules += [{
-        \"Listen\": $user_port,
-        \"Forward\": \"127.0.0.1:$proxy_port\",
-        \"Quota\": $((quota_gb * 1073741824)),
-        \"Simultaneous\": $simultaneous
-        }]" "$rules_json" > "$rules_json.tmp" && mv "$rules_json.tmp" "$rules_json"
-    }
-
-    # Detect system architecture
-    architecture=$(uname -m)
-    if [ "$architecture" == "x86_64" ]; then
-        architecture="amd64"
-    fi
-
-    # Modify the download link based on architecture
-    download_link="https://github.com/HirbodBehnam/PortForwarder/releases/download/v1.5.0/PortForwarder-v1.5.0-linux-$architecture.tar.gz"
-
-    # Create the quota-manager directory if it doesn't exist
-    if [ ! -d "quota-manager" ]; then
-        mkdir "quota-manager"
-    fi
-
-    # Check if PortForwarder archive exists, if not, download it
-    if [ ! -f "quota-manager/PortForwarder-v1.5.0-linux-$architecture.tar.gz" ]; then
-        wget -P "quota-manager" "$download_link"
-    fi
-
-    # Check if rules.json exists, if not, create it
-    create_or_update_rules_json 0 0 0 0
-
-    # Check if tmux is installed, if not, install it
-    if ! command_exists tmux; then
-        sudo apt-get update
-        sudo apt-get install -y tmux
-    fi
-
-    # Grab all user ports and proxy ports
-    user_ports=()
-    proxy_ports=()
-    while IFS= read -r line; do
-        listen_port=$(jq -r '.Listen' <<< "$line")
-        forward_port=$(jq -r '.Forward' <<< "$line")
-        user_ports+=("$listen_port")
-        proxy_ports+=("${forward_port##*:}")
-    done < "quota-manager/rules.json"
-
-    # Prompt user to choose a port
-    PS3="Choose a port or enter a new one: "
-    options=("${user_ports[@]}" "New Port")
-    select choice in "${options[@]}"; do
-        if [ "$choice" == "New Port" ]; then
-            read -p "Enter the new user port: " new_user_port
-            read -p "Enter the proxy port: " proxy_port
-            read -p "Enter the quota (GB): " quota_gb
-            read -p "Enter the simultaneous connection limit: " simultaneous
-
-            create_or_update_rules_json "$new_user_port" "$proxy_port" "$quota_gb" "$simultaneous"
-            break
-        elif [[ " ${user_ports[@]} " =~ " $choice " ]]; then
-            index=$((REPLY - 1))
-            read -p "Modify port $choice (y/n)? " modify
-            if [ "$modify" == "y" ]; then
-                read -p "Enter the new user port: " new_user_port
-                read -p "Enter the proxy port: " proxy_port
-                read -p "Enter the quota (GB): " quota_gb
-                read -p "Enter the simultaneous connection limit: " simultaneous
-
-                create_or_update_rules_json "$new_user_port" "$proxy_port" "$quota_gb" "$simultaneous"
-                break
-            fi
-        fi
-    done
-
-    # Kill the existing PortForwarder if running
-    tmux kill-session -t PortForwarder 2>/dev/null
-
-    # Run PortForwarder in the background using tmux
-    cd quota-manager || exit
-    tmux new -d -s PortForwarder "./PortForwarder"  # Adjust the actual command as needed
-
-}
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu

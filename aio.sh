@@ -51,18 +51,19 @@ display_main_menu() {
     white "---------------------------------------------"
     white " Github: github.com/hrostami"
     white " Twitter: twitter.com/hosy000"
+    echo
     echo "**********************************************"
     yellow "                  Main Menu                   "
     echo "**********************************************"
     echo
-    red "-------------------Protocols------------------"
+    yellow "-------------------Protocols------------------"
     green "1. Hysteria              2.Hysteria V2"
-    green "3. Tuic                  4.Reality"
+    red "3. Tuic                  4.Reality"
     green "5. Juicity               6.SSH"
     echo
-    red "---------------------Tools--------------------"
+    yellow "---------------------Tools--------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"
-    green "9. Warp                  10. Telegram Proxy"
+    rred "9. Warp                  10. Telegram Proxy"
     green "11. Show Ports           "
     echo
     green "0. Exit"
@@ -122,6 +123,12 @@ display_tuic_menu() {
 
 display_reality_menu() {
     clear
+    white "---------------------------------------------"
+    white "The script for RealityEZPZ is created by @Aleskxyz"
+    white "Please check out and star his Github repo"
+    white " Github: github.com/aleskxyz/reality-ezpz"
+    white "---------------------------------------------"
+    echo
     echo "**********************************************"
     yellow "                   Reality Menu                  "
     echo "**********************************************"
@@ -226,6 +233,12 @@ display_warp_menu() {
 
 display_telegram_menu() {
     clear
+    white "---------------------------------------------"
+    white "This part's script is created by @HirbodBehnam"
+    white "Please check out and star his Github repo"
+    white "github.com/HirbodBehnam/MTProtoProxyInstaller"
+    white "---------------------------------------------"
+    echo
     echo "**********************************************"
     yellow "                Telegram Menu                  "
     echo "**********************************************"
@@ -1327,16 +1340,20 @@ while true; do
 
                 case "$telegram_choice" in
                     1) # Python
-                        install_telegram_proxy_python
+                        curl -o MTProtoProxyInstall.sh -L https://git.io/fjo34 && bash MTProtoProxyInstall.sh
+                        readp "Press Enter to continue..."
                         ;;
                     2) # Official Method
-                        install_telegram_proxy_official
+                        curl -o MTProtoProxyOfficialInstall.sh -L https://git.io/fjo3u && bash MTProtoProxyOfficialInstall.sh
+                        readp "Press Enter to continue..."
                         ;;
                     3) # Golang
-                        install_telegram_proxy_golang
+                        curl -o MTGInstall.sh -L https://git.io/mtg_installer && bash MTGInstall.sh
+                        readp "Press Enter to continue..."
                         ;;
                     4) # Erlang
-                        install_telegram_proxy_erlang
+                        curl -L -o mtp_install.sh https://git.io/fj5ru && bash mtp_install.sh
+                        readp "Press Enter to continue..."
                         ;;
                     0) # Back to Main Menu
                         break

@@ -1173,7 +1173,7 @@ while true; do
                 display_reality_menu
                 readp "Enter your choice: " reality_choice
 
-                case $reality_choice in
+                case "$reality_choice" in
                     1) # Install tcp
                         bash <(curl -sL https://bit.ly/realityez) -t tcp -d www.datadoghq.com
                         readp "Press Enter to continue..."

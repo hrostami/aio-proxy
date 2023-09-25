@@ -172,7 +172,7 @@ display_juicity_menu() {
 display_ssh_menu() {
     clear
     echo "**********************************************"
-    yellow "                   SSH Menu  4                "
+    yellow "                   SSH Menu  5                "
     echo "**********************************************"
     green "1. Add user"
     echo
@@ -1099,6 +1099,7 @@ modify_delete_ssh_user() {
         port_from_config=$(grep -Eo "Match User $username Address \*:(\d+)" "$sshd_config_file" | grep -Eo "\d+")
         port=${port_from_config:-22}
     fi
+    echo "port from config= $port or $port_from_config"
     sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
     sudo sed -i "/port $port/d" "$sshd_config_file"
 

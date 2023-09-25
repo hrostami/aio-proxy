@@ -1092,7 +1092,7 @@ while true; do
                 display_hysteria_menu
                 readp "Enter your choice: " hysteria_choice
 
-                case $hysteria_choice in
+                case "$hysteria_choice" in
                     1) # Install/Update
                         run_hysteria_setup
                         show_hy_configs
@@ -1119,7 +1119,7 @@ while true; do
                 display_hysteria_v2_menu
                 readp "Enter your choice: " hysteria_v2_choice
 
-                case $hysteria_v2_choice in
+                case "$hysteria_v2_choice" in
                     1) # Install/Update
                         run_hysteria_v2_setup
                         show_hy2_configs
@@ -1146,7 +1146,7 @@ while true; do
                 display_tuic_menu
                 readp "Enter your choice: " tuic_choice
 
-                case $tuic_choice in
+                case "$tuic_choice" in
                     1) # Install/Update
                         run_tuic_setup
                         show_tuic_configs
@@ -1213,7 +1213,7 @@ while true; do
                 display_juicity_menu
                 readp "Enter your choice: " juicity_choice
 
-                case $juicity_choice in
+                case "$juicity_choice" in
                     1) # Install/Update
                         run_juicity_setup
                         show_juicity_configs
@@ -1241,7 +1241,7 @@ while true; do
                 display_ssh_menu
                 readp "Enter your choice: " ssh_choice
 
-                case $ssh_choice in
+                case "$ssh_choice" in
                     1) # Install/Update
                         run_ssh_setup
                         show_ssh_configs
@@ -1275,7 +1275,7 @@ while true; do
                 display_install_panels_menu
                 readp "Enter your choice: " install_panels_choice
 
-                case $install_panels_choice in
+                case "$install_panels_choice" in
                     1) # X-UI Alireza
                         install_x_ui_alireza
                         ;;
@@ -1303,7 +1303,7 @@ while true; do
                 display_warp_menu
                 readp "Enter your choice: " warp_choice
 
-                case $warp_choice in
+                case "$warp_choice" in
                     1) # Install
                         install_warp
                         ;;
@@ -1325,7 +1325,7 @@ while true; do
                 display_telegram_menu
                 readp "Enter your choice: " telegram_choice
 
-                case $telegram_choice in
+                case "$telegram_choice" in
                     1) # Python
                         install_telegram_proxy_python
                         ;;

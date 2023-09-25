@@ -172,7 +172,7 @@ display_juicity_menu() {
 display_ssh_menu() {
     clear
     echo "**********************************************"
-    yellow "                   SSH Menu  3                "
+    yellow "                   SSH Menu  4                "
     echo "**********************************************"
     green "1. Add user"
     echo
@@ -1093,6 +1093,15 @@ modify_delete_ssh_user() {
         exit 1
     fi
 
+    sshd_config_file="/etc/ssh/sshd_config"
+
+    if [ -z "$port" ]; then
+        port_from_config=$(grep -Eo "Match User $username Address \*:(\d+)" "$sshd_config_file" | grep -Eo "\d+")
+        port=${port_from_config:-22}
+    fi
+    sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
+    sudo sed -i "/port $port/d" "$sshd_config_file"
+
     echo "Select an option:"
     echo "1) Modify user"
     echo "2) Delete user"
@@ -1110,11 +1119,6 @@ modify_delete_ssh_user() {
 
             sudo usermod -p "$(echo "$password" | openssl passwd -1 -stdin)" "$username"
 
-            sshd_config_file="/etc/ssh/sshd_config"
-
-            sudo sed -i "/port $port/d" "$sshd_config_file"
-            sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
-
             allow_users_line="Match User $username Address *:$port"
             add_or_modify_line "$sshd_config_file" "port $port"
             add_or_modify_line "$sshd_config_file" "$allow_users_line"
@@ -1125,12 +1129,6 @@ modify_delete_ssh_user() {
             ;;
 
         2)  # Delete user
-            sshd_config_file="/etc/ssh/sshd_config"
-
-            # Remove lines associated with the user before deleting
-            sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
-            sudo sed -i "/port $port/d" "$sshd_config_file"
-
             sudo userdel -r "$username"
             echo "User deleted."
             ;;

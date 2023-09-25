@@ -1072,7 +1072,9 @@ modify_delete_ssh_user() {
 
     user_exists=$(getent passwd "$username")
     if [ -z "$user_exists" ]; then
+        echo
         red "User not found."
+        echo
         return
     fi
 
@@ -1333,10 +1335,12 @@ while true; do
                         readp "Press Enter to continue..."
                         ;;
                     3) # Show all users
+                        echo
                         rred "Non-system users created by root:"
                         rred "---------------------------------------------"
                         awk -F: '($3 >= 1000 && $1 != "root") {print $1}' /etc/passwd
                         rred "---------------------------------------------"
+                        echo
                         readp "Press Enter to continue..."
                         ;;
                     4) # Delete

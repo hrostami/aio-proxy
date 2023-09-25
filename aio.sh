@@ -1072,8 +1072,7 @@ modify_delete_ssh_user() {
 
     user_exists=$(getent passwd "$username")
     if [ -z "$user_exists" ]; then
-        echo "User not found."
-        sleep 2
+        red "User not found."
         return
     fi
 

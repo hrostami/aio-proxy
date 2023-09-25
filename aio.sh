@@ -57,11 +57,11 @@ display_main_menu() {
     #echo "**********************************************"
     #echo
     yellow "-------------------Protocols------------------"
-    green "1. Hysteria              2.Hysteria V2"
+    green "1. Hysteria              2. Hysteria V2"
     echo
-    green "3. Tuic                  4.Reality"
+    green "3. Tuic                  4. Reality"
     echo
-    green "5. Juicity               6.SSH"
+    green "5. SSH                   6. Coming Soon..."
     echo
     yellow "---------------------Tools--------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"
@@ -147,23 +147,6 @@ display_reality_menu() {
     green "5. Change SNI"
     echo
     green "6. Delete"
-    echo
-    green "0. Back to Main Menu"
-    echo "**********************************************"
-}
-
-display_juicity_menu() {
-    clear
-    echo "**********************************************"
-    yellow "                   Juicity Menu                  "
-    echo "**********************************************"
-    green "1. Install/Update"
-    echo
-    green "2. Change Parameters"
-    echo
-    green "3. Show Configs"
-    echo
-    green "4. Delete"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
@@ -1335,35 +1318,7 @@ while true; do
             done
             ;;
 
-        5) # Juicity
-            while true; do
-                display_juicity_menu
-                readp "Enter your choice: " juicity_choice
-
-                case "$juicity_choice" in
-                    1) # Install/Update
-                        run_juicity_setup
-                        show_juicity_configs
-                        ;;
-                    2) # Change Parameters
-                        change_juicity_parameters
-                        show_juicity_configs
-                        ;;
-                    3) # Show Configs
-                        show_juicity_configs
-                        ;;
-                    4) # Delete
-                        delete_juicity
-                        ;;
-                    0) # Back to Main Menu
-                        break
-                        ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
-                esac
-            done
-            ;;
-
-        6) # SSH
+        5) # SSH
             while true; do
                 display_ssh_menu
                 readp "Enter your choice: " ssh_choice

@@ -58,12 +58,16 @@ display_main_menu() {
     echo
     yellow "-------------------Protocols------------------"
     green "1. Hysteria              2.Hysteria V2"
-    red "3. Tuic                  4.Reality"
+    echo
+    green "3. Tuic                  4.Reality"
+    echo
     green "5. Juicity               6.SSH"
     echo
     yellow "---------------------Tools--------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"
-    rred "9. Warp                  10. Telegram Proxy"
+    echo
+    green "9. Warp                  10. Telegram Proxy"
+    echo
     green "11. Show Ports           "
     echo
     green "0. Exit"

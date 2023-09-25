@@ -130,7 +130,7 @@ display_reality_menu() {
     white "---------------------------------------------"
     echo -e "${plain}The script for RealityEZPZ is created by ${yellow}@Aleskxyz${plain}"
     echo -e "Please check out and ${yellow}star ${plain}his Github repo"
-    yellow " github.com/aleskxyz/reality-ezpz"
+    echo -e "${yellow}https://github.com/aleskxyz/reality-ezpz${plain}"
     white "---------------------------------------------"
     echo
     echo "**********************************************"
@@ -240,7 +240,7 @@ display_telegram_menu() {
     white "---------------------------------------------"
     echo -e "This part's script is created by ${yellow}@HirbodBehnam${plain}"
     echo -e "Please check out and ${yellow}star ${plain}his Github repo"
-    yellow "github.com/HirbodBehnam/MTProtoProxyInstaller"
+    echo -e "${yellow}https://github.com/HirbodBehnam/MTProtoProxyInstaller${plain}"
     white "---------------------------------------------"
     echo
     echo "**********************************************"

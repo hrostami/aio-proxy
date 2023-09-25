@@ -178,7 +178,7 @@ display_ssh_menu() {
     echo
     green "2. Change Parameters"
     echo
-    green "3. Show Configs"
+    green "3. Show all users"
     echo
     green "4. Delete"
     echo
@@ -1043,16 +1043,17 @@ contains_substring() {
 }
 
 add_or_modify_line() {
-    file="$1"
-    line="$2"
+    local file="$1"
+    local line="$2"
 
-    if jq -e --arg line "$line" '.[] | contains([$line])' "$file" > /dev/null; then
+    if jq -e ". | contains([$line])" "$file" > /dev/null; then
         echo "Line already exists in $file"
     else
-        echo "$line" | jq --arg line "$line" '. += [$line]' > "$file.tmp" && mv "$file.tmp" "$file"
+        jq ". += $line" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
         echo "Added line to $file"
     fi
 }
+
 add_ssh_user() {
     read -p "Enter the username: " username
     read -s -p "Enter the password: " password
@@ -1589,11 +1590,6 @@ while true; do
             sudo ss -tulpn | awk '{if(NR>1) print $5, $7}' | column -t
 
             echo "----------------------------------------------"
-            readp "Press Enter to continue..."
-            ;;
-        12)
-            clear
-            run_quota_manager
             readp "Press Enter to continue..."
             ;;
         0) # Exit

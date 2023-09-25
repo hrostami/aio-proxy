@@ -172,7 +172,7 @@ display_juicity_menu() {
 display_ssh_menu() {
     clear
     echo "**********************************************"
-    yellow "                   SSH Menu  2                "
+    yellow "                   SSH Menu  3                "
     echo "**********************************************"
     green "1. Add user"
     echo
@@ -1047,7 +1047,7 @@ add_or_modify_line() {
     # Check if the line already exists
     if grep -q "^$line" "$file"; then
         # Modify the line if it exists
-        sudo sed -i "s/^$line.*/$line/" "$file"
+        sudo sed -i "/^$line/c $line" "$file"
         echo "Modified line in $file"
     else
         # Add the line if it doesn't exist
@@ -1055,7 +1055,6 @@ add_or_modify_line() {
         echo "Added line to $file"
     fi
 }
-
 
 add_ssh_user() {
     read -p "Enter the username: " username
@@ -1071,14 +1070,11 @@ add_ssh_user() {
     echo "$username:$password" | sudo chpasswd
 
     sshd_config_file="/etc/ssh/sshd_config"
-
-    if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" 'Match Address 0.0.0.0/0'; then
-        add_or_modify_line "$sshd_config_file" 'Match Address 0.0.0.0/0'
-        add_or_modify_line "$sshd_config_file" 'AllowTcpForwarding yes'
-        add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
+    if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" "port $port"; then
+        add_or_modify_line "$sshd_config_file" "port $port"
     fi
 
-    allow_users_line="AllowUsers $username@*:$port"
+    allow_users_line="Match User $username Address *:$port"
     add_or_modify_line "$sshd_config_file" "$allow_users_line"
 
     sudo systemctl restart ssh
@@ -1116,14 +1112,11 @@ modify_delete_ssh_user() {
 
             sshd_config_file="/etc/ssh/sshd_config"
 
-            if ! contains_substring "$(jq -c . /etc/ssh/sshd_config)" 'Match Address 0.0.0.0/0'; then
-                add_or_modify_line "$sshd_config_file" 'Match Address 0.0.0.0/0'
-                add_or_modify_line "$sshd_config_file" 'AllowTcpForwarding yes'
-                add_or_modify_line "$sshd_config_file" 'PasswordAuthentication yes'
-            fi
+            sudo sed -i "/port $port/d" "$sshd_config_file"
+            sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
 
-            #allow_users_line="\"AllowUsers $username@*:$port\""
-            allow_users_line="AllowUsers $username@*:$port"
+            allow_users_line="Match User $username Address *:$port"
+            add_or_modify_line "$sshd_config_file" "port $port"
             add_or_modify_line "$sshd_config_file" "$allow_users_line"
 
             sudo systemctl restart ssh
@@ -1132,6 +1125,12 @@ modify_delete_ssh_user() {
             ;;
 
         2)  # Delete user
+            sshd_config_file="/etc/ssh/sshd_config"
+
+            # Remove lines associated with the user before deleting
+            sudo sed -i "/Match User $username Address/d" "$sshd_config_file"
+            sudo sed -i "/port $port/d" "$sshd_config_file"
+
             sudo userdel -r "$username"
             echo "User deleted."
             ;;
@@ -1141,6 +1140,7 @@ modify_delete_ssh_user() {
     esac
 
 }
+
 
 # ----------------------------------------Tunnel stuff------------------------------------------------
 run_tunnel_setup() {

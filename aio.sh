@@ -52,10 +52,10 @@ display_main_menu() {
     white " Github: github.com/hrostami"
     white " Twitter: twitter.com/hosy000"
     echo
-    echo "**********************************************"
-    yellow "                  Main Menu                   "
-    echo "**********************************************"
-    echo
+    #echo "**********************************************"
+    #yellow "                  Main Menu                   "
+    #echo "**********************************************"
+    #echo
     yellow "-------------------Protocols------------------"
     green "1. Hysteria              2.Hysteria V2"
     echo

@@ -180,8 +180,6 @@ display_ssh_menu() {
     echo
     green "3. Show all users"
     echo
-    green "4. Del"
-    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
 }

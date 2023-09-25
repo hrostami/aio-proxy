@@ -176,7 +176,7 @@ display_ssh_menu() {
     echo "**********************************************"
     green "1. Add user"
     echo
-    green "2. Change Parameters"
+    green "2. Modify/Delete user"
     echo
     green "3. Show all users"
     echo
@@ -1043,16 +1043,17 @@ contains_substring() {
 }
 
 add_or_modify_line() {
-    local file="$1"
-    local line="$2"
+    file="$1"
+    line="$2"
 
-    if jq -e ". | contains([$line])" "$file" > /dev/null; then
+    if grep -qF "$line" "$file"; then
         echo "Line already exists in $file"
     else
-        jq ". += $line" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+        echo "$line" | sudo tee -a "$file" > /dev/null
         echo "Added line to $file"
     fi
 }
+
 
 add_ssh_user() {
     read -p "Enter the username: " username

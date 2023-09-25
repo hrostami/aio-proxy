@@ -1079,7 +1079,7 @@ add_ssh_user() {
     fi
 
     allow_users_line="\"AllowUsers $username@*:$port\""
-    add_or_modify_line "$sshd_config_file" $allow_users_line
+    add_or_modify_line "$sshd_config_file" '$allow_users_line'
 
     sudo systemctl restart ssh
 
@@ -1123,7 +1123,7 @@ modify_delete_ssh_user() {
             fi
 
             allow_users_line="\"AllowUsers $username@*:$port\""
-            add_or_modify_line "$sshd_config_file" $allow_users_line
+            add_or_modify_line "$sshd_config_file" '$allow_users_line'
 
             sudo systemctl restart ssh
 

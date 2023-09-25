@@ -1333,10 +1333,10 @@ while true; do
                         readp "Press Enter to continue..."
                         ;;
                     3) # Show all users
-                        echo "Non-system users created by root:"
-                        white "---------------------------------------------"
+                        rred "Non-system users created by root:"
+                        rred "---------------------------------------------"
                         awk -F: '($3 >= 1000 && $1 != "root") {print $1}' /etc/passwd
-                        white "---------------------------------------------"
+                        rred "---------------------------------------------"
                         readp "Press Enter to continue..."
                         ;;
                     4) # Delete

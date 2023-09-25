@@ -125,13 +125,17 @@ display_reality_menu() {
     echo "**********************************************"
     yellow "                   Reality Menu                  "
     echo "**********************************************"
-    green "1. Install/Update"
+    green "1. Install tcp"
     echo
-    green "2. Change Parameters"
+    green "2. Install grpc"
     echo
     green "3. Show Configs"
     echo
-    green "4. Delete"
+    green "4. Change Port"
+    echo
+    green "5. Change SNI"
+    echo
+    green "6. Delete"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"

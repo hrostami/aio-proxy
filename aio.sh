@@ -1433,10 +1433,12 @@ setup_nginx_nat() {
 
         sudo mkdir -p /etc/letsencrypt/live/$your_domain
 
-        readp "Please Enter the certificate you got from Cloudflare: " cert
+        yellow "Please Enter the certificate you got from Cloudflare: "
+        read -r cert
         echo "$cert" | sudo tee /etc/letsencrypt/live/$your_domain/fullchain.pem > /dev/null
 
-        readp "Please Enter the pricate key you got from Cloudflare: " key
+        yellow "Please Enter the pricate key you got from Cloudflare: "
+        read -r key
         echo "$key" | sudo tee /etc/letsencrypt/live/$your_domain/privkey.pem > /dev/null
 
         

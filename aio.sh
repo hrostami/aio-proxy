@@ -51,8 +51,8 @@ display_main_menu() {
     bblue "           All-in-one Proxy Tool             "
     white "              Created by Hosy                "
     white "---------------------------------------------"
-    white " Github: github.com/hrostami"
-    white " Twitter: twitter.com/hosy000"
+    white " Github: https://github.com/hrostami"
+    white " Twitter: https://twitter.com/hosy000"
     echo
     #echo "**********************************************"
     #yellow "                  Main Menu                   "

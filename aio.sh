@@ -1408,9 +1408,19 @@ EOF
 }
 
 setup_nginx_nat() {
-    if [ -z "$IPV4_DOMAIN" ]; then
-       rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
-       return
+    if [ -z "$IPV4_DOMAIN" ] && [ -f "/etc/letsencrypt/live/$IPV4_DOMAIN/fullchain.pem" ]; then
+        rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
+        echo
+        yellow "Please get the certificate and key from Cloudflare and use the commands below: "
+        echo
+        white "Command for certficate: "
+        yellow "nano /etc/letsencrypt/live/$your_domain/fullchain.pem"
+        echo
+        white "Command for Key: "
+        yellow "nano /etc/letsencrypt/live/$your_domain/privkey.pem"
+        echo
+        readp "Press Enter to continue..."
+        return
     else
         source ~/.bashrc
         sudo apt-get update
@@ -1432,15 +1442,6 @@ setup_nginx_nat() {
         your_domain="$IPV4_DOMAIN"
 
         sudo mkdir -p /etc/letsencrypt/live/$your_domain
-
-        yellow "Please Enter the certificate you got from Cloudflare: "
-        read -r cert
-        echo "$cert" | sudo tee /etc/letsencrypt/live/$your_domain/fullchain.pem > /dev/null
-
-        yellow "Please Enter the pricate key you got from Cloudflare: "
-        read -r key
-        echo "$key" | sudo tee /etc/letsencrypt/live/$your_domain/privkey.pem > /dev/null
-
         
         sudo systemctl start nginx
 

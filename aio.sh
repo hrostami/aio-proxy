@@ -1320,25 +1320,23 @@ setup_cert() {
         # Create the symbolic link
         sudo ln -s "$WEB_ROOT/index.html" "/var/www/html"
         
-        readp "Enter your email: " email
-
-        if [ -n "$email" ] && [ -n "$IPV4_DOMAIN" ]; then
-            # Obtain SSL certificates
-            sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
-        fi
-
-        # Wait for the user to press Enter
-        read -p "Please press Enter to continue"
+        # Prompt user for HTTPS port
+        clear
+        read -p "Enter your email: " email
+        # Request SSL certificate using Certbot and specify the chosen port
+        sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
+        
         #echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
         #sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
 
         # Configure Nginx to use the chosen HTTPS port
-        sudo sed -i "s/listen 443 ssl default_server;/listen 443 ssl default_server;/" /etc/nginx/sites-available/default
+        sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default
         sudo nginx -s reload
 
         echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
     fi
-    readp "Press Enter to continue..." 
+    readp "Press Enter to continue..."
+    
 }
 # ----------------------------------------Menu options------------------------------------------------
 while true; do

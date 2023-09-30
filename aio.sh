@@ -1338,8 +1338,7 @@ setup_cert() {
 
         echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
     fi
-    readp "Press Enter to continue..."
-    
+    readp "Press Enter to continue..." 
 }
 # ----------------------------------------Menu options------------------------------------------------
 while true; do

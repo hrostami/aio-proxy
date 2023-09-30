@@ -1325,6 +1325,7 @@ setup_cert() {
         if [ -n "$email" ] && [ -n "$IPV4_DOMAIN" ]; then
             # Obtain SSL certificates
             sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
+        fi
 
         # Wait for the user to press Enter
         read -p "Please press Enter to continue"

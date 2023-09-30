@@ -68,7 +68,7 @@ display_main_menu() {
     echo
     green "9. Warp                  10. Telegram Proxy"
     echo
-    green "11. Show used Ports      "
+    green "11. Show used Ports      12. Set Domains"
     echo
     rred "0. Exit"
     echo "----------------------------------------------"
@@ -236,6 +236,23 @@ display_telegram_menu() {
     green "4. Erlang"
     echo
     green "0. Back to Main Menu"
+    echo "**********************************************"
+}
+
+display_domains_menu() {
+    clear
+    echo "**********************************************"
+    yellow "                Domains Menu                  "
+    echo "**********************************************"
+    green "1. IPv4 Domain"
+    echo
+    green "2. IPv6 Domain"
+    echo
+    green "0. Back to Main Menu"
+    echo "**********************************************"
+    echo -e "${plain}HTTPS Port:${red} $HTTPS_PORT${plain}"
+    echo -e "${plain}IPv4 Domain:${red} $IPV4_DOMAIN${plain}"
+    echo -e "${plain}IPv6 Domain:${red} $IPV6_DOMAIN${plain}"
     echo "**********************************************"
 }
 # ----------------------------------------Hysteria stuff------------------------------------------------
@@ -1193,6 +1210,62 @@ enable_warp() {
     readp "Press Enter to continue..."
 }
 
+# ----------------------------------------Domains stuff------------------------------------------------
+setup_ipv4_domain() {
+    if [ -z "$IPV4_DOMAIN" ]; then
+        rred "IPV4_DOMAIN is not set."
+        echo "Please enter the new domain:"
+        read -r DOMAIN
+        export IPV4_DOMAIN=$DOMAIN
+        echo -e "IPV4_DOMAIN updated to:${yellow} $IPV4_DOMAIN${plain}"
+    else
+        echo "Current value of IPV4_DOMAIN is: $IPV4_DOMAIN"
+        read -p "Do you want to change the domain? (y/n): " choice
+        if [[ $choice =~ ^[Yy] ]]; then
+            echo "Please enter the new domain:"
+            read -r DOMAIN
+            export IPV4_DOMAIN=$DOMAIN
+            echo -e "IPV4_DOMAIN updated to:${yellow} $IPV4_DOMAIN${plain}"
+        else
+            echo "IPV4_DOMAIN remains unchanged."
+        fi
+    fi
+
+    # Install Certbot
+    echo "Installing Certbot..."
+    sudo apt-get update
+    sudo apt-get install -y certbot python3-certbot-nginx
+
+    # Ensure Nginx is installed and set up
+    if ! command -v nginx &> /dev/null; then
+        echo "Nginx is not installed. Installing..."
+        sudo apt-get install -y nginx
+        sudo systemctl start nginx
+        sudo systemctl enable nginx
+        echo "Nginx installed and started."
+        sleep 2
+    fi
+
+    # Prompt user for HTTPS port
+    clear
+    read -p "Enter the desired HTTPS port (default is 443): " HTTPS_PORT
+    HTTPS_PORT=${HTTPS_PORT:-443}
+
+    # Request SSL certificate using Certbot and specify the chosen port
+    sudo certbot certonly --nginx --agree-tos --no-eff-email --redirect --expand -d $IPV4_DOMAIN --preferred-challenges http --redirect --hsts --uir --staple-ocsp --tls-sni-01-port $HTTPS_PORT
+
+    # Set up a simple webpage
+    sudo mkdir -p /var/www/html
+    echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
+    sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
+
+    # Configure Nginx to use the chosen HTTPS port
+    sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default
+    sudo nginx -s reload
+
+    echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
+}
+
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
@@ -1449,6 +1522,25 @@ while true; do
 
             echo "----------------------------------------------"
             readp "Press Enter to continue..."
+            ;;
+        12) # Domains
+            while true; do
+                display_domains_menu
+                readp "Enter your choice: " domains_choice
+
+                case "$domains_choice" in
+                    1) # IPv4 Domain
+                        setup_ipv4_domain
+                        ;;
+                    2) # IPv6 Domain
+                        setup_ipv6_domain
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
             ;;
         0) # Exit
             clear

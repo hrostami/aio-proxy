@@ -1288,11 +1288,13 @@ setup_cert() {
        rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
        return
     else
+        source ~/.bashrc
         # Install Certbot
         sudo apt-get update
         clear
-        echo "Installing Certbot..."
+        yellow "Installing Certbot..."
         sudo apt-get install -y certbot python3-certbot-nginx
+        sudo apt install ufw -y
 
         # Ensure Nginx is installed and set up
         if ! command -v nginx &> /dev/null; then
@@ -1303,22 +1305,6 @@ setup_cert() {
             echo "Nginx installed and started."
             sleep 2
         fi
-
-        # Set up a simple webpage
-        sudo mkdir -p /var/www/html
-        WEB_ROOT="/var/www/$IPV4_DOMAIN/html"
-        sudo mkdir -p "$WEB_ROOT"
-
-        # Check if the directory was created successfully
-        if [ ! -d "$WEB_ROOT" ]; then
-            echo "Failed to create the web directory: $WEB_ROOT"
-            return
-        fi
-
-        echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee "$WEB_ROOT/index.html"
-
-        # Create the symbolic link
-        sudo ln -s "$WEB_ROOT/index.html" "/var/www/html"
         
         # Prompt user for HTTPS port
         clear
@@ -1326,14 +1312,94 @@ setup_cert() {
         # Request SSL certificate using Certbot and specify the chosen port
         sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
         
-        #echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
-        #sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
+        your_domain="$IPV4_DOMAIN"
 
-        # Configure Nginx to use the chosen HTTPS port
-        sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default
+        sudo ufw allow 'Nginx HTTPS'
+
+        sudo mkdir -p /var/www/$your_domain/html
+
+        html_content=$(cat <<EOF
+        <html><head>
+        <style>
+            .banner {
+                text-align: center;
+                padding: 5px;
+                font-size: 169px;
+                color: lightblue;
+                padding-bottom: 0;
+            }
+            .created-by {
+                text-align: center;
+                color: lightblue;
+                font-size: 18px;
+                margin-bottom: 40px;
+            }
+            .link {
+            display: block;
+            color: gold;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 10px;
+            text-decoration: none;
+            }
+            .link:hover {
+            text-decoration: underline;
+            }
+        </style>
+        </head>
+        <body style="
+            background-color: #03031f;
+        ">
+        <div class="banner">
+            AIO
+        </div>
+        <div class="created-by">
+            Created by Hosy
+        </div>
+        <a href="https://github.com/hrostami" class="link" target="_blank">
+            Github: github.com/hrostami
+        </a>
+        <a href="https://twitter.com/hosy000" class="link" target="_blank">
+            Twitter: twitter.com/hosy000
+        </a>
+
+
+        </body></html>
+EOF
+        )
+
+        echo "$html_content" | sudo tee /var/www/$your_domain/html/index.html > /dev/null
+
+        nginx_conf=$(cat <<EOF
+        server {
+        listen 443 ssl;
+        listen [::]:443 ssl;
+
+        server_name $your_domain;
+        ssl_certificate /etc/letsencrypt/live/$your_domain/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$your_domain/privkey.pem;
+        
+        root /var/www/$your_domain/html;
+        index index.html index.htm;
+        }
+
+EOF
+        )
+
+        # Write Nginx server block configuration to file
+        echo "$nginx_conf" | sudo tee /etc/nginx/sites-available/$your_domain > /dev/null
+
+        # Enable the Nginx server block
+        sudo ln -s /etc/nginx/sites-available/$your_domain /etc/nginx/sites-enabled/
+
+        # Test the Nginx configuration and restart Nginx
+        sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default_disabled
+        sudo service apache2 stop
+        sudo nginx -t
+        sudo systemctl restart nginx
         sudo nginx -s reload
 
-        echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
+        green "Nginx configured to use HTTPS for $IPV4_DOMAIN."
     fi
     readp "Press Enter to continue..."
     

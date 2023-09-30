@@ -13,6 +13,9 @@ bblue(){ echo -e "\033[34m\033[01m$1\033[0m";}
 rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
 readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
+
+source ~/.bashrc
+
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."

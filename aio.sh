@@ -1289,8 +1289,9 @@ setup_cert() {
        return
     else
         # Install Certbot
-        echo "Installing Certbot..."
         sudo apt-get update
+        clear
+        echo "Installing Certbot..."
         sudo apt-get install -y certbot python3-certbot-nginx
 
         # Ensure Nginx is installed and set up
@@ -1303,6 +1304,22 @@ setup_cert() {
             sleep 2
         fi
 
+        # Set up a simple webpage
+        sudo mkdir -p /var/www/html
+        WEB_ROOT="/var/www/$IPV4_DOMAIN/html"
+        sudo mkdir -p "$WEB_ROOT"
+
+        # Check if the directory was created successfully
+        if [ ! -d "$WEB_ROOT" ]; then
+            echo "Failed to create the web directory: $WEB_ROOT"
+            return
+        fi
+
+        echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee "$WEB_ROOT/index.html"
+
+        # Create the symbolic link
+        sudo ln -s "$WEB_ROOT/index.html" "/var/www/html"
+        
         # Prompt user for HTTPS port
         clear
         read -p "Enter the desired HTTPS port (default is 443): " HTTPS_PORT
@@ -1311,10 +1328,9 @@ setup_cert() {
         # Request SSL certificate using Certbot and specify the chosen port
         sudo certbot certonly --nginx --agree-tos --no-eff-email --redirect --expand -d $IPV4_DOMAIN --preferred-challenges http --redirect --hsts --uir --staple-ocsp --tls-sni-01-port $HTTPS_PORT
 
-        # Set up a simple webpage
-        sudo mkdir -p /var/www/html
-        echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
-        sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
+        
+        #echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
+        #sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
 
         # Configure Nginx to use the chosen HTTPS port
         sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default

@@ -14,8 +14,6 @@ rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
 readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
 
-source ~/.bashrc
-
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."
@@ -253,6 +251,8 @@ display_domains_menu() {
     green "2. IPv6 Domain"
     echo
     green "3. Cert + Nginx Setup"
+    echo
+    green "4. NAT Nginx Setup (get certs manually from Cloudflare)"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
@@ -1405,7 +1405,133 @@ EOF
         green "Nginx configured to use HTTPS for $IPV4_DOMAIN."
     fi
     readp "Press Enter to continue..."
-    
+}
+
+setup_nginx_nat() {
+    if [ -z "$IPV4_DOMAIN" ]; then
+       rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
+       return
+    else
+        source ~/.bashrc
+        sudo apt-get update
+        clear
+        sudo apt install ufw -y
+
+        # Ensure Nginx is installed and set up
+        if ! command -v nginx &> /dev/null; then
+            echo "Nginx is not installed. Installing..."
+            sudo apt-get install -y nginx
+            sudo systemctl enable nginx
+            echo "Nginx installed."
+            sleep 2
+        fi
+
+        clear
+        
+        # Prompt user for HTTPS port
+        your_domain="$IPV4_DOMAIN"
+
+        sudo mkdir -p /etc/letsencrypt/live/$your_domain
+
+        readp "Please Enter the certificate you got from Cloudflare: " cert
+        echo "$cert" | sudo tee /etc/letsencrypt/live/$your_domain/fullchain.pem > /dev/null
+
+        readp "Please Enter the pricate key you got from Cloudflare: " key
+        echo "$key" | sudo tee /etc/letsencrypt/live/$your_domain/privkey.pem > /dev/null
+
+        
+        sudo systemctl start nginx
+
+        readp "Please Enter the port number: " port
+
+        sudo ufw allow 'Nginx HTTPS'
+
+        sudo mkdir -p /var/www/$your_domain/html
+
+        html_content=$(cat <<EOF
+        <html><head>
+        <style>
+            .banner {
+                text-align: center;
+                padding: 5px;
+                font-size: 169px;
+                color: lightblue;
+                padding-bottom: 0;
+            }
+            .created-by {
+                text-align: center;
+                color: lightblue;
+                font-size: 18px;
+                margin-bottom: 40px;
+            }
+            .link {
+            display: block;
+            color: gold;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 10px;
+            text-decoration: none;
+            }
+            .link:hover {
+            text-decoration: underline;
+            }
+        </style>
+        </head>
+        <body style="
+            background-color: #03031f;
+        ">
+        <div class="banner">
+            AIO
+        </div>
+        <div class="created-by">
+            Created by Hosy
+        </div>
+        <a href="https://github.com/hrostami" class="link" target="_blank">
+            Github: github.com/hrostami
+        </a>
+        <a href="https://twitter.com/hosy000" class="link" target="_blank">
+            Twitter: twitter.com/hosy000
+        </a>
+
+
+        </body></html>
+EOF
+        )
+
+        echo "$html_content" | sudo tee /var/www/$your_domain/html/index.html > /dev/null
+
+        nginx_conf=$(cat <<EOF
+        server {
+        listen $port ssl;
+        listen [::]:$port ssl;
+
+        server_name $your_domain;
+        ssl_certificate /etc/letsencrypt/live/$your_domain/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/$your_domain/privkey.pem;
+        
+        root /var/www/$your_domain/html;
+        index index.html index.htm;
+        }
+
+EOF
+        )
+
+        # Write Nginx server block configuration to file
+        echo "$nginx_conf" | sudo tee /etc/nginx/sites-available/$your_domain > /dev/null
+
+        # Enable the Nginx server block
+        sudo ln -s /etc/nginx/sites-available/$your_domain /etc/nginx/sites-enabled/
+
+        # Test the Nginx configuration and restart Nginx
+        sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default_disabled
+        sudo service apache2 stop
+        sudo nginx -t
+        sudo systemctl restart nginx
+        sudo nginx -s reload
+
+        green "Nginx configured to use HTTPS for $IPV4_DOMAIN."
+    fi
+    readp "Press Enter to continue..."
 }
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
@@ -1678,6 +1804,9 @@ while true; do
                         ;;
                     3) # Cert + nginx setup
                         setup_cert
+                        ;;
+                    4) # NAT nginx setup
+                        setup_nginx_nat
                         ;;
                     0) # Back to Main Menu
                         break

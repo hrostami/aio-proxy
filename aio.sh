@@ -1219,14 +1219,25 @@ setup_ipv4_domain() {
         echo "Please enter the new domain:"
         read -r DOMAIN
         export IPV4_DOMAIN=$DOMAIN
+        if grep -q "export IPV4_DOMAIN" ~/.bashrc; then
+            echo "IPV4_DOMAIN is set in ~/.bashrc. Updating the value..."
+            sed -i "s/export IPV4_DOMAIN=.*/export IPV4_DOMAIN=$DOMAIN/" ~/.bashrc
+            source ~/.bashrc
+        else
+            echo "IPV4_DOMAIN is not set in ~/.bashrc. Adding the export command..."
+            echo -e "export IPV4_DOMAIN=$DOMAIN" >> ~/.bashrc
+            source ~/.bashrc
+        fi
         echo -e "IPV4_DOMAIN updated to:${yellow} $IPV4_DOMAIN${plain}"
     else
-        echo "Current value of IPV4_DOMAIN is: $IPV4_DOMAIN"
+        echo "Current value of IPV4_DOMAIN is: $DOMAIN"
         read -p "Do you want to change the domain? (y/n): " choice
         if [[ $choice =~ ^[Yy] ]]; then
             echo "Please enter the new domain:"
             read -r DOMAIN
             export IPV4_DOMAIN=$DOMAIN
+            sed -i "s/export IPV4_DOMAIN=.*/export IPV4_DOMAIN=$IPV4_DOMAIN/" ~/.bashrc
+            source ~/.bashrc
             echo -e "IPV4_DOMAIN updated to:${yellow} $IPV4_DOMAIN${plain}"
         else
             echo "IPV4_DOMAIN remains unchanged."
@@ -1242,14 +1253,25 @@ setup_ipv6_domain() {
         echo "Please enter the new domain:"
         read -r DOMAIN
         export IPV6_DOMAIN=$DOMAIN
+        if grep -q "export IPV6_DOMAIN" ~/.bashrc; then
+            echo "IPV6_DOMAIN is set in ~/.bashrc. Updating the value..."
+            sed -i "s/export IPV6_DOMAIN=.*/export IPV6_DOMAIN=$DOMAIN/" ~/.bashrc
+            source ~/.bashrc
+        else
+            echo "IPV6_DOMAIN is not set in ~/.bashrc. Adding the export command..."
+            echo -e "export IPV6_DOMAIN=$DOMAIN" >> ~/.bashrc
+            source ~/.bashrc
+        fi
         echo -e "IPV6_DOMAIN updated to:${yellow} $IPV6_DOMAIN${plain}"
     else
-        echo "Current value of IPV6_DOMAIN is: $IPV6_DOMAIN"
+        echo "Current value of IPV6_DOMAIN is: $DOMAIN"
         read -p "Do you want to change the domain? (y/n): " choice
         if [[ $choice =~ ^[Yy] ]]; then
             echo "Please enter the new domain:"
             read -r DOMAIN
             export IPV6_DOMAIN=$DOMAIN
+            sed -i "s/export IPV6_DOMAIN=.*/export IPV6_DOMAIN=$IPV6_DOMAIN/" ~/.bashrc
+            source ~/.bashrc
             echo -e "IPV6_DOMAIN updated to:${yellow} $IPV6_DOMAIN${plain}"
         else
             echo "IPV6_DOMAIN remains unchanged."

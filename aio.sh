@@ -1410,7 +1410,7 @@ EOF
 }
 
 setup_nginx_nat() {
-    if [ -z "$IPV4_DOMAIN" ] && [ -f "/etc/letsencrypt/live/$IPV4_DOMAIN/fullchain.pem" ]; then
+    if [ -z "$IPV4_DOMAIN" ] && [ ! -f "/etc/letsencrypt/live/$IPV4_DOMAIN/fullchain.pem" ]; then
         rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
         echo
         yellow "Please get the certificate and key from Cloudflare and use the commands below: "

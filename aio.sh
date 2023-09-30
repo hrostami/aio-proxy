@@ -248,6 +248,8 @@ display_domains_menu() {
     echo
     green "2. IPv6 Domain"
     echo
+    green "3. Cert + Nginx Setup"
+    echo
     green "0. Back to Main Menu"
     echo "**********************************************"
     echo -e "${plain}HTTPS Port:${red} $HTTPS_PORT${plain}"
@@ -378,16 +380,16 @@ show_hy_configs() {
         
         systemctl stop wg-quick@wgcf
 
-        IPV4=$(curl -s https://v4.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv4 address"
-            return
+        if [ -z "$IPV4_DOMAIN" ]; then
+            IPV4=$(curl -s https://v4.ident.me)
+        else
+            IPV4="$IPV4_DOMAIN"
         fi
 
-        IPV6=$(curl -s https://v6.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv6 address" 
-            return
+        if [ -z "$IPV6_DOMAIN" ]; then
+            IPV6=$(curl -s https://v6.ident.me)
+        else
+            IPV6="$IPV6_DOMAIN"
         fi
 
         systemctl restart wg-quick@wgcf
@@ -652,16 +654,16 @@ show_hy2_configs() {
         
         systemctl stop wg-quick@wgcf
 
-        IPV4=$(curl -s https://v4.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv4 address"
-            return
+        if [ -z "$IPV4_DOMAIN" ]; then
+            IPV4=$(curl -s https://v4.ident.me)
+        else
+            IPV4="$IPV4_DOMAIN"
         fi
 
-        IPV6=$(curl -s https://v6.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv6 address" 
-            return
+        if [ -z "$IPV6_DOMAIN" ]; then
+            IPV6=$(curl -s https://v6.ident.me)
+        else
+            IPV6="$IPV6_DOMAIN"
         fi
 
         systemctl restart wg-quick@wgcf
@@ -943,16 +945,16 @@ show_tuic_configs() {
 
         systemctl stop wg-quick@wgcf
 
-        IPV4=$(curl -s https://v4.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv4 address"
-            return
+        if [ -z "$IPV4_DOMAIN" ]; then
+            IPV4=$(curl -s https://v4.ident.me)
+        else
+            IPV4="$IPV4_DOMAIN"
         fi
 
-        IPV6=$(curl -s https://v6.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv6 address" 
-            return
+        if [ -z "$IPV6_DOMAIN" ]; then
+            IPV6=$(curl -s https://v6.ident.me)
+        else
+            IPV6="$IPV6_DOMAIN"
         fi
 
         systemctl restart wg-quick@wgcf
@@ -1230,42 +1232,73 @@ setup_ipv4_domain() {
             echo "IPV4_DOMAIN remains unchanged."
         fi
     fi
-
-    # Install Certbot
-    echo "Installing Certbot..."
-    sudo apt-get update
-    sudo apt-get install -y certbot python3-certbot-nginx
-
-    # Ensure Nginx is installed and set up
-    if ! command -v nginx &> /dev/null; then
-        echo "Nginx is not installed. Installing..."
-        sudo apt-get install -y nginx
-        sudo systemctl start nginx
-        sudo systemctl enable nginx
-        echo "Nginx installed and started."
-        sleep 2
-    fi
-
-    # Prompt user for HTTPS port
-    clear
-    read -p "Enter the desired HTTPS port (default is 443): " HTTPS_PORT
-    HTTPS_PORT=${HTTPS_PORT:-443}
-
-    # Request SSL certificate using Certbot and specify the chosen port
-    sudo certbot certonly --nginx --agree-tos --no-eff-email --redirect --expand -d $IPV4_DOMAIN --preferred-challenges http --redirect --hsts --uir --staple-ocsp --tls-sni-01-port $HTTPS_PORT
-
-    # Set up a simple webpage
-    sudo mkdir -p /var/www/html
-    echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
-    sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
-
-    # Configure Nginx to use the chosen HTTPS port
-    sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default
-    sudo nginx -s reload
-
-    echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
+    readp "Press Enter to continue..."
+    
 }
 
+setup_ipv6_domain() {
+    if [ -z "$IPV6_DOMAIN" ]; then
+        rred "IPV6_DOMAIN is not set."
+        echo "Please enter the new domain:"
+        read -r DOMAIN
+        export IPV6_DOMAIN=$DOMAIN
+        echo -e "IPV6_DOMAIN updated to:${yellow} $IPV6_DOMAIN${plain}"
+    else
+        echo "Current value of IPV6_DOMAIN is: $IPV6_DOMAIN"
+        read -p "Do you want to change the domain? (y/n): " choice
+        if [[ $choice =~ ^[Yy] ]]; then
+            echo "Please enter the new domain:"
+            read -r DOMAIN
+            export IPV6_DOMAIN=$DOMAIN
+            echo -e "IPV6_DOMAIN updated to:${yellow} $IPV6_DOMAIN${plain}"
+        else
+            echo "IPV6_DOMAIN remains unchanged."
+        fi
+    fi
+    readp "Press Enter to continue..."
+}
+
+setup_cert() {
+    if [ -z "$IPV4_DOMAIN" ]; then
+       rred "IPv4 Domain is not set. Please set it first using option 1 in Domains menu."
+       return
+    else
+        # Install Certbot
+        echo "Installing Certbot..."
+        sudo apt-get update
+        sudo apt-get install -y certbot python3-certbot-nginx
+
+        # Ensure Nginx is installed and set up
+        if ! command -v nginx &> /dev/null; then
+            echo "Nginx is not installed. Installing..."
+            sudo apt-get install -y nginx
+            sudo systemctl start nginx
+            sudo systemctl enable nginx
+            echo "Nginx installed and started."
+            sleep 2
+        fi
+
+        # Prompt user for HTTPS port
+        clear
+        read -p "Enter the desired HTTPS port (default is 443): " HTTPS_PORT
+        HTTPS_PORT=${HTTPS_PORT:-443}
+
+        # Request SSL certificate using Certbot and specify the chosen port
+        sudo certbot certonly --nginx --agree-tos --no-eff-email --redirect --expand -d $IPV4_DOMAIN --preferred-challenges http --redirect --hsts --uir --staple-ocsp --tls-sni-01-port $HTTPS_PORT
+
+        # Set up a simple webpage
+        sudo mkdir -p /var/www/html
+        echo "This is a simple webpage for $IPV4_DOMAIN." | sudo tee /var/www/html/index.html
+        sudo ln -s /var/www/html/index.html /var/www/$IPV4_DOMAIN/html
+
+        # Configure Nginx to use the chosen HTTPS port
+        sudo sed -i "s/listen 443 ssl default_server;/listen $HTTPS_PORT ssl default_server;/" /etc/nginx/sites-available/default
+        sudo nginx -s reload
+
+        echo "Nginx configured to use HTTPS on port $HTTPS_PORT for $IPV4_DOMAIN."
+    fi
+    readp "Press Enter to continue..."
+}
 # ----------------------------------------Menu options------------------------------------------------
 while true; do
     display_main_menu
@@ -1534,6 +1567,9 @@ while true; do
                         ;;
                     2) # IPv6 Domain
                         setup_ipv6_domain
+                        ;;
+                    3) # Cert + nginx setup
+                        setup_cert
                         ;;
                     0) # Back to Main Menu
                         break

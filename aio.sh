@@ -1298,10 +1298,10 @@ setup_cert() {
         sudo ufw enable
         sudo ufw allow ssh
 
+        sudo apt-get install -y nginx
+
         # Ensure Nginx is installed and set up
-        if ! command -v nginx &> /dev/null; then
-            echo "Nginx is not installed. Installing..."
-            sudo apt-get install -y nginx
+        if ! command -v nginx &> /dev/null; then            
             sudo systemctl enable nginx
             echo "Nginx installed."
             sleep 2
@@ -1431,10 +1431,10 @@ setup_nginx_nat() {
         sudo ufw enable
         sudo ufw allow ssh
 
+        sudo apt-get install -y nginx
+
         # Ensure Nginx is installed and set up
         if ! command -v nginx &> /dev/null; then
-            echo "Nginx is not installed. Installing..."
-            sudo apt-get install -y nginx
             sudo systemctl enable nginx
             echo "Nginx installed."
             sleep 2

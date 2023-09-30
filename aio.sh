@@ -17,7 +17,7 @@ readp(){ read -p "$(yellow "$1")" $2;}
 # install requirements
 if ! command -v qrencode &> /dev/null; then
     echo "qrencode is not installed. Installing..."
-    sudp apt-get update
+    sudo apt-get update
     sudo apt-get install qrencode -y
 
     # Check if installation was successful

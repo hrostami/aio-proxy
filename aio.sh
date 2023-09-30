@@ -1295,6 +1295,8 @@ setup_cert() {
         yellow "Installing Certbot..."
         sudo apt-get install -y certbot python3-certbot-nginx
         sudo apt install ufw -y
+        sudo ufw enable
+        sudo ufw allow ssh
 
         # Ensure Nginx is installed and set up
         if ! command -v nginx &> /dev/null; then
@@ -1426,6 +1428,8 @@ setup_nginx_nat() {
         sudo apt-get update
         clear
         sudo apt install ufw -y
+        sudo ufw enable
+        sudo ufw allow ssh
 
         # Ensure Nginx is installed and set up
         if ! command -v nginx &> /dev/null; then
@@ -1504,18 +1508,17 @@ EOF
         echo "$html_content" | sudo tee /var/www/$your_domain/html/index.html > /dev/null
 
         nginx_conf=$(cat <<EOF
-        server {
-        listen $port ssl;
-        listen [::]:$port ssl;
+server {
+    listen $port ssl;
+    listen [::]:$port ssl;
 
-        server_name $your_domain;
-        ssl_certificate /etc/letsencrypt/live/$your_domain/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/$your_domain/privkey.pem;
-        
-        root /var/www/$your_domain/html;
-        index index.html index.htm;
-        }
-
+    server_name $your_domain;
+    ssl_certificate /etc/letsencrypt/live/$your_domain/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$your_domain/privkey.pem;
+    
+    root /var/www/$your_domain/html;
+    index index.html index.htm;
+}
 EOF
         )
 

@@ -256,7 +256,6 @@ display_domains_menu() {
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
-    echo -e "${plain}HTTPS Port:${red} $HTTPS_PORT${plain}"
     echo -e "${plain}IPv4 Domain:${red} $IPV4_DOMAIN${plain}"
     echo -e "${plain}IPv6 Domain:${red} $IPV6_DOMAIN${plain}"
     echo "**********************************************"
@@ -1301,18 +1300,21 @@ setup_cert() {
         if ! command -v nginx &> /dev/null; then
             echo "Nginx is not installed. Installing..."
             sudo apt-get install -y nginx
-            sudo systemctl start nginx
             sudo systemctl enable nginx
-            echo "Nginx installed and started."
+            echo "Nginx installed."
             sleep 2
         fi
         
         # Prompt user for HTTPS port
         clear
+
+        sudo systemctl stop nginx
+
         read -p "Enter your email: " email
         # Request SSL certificate using Certbot and specify the chosen port
         sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
         
+        sudo systemctl start nginx
         your_domain="$IPV4_DOMAIN"
 
         sudo ufw allow 'Nginx HTTPS'

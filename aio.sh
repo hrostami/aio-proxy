@@ -16,27 +16,27 @@ readp(){ read -p "$(yellow "$1")" $2;}
 
 # install requirements
 if ! command -v qrencode &> /dev/null; then
-    echo "qrencode is not installed. Installing..."
-    sudp apt-get update
+    rred "qrencode is not installed. Installing..."
+    sudo apt-get update
     sudo apt-get install qrencode -y
 
     # Check if installation was successful
     if [ $? -eq 0 ]; then
-        echo "qrencode is now installed."
+        red "qrencode is now installed."
     else
-        echo "Error: Failed to install qrencode."
+        red "Error: Failed to install qrencode."
     fi
 else
-    echo "qrencode is already installed."
+    green "qrencode is already installed."
 fi
 
 if ! command -v jq &>/dev/null; then
-    echo "Installing jq..."
+    rred "Installing jq..."
     if ! sudo apt-get install jq -y; then
-        echo "Error: Failed to install jq."
+        red "Error: Failed to install jq."
         exit 1
     fi
-    echo "jq installed successfully."
+    red "jq installed successfully."
 fi
 
 # ----------------------------------------Show Menus------------------------------------------------
@@ -1298,28 +1298,31 @@ setup_cert() {
         sudo ufw enable
         sudo ufw allow ssh
 
-        sudo apt-get install -y nginx
-
         # Ensure Nginx is installed and set up
         if ! command -v nginx &> /dev/null; then            
+            sudo apt-get install -y nginx
             sudo systemctl enable nginx
             echo "Nginx installed."
             sleep 2
         fi
+        
+        sudo ufw allow 'Nginx HTTPS'
+        sudo ufw allow 'Nginx HTTP'
         
         # Prompt user for HTTPS port
         clear
 
         sudo systemctl stop nginx
 
-        read -p "Enter your email: " email
+        readp "Enter your email: " email
         # Request SSL certificate using Certbot and specify the chosen port
         sudo certbot certonly --standalone --preferred-challenges http --agree-tos --email "$email" -d "$IPV4_DOMAIN"
+
+        sudo ufw delete allow 'Nginx HTTP'
         
         sudo systemctl start nginx
-        your_domain="$IPV4_DOMAIN"
 
-        sudo ufw allow 'Nginx HTTPS'
+        your_domain="$IPV4_DOMAIN"
 
         sudo mkdir -p /var/www/$your_domain/html
 

@@ -1324,6 +1324,7 @@ setup_cert() {
 
         html_content=$(cat <<EOF
         <html><head>
+        <title>AIO by Hosy</title>
         <style>
             .banner {
                 text-align: center;

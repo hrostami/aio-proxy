@@ -15,9 +15,11 @@ readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
 
 # install requirements
+sudo apt-get update
+sudo apt install net-tools
+
 if ! command -v qrencode &> /dev/null; then
     rred "qrencode is not installed. Installing..."
-    sudo apt-get update
     sudo apt-get install qrencode -y
 
     # Check if installation was successful

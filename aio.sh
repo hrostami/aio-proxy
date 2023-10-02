@@ -1788,6 +1788,7 @@ while true; do
             done
             ;;
         11) # show ports in use
+            sudo apt install net-tools
             clear
             echo "Ports in use and their corresponding processes:"
             echo "----------------------------------------------"

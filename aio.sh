@@ -15,35 +15,57 @@ readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
 
 # install requirements
-sudo apt-get update
-sudo apt install net-tools
+if ! command -v qrencode &> /dev/null || ! command -v jq &> /dev/null || ! dpkg -l | grep -q net-tools; then
+    sudo apt-get update
+    if ! command -v qrencode &> /dev/null; then
+        rred "qrencode is not installed. Installing..."
+        sudo apt-get install qrencode -y
 
-if ! command -v qrencode &> /dev/null; then
-    rred "qrencode is not installed. Installing..."
-    sudo apt-get install qrencode -y
-
-    # Check if installation was successful
-    if [ $? -eq 0 ]; then
-        red "qrencode is now installed."
+        # Check if installation was successful
+        if [ $? -eq 0 ]; then
+            red "qrencode is now installed."
+        else
+            red "Error: Failed to install qrencode."
+        fi
     else
-        red "Error: Failed to install qrencode."
+        green "qrencode is already installed."
+    fi
+
+    if ! command -v jq &> /dev/null; then
+        rred "Installing jq..."
+        if sudo apt-get install jq -y; then
+            red "jq installed successfully."
+        else
+            red "Error: Failed to install jq."
+            exit 1
+        fi
+    else
+        green "jq is already installed."
+    fi
+
+    if ! dpkg -l | grep -q net-tools; then
+        rred "net-tools is not installed. Installing..."
+        sudo apt-get install net-tools -y
+
+        # Check if installation was successful
+        if [ $? -eq 0 ]; then
+            red "net-tools is now installed."
+        else
+            red "Error: Failed to install net-tools."
+            exit 1
+        fi
+    else
+        green "net-tools is already installed."
     fi
 else
-    green "qrencode is already installed."
-fi
-
-if ! command -v jq &>/dev/null; then
-    rred "Installing jq..."
-    if ! sudo apt-get install jq -y; then
-        red "Error: Failed to install jq."
-        exit 1
-    fi
-    red "jq installed successfully."
+    green "qrencode, jq, and net-tools are already installed."
 fi
 
 # ----------------------------------------Show Menus------------------------------------------------
 display_main_menu() {
     clear 
+    echo
+    echo
     bblue "             █████╗ ██╗ ██████╗              "
     bblue "            ██╔══██╗██║██╔═══██╗             "
     bblue "            ███████║██║██║   ██║             "
@@ -1788,7 +1810,6 @@ while true; do
             done
             ;;
         11) # show ports in use
-            sudo apt install net-tools
             clear
             echo "Ports in use and their corresponding processes:"
             echo "----------------------------------------------"

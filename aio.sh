@@ -83,7 +83,7 @@ display_main_menu() {
     echo
     green "3. Tuic                  4. Reality"
     echo
-    green "5. SSH                   6. Coming Soon..."
+    green "5. SSH                   6. 4 In 1 Script"
     echo
     yellow "---------------------Tools--------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"
@@ -1723,7 +1723,15 @@ while true; do
                 esac
             done
             ;;
-
+        6) # 4in1
+            while true; do
+                yellow "Please Disable hysteria and other common protocols manually if you've already set those up using AIO"
+                readp "Press Enter to continue..."
+                bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/4in1.sh)
+                readp "Press Enter to continue..."
+                break
+            done
+            ;;
         7) # Tunnel
             while true; do
                 run_tunnel_setup

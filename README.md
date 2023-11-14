@@ -1,9 +1,10 @@
 # All-In-One Proxy Tools
+![AIO in action](https://gcdnb.pbrd.co/images/F9LKos7KvFYI.png?o=1)
 
-This script automates setting up TUIC and hysteria and other proxy-related tools in Linux  and 
+This script automates setting up TUIC, hysteria and other proxy-related tools in Linux.
 ## Features
-- Setting domains( for both IPv4 and IPv6 )
-- Getting SSL certification for the domains and setting up a simple web page to fool gfw
+- Setting domains( for both IPv4 and IPv6 proxy configs will be shown using domains if set) 
+- Getting SSL certification for the domains and setting up a simple web page( Probe Resistance )
 - Hysteria ( according to [iSegaro's hysteria tutorial](https://telegra.ph/How-run-Hysteria-Protocol-with-iSegaro-04-07) )
 - Hysteria V2 ( according to [iSegaro's hysteria v2 tutorial](https://telegra.ph/How-run-Hysteria-V2-Protocol-with-iSegaro-09-0) )
 - Tuic ( according to [iSegaro's tuic tutorial](https://telegra.ph/How-to-start-the-TUIC-v5-protocol-with-iSegaro-08-26) )

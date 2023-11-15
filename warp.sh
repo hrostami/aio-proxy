@@ -458,7 +458,7 @@ yellow "After 6 seconds, continue to install WARP for plan 1. To exit the instal
 fi
 }
 lncf(){
-curl -sSL -o /usr/bin/cf -L https://gitlab.com/rwkgyg/CFwarp/-/raw/main/CFwarp.sh
+curl -sSL -o /usr/bin/cf -L https://raw.githubusercontent.com/hrostami/aio-proxy/master/warp.sh
 chmod +x /usr/bin/cf
 }
 UPwpyg(){

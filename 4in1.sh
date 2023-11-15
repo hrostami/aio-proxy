@@ -1984,7 +1984,7 @@ crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
 }
 lnsb(){
-curl -sL -o /usr/bin/sb https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/sb.sh
+curl -sL -o /usr/bin/sb https://raw.githubusercontent.com/hrostami/aio-proxy/master/4in1.sh
 chmod +x /usr/bin/sb
 }
 upsbyg(){
@@ -2123,7 +2123,7 @@ acme(){
 bash <(curl -Ls https://gitlab.com/rwkgyg/acme-script/raw/main/acme.sh)
 }
 cfwarp(){
-bash <(curl -Ls https://gitlab.com/rwkgyg/CFwarp/raw/main/CFwarp.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/warp.sh)
 }
 bbr(){
 bash <(curl -Ls https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)

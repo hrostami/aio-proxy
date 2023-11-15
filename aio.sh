@@ -233,7 +233,12 @@ display_warp_menu() {
         echo "Error: Failed to get IPv6 address" 
         return
     fi
-    echo -e "${plain}IPv4:${red} $IPV4${plain}"
+    if [[ $IPV4 == 104* ]]; then
+        echo -e "${plain}IPv4:${green} $IPV4 [Warp]${plain}"
+    else
+        echo -e "${plain}IPv4:${red} $IPV4${plain}"
+    fi
+
     echo -e "${plain}IPv6:${red} $IPV6${plain}"
     echo "**********************************************"
 }
@@ -1725,8 +1730,15 @@ while true; do
             ;;
         6) # 4in1
             while true; do
-                yellow "Please Disable hysteria and other common protocols manually if you've already set those up using AIO"
-                readp "Press Enter to continue..."
+                dir1="/root/hy2"
+                dir2="/root/tuic"
+
+                if [ -d "$dir1" ] || [ -d "$dir2" ]; then
+                    rred "Please Disable hysteria and other common protocols manually."
+                    readp "Press Enter to continue..."
+                else
+                    echo "4in1 script loading..."
+                fi
                 bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/4in1.sh)
                 readp "Press Enter to continue..."
                 break

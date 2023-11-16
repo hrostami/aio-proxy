@@ -2121,7 +2121,7 @@ sb
 fi
 }
 acme(){
-bash <(curl -Ls https://gitlab.com/rwkgyg/acme-script/raw/main/acme.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 }
 cfwarp(){
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/warp.sh)

@@ -109,8 +109,8 @@ fi
 fi
 fi
 v4v6(){
-v4=$(curl -s4m5 ip.me -k)
-v6=$(curl -s6m5 ip.me -k)
+v4=$(curl -s4m5 icanhazip.com -k)
+v6=$(curl -s6m5 icanhazip.com -k)
 }
 warpcheck(){
 wgcfv6=$(curl -s6m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
@@ -118,7 +118,7 @@ wgcfv4=$(curl -s4m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cu
 }
 v6(){
 v4orv6(){
-if [ -z $(curl -s4m5 ip.me -k) ]; then
+if [ -z $(curl -s4m5 icanhazip.com -k) ]; then
 echo
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow "Pure IPV6 VPS detected, add DNS64"
@@ -617,7 +617,7 @@ systemctl restart sing-box
 }
 ipuuid(){
 uuid=$(jq -r '.inbounds[0].users[0].uuid' /etc/s-box/sb.json)
-serip=$(curl -s4m5 ip.me -k || curl -s6m5 ip.me -k)
+serip=$(curl -s4m5 icanhazip.com -k || curl -s6m5 icanhazip.com -k)
 if [[ "$serip" =~ : ]]; then
 sbdnsip='https://[2001:4860:4860::8888]/dns-query'
 server_ip="[$serip]"
@@ -1201,6 +1201,7 @@ hy2_ports=$(echo $hy2_ports | sed 's/:/-/g')
 a=$hy2_ports
 sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
 fi
+sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
 }
 cfargo(){
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
@@ -1517,16 +1518,16 @@ green "0: Return to the upper level"
 readp "Please select [0-2]:" menu
 if [ "$menu" = "1" ]; then
 port=$(jq -r '.inbounds[3].listen_port' /etc/s-box/sb.json)
-fports && changeport
+fports && result_vl_vm_hy_tu && sb_client && changeport
 elif [ "$menu" = "2" ]; then
 port=$(jq -r '.inbounds[3].listen_port' /etc/s-box/sb.json)
-fport && changeport
+fport && result_vl_vm_hy_tu && sb_client && changeport
 else
 changeport
 fi
 elif [ "$menu" = "3" ]; then
 if [ -n $tu5_ports ]; then
-tu5deports
+tu5deports && result_vl_vm_hy_tu && sb_client && changeport
 else
 yellow "Tuic5 is not set up with multiple ports" && changeport
 fi
@@ -1665,8 +1666,8 @@ sb
 fi
 }
 sbymfl(){
-[[ $(systemctl is-active warp-svc) = active ]] && warp_s4_ip="Current IP: $(curl -4sx socks5h://localhost:40000 ip.me -k)" || warp_s4_ip='无warp-s5的IPV4，黑名单模式'
-[[ $(systemctl is-active warp-svc) = active ]] && warp_s6_ip="Current IP: $(curl -6sx socks5h://localhost:40000 ip.me -k)" || warp_s6_ip='无warp-s5的IPV6，黑名单模式'
+[[ $(systemctl is-active warp-svc) = active ]] && warp_s4_ip="Current IP: $(curl -4sx socks5h://localhost:40000 icanhazip.com -k)" || warp_s4_ip='无warp-s5的IPV4，黑名单模式'
+[[ $(systemctl is-active warp-svc) = active ]] && warp_s6_ip="Current IP: $(curl -6sx socks5h://localhost:40000 icanhazip.com -k)" || warp_s6_ip='无warp-s5的IPV6，黑名单模式'
 v4v6
 if [[ -z $v4 ]]; then
 vps_ipv4='无本地IPV4，黑名单模式'      
@@ -2055,9 +2056,9 @@ result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5 && sb_client
 clash_sb_share(){
 echo
 yellow "1: Check the sharing links and QR codes of each agreement"
-yellow "2: View the Clash-Meta and Sing-box client SFA/SFI/SFW four-in-one configuration files"
-yellow "3: View the V2rayN client configuration files of Hysteria2 and Tuic5"
-yellow "4: Telegram notifies all node configuration information (1+2)"
+yellow "2: View Clash-Meta, Sing-box client SFA/SFI/SFW unified configuration files"
+yellow "3: Check the V2rayN client configuration files of Hysteria2 and Tuic5"
+yellow "4: Execute a Telegram robot push to the node configuration information (1+2)"
 yellow "0: Return to the upper level"
 readp "Please select【0-4】：" menu
 if [ "$menu" = "1" ]; then
@@ -2205,12 +2206,11 @@ insV=$(cat /etc/s-box/v 2>/dev/null)
 latestV=$(curl -sL https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/version/version | awk -F "update content" '{print $1}' | head -n 1)
 if [ -f /etc/s-box/v ]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e "The current Sing-box-yg latest script version number: ${bblue}${insV}${plain}, already installed"
+echo -e "The latest version of the current Sing-box-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Sing-box-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Sing-box-yg script version number detected: ${yellow}${latestV}${plain}"
+echo -e "The latest Sing-box-yg script version number detected: ${yellow}${latestV}${plain} (7 can be selected for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/sing-box-yg/-/raw/main/version/version)${plain}"
-echo -e "7 options available for update"
 fi
 else
 echo -e "Current Sing-box-yg script version number: ${bblue}${latestV}${plain}"
@@ -2221,28 +2221,28 @@ if [ -f '/etc/s-box/sb.json' ]; then
 if [[ $inscore =~ ^[0-9.]+$ ]]; then
 if [ "${inscore}" = "${latcore}" ]; then
 echo
-echo -e "The latest official version of the current Sing-box kernel: ${bblue}${inscore}${plain}, already installed"
+echo -e "The latest official version of the current Sing-box kernel: ${bblue}${inscore}${plain} (already installed)"
 echo
-echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain}"
+echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
-echo -e "Detected the latest Sing-box official version kernel: ${yellow}${latcore}${plain}, you can choose 8 for update"
+echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
-echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain}"
+echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 fi
 else
 if [ "${inscore}" = "${precore}" ]; then
 echo
-echo -e "The current Sing-box latest beta kernel: ${bblue}${inscore}${plain}, already installed"
+echo -e "Current Sing-box latest beta kernel: ${bblue}${inscore}${plain} (installed)"
 echo
-echo -e "The latest official version of the current Sing-box kernel: ${bblue}${latcore}${plain}"
+echo -e "Current Sing-box latest official version kernel: ${bblue}${latcore}${plain} (switchable)"
 else
 echo
 echo -e "Currently Sing-box has a beta kernel installed: ${bblue}${inscore}${plain}"
-echo -e "The latest Sing-box beta kernel is detected: ${yellow}${precore}${plain}, you can choose 8 for update"
+echo -e "The latest Sing-box beta kernel detected: ${yellow}${precore}${plain} (8 can be selected for update)"
 echo
-echo -e "The latest official version of the current Sing-box kernel: ${bblue}${latcore}${plain}"
+echo -e "Current Sing-box latest official version kernel: ${bblue}${latcore}${plain} (switchable)"
 fi
 fi
 else

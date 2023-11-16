@@ -1291,7 +1291,7 @@ fi
 fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white " VPS system information is as follows:"
-white " Operating System: $(blue"$op") \c" && white " Kernel version: $(blue"$version") \c" && white " CPU architecture: $(blue"$cpu") \c" && white " Virtualization type: $(blue"$vi")"
+white " Operating System: $(blue "$op") \c" && white " Kernel version: $(blue "$version") \c" && white " CPU architecture: $(blue "$cpu") \c" && white " Virtualization type: $(blue "$vi")"
 WGCFmenu
 S5menu
 echo
@@ -1796,7 +1796,7 @@ red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cfwarpshow
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white " VPS system information is as follows:"
-white " Operating System: $(blue"$op") \c" && white " Kernel version: $(blue"$version") \c" && white " CPU architecture: $(blue"$cpu") \c" && white " Virtualization type: $(blue"$vi")"
+white " Operating System: $(blue "$op") \c" && white " Kernel version: $(blue "$version") \c" && white " CPU architecture: $(blue "$cpu") \c" && white " Virtualization type: $(blue "$vi")"
 WGCFmenu
 S5menu
 echo

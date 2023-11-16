@@ -692,7 +692,7 @@ white "-------------------------------------------------------------------------
 white " Option 1: The current IPV6 takeover VPS outbound situation is as follows ($keepup)"
 white " ${WARPIPv6Status}"
 white "------------------------------------------------------------------------------------"
-if [[ "$WARPIPv4Status" == *does not exist* &&"$WARPIPv6Status" == *不存在* ]]; then
+if [[ "$WARPIPv4Status" == "No IPV4 address exists" &&"$WARPIPv6Status" == "No IPV6 address exists" ]]; then
 yellow "Both IPV4 and IPV6 do not exist! It is recommended to use the cf shortcut to enter again after exiting. If it persists, it is recommended to uninstall and reinstall solution one."
 fi
 }

@@ -29,13 +29,14 @@ release="Ubuntu"
 elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
 else 
-red "Your current system is not supported, please choose to use Ubuntu, Debian, Centos system." && exit
+red "The script does not support your current system. Please choose to use Ubuntu, Debian, or Centos systems." && exit
 fi
 vsid=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
 op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
+if [[ $(echo "$op" | grep -i -E "arch|alpine") ]]; then
+red "The script does not support your current $op system, please choose to use Ubuntu, Debian, Centos system." && exit
+fi
 version=$(uname -r | cut -d "-" -f1)
-main=$(uname -r | cut -d "." -f1)
-minor=$(uname -r | cut -d "." -f2)
 vi=$(systemd-detect-virt)
 bit=$(uname -m)
 if [[ $bit = "aarch64" ]]; then
@@ -60,13 +61,21 @@ if [ ! -f sbyg_update ]; then
 green "Install the necessary dependencies of the Sing-box-yg script for the first time..."
 update(){
 if [ -x "$(command -v apt-get)" ]; then
-apt update
+apt update -y
 elif [ -x "$(command -v yum)" ]; then
-yum update && yum install epel-release -y
+yum update -y && yum install epel-release -y
 elif [ -x "$(command -v dnf)" ]; then
-dnf update
+dnf update -y
 fi
 }
+if [[ $release = Centos && ${vsid} =~ 8 ]]; then
+cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
+curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
+sed -i -e "s|mirrors.cloud.aliyuncs.com|mirrors.aliyun.com|g " /etc/yum.repos.d/CentOS-*
+sed -i -e "s|releasever|releasever-stream|g" /etc/yum.repos.d/CentOS-*
+yum clean all && yum makecache
+cd
+fi
 update
 packages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "wget" "cron")
 for package in "${packages[@]}"
@@ -1291,7 +1300,7 @@ else
 red "Only option 1 (vless-reality) is supported. Because the domain name certificate has not been applied for, the certificate switching options for vmess-ws, Hysteria2, and Tuic5 are not displayed for the time being."
 fi
 green "0: Return to the upper level"
-readp "Please select【0-4】：" menu
+readp "please choose:" menu
 if [ "$menu" = "1" ]; then
 readp "Please enter the vless-reality domain name (press Enter to use www.yahoo.com):" menu
 ym_vl_re=${menu:-www.yahoo.com}
@@ -2055,10 +2064,10 @@ result_vl_vm_hy_tu && resvless && resvmess && reshy2 && restu5 && sb_client
 }
 clash_sb_share(){
 echo
-yellow "1: Check the sharing links and QR codes of each agreement"
-yellow "2: View Clash-Meta, Sing-box client SFA/SFI/SFW unified configuration files"
-yellow "3: Check the V2rayN client configuration files of Hysteria2 and Tuic5"
-yellow "4: Execute a Telegram robot push to the node configuration information (1+2)"
+yellow "1: View the latest sharing links and QR codes of each agreement"
+yellow "2: View the latest Clash-Meta and Sing-box client SFA/SFI/SFW unified configuration files"
+yellow "3: View the latest V2rayN client configuration files of Hysteria2 and Tuic5"
+yellow "4: Execute Telegram push of the latest node configuration information (1+2)"
 yellow "0: Return to the upper level"
 readp "Please select【0-4】：" menu
 if [ "$menu" = "1" ]; then
@@ -2067,7 +2076,7 @@ elif  [ "$menu" = "2" ]; then
 green "Please wait……"
 sbshare > /dev/null 2>&1
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The Clash-Meta four-in-one configuration file is shown as follows:"
+red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The Clash-Meta configuration file is shown as follows:"
 red "Supports Clash-Meta Android client, Clash-Verge computer client, soft router Openclash, and supports Gitlab private subscription link online configuration update"
 red "File directory /etc/s-box/clash_meta_client.yaml , copy and build according to the yaml file format." && sleep 2
 echo
@@ -2076,7 +2085,7 @@ echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The SFA/SFI/SFW four-in-one configuration file is shown as follows:"
+red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The SFA/SFI/SFW configuration file is displayed as follows:"
 red "Android SFA, Apple SFI (supports Gitlab private subscription link online configuration update), download the Sing-box official client of SFW on win computer by yourself,"
 red "File directory /etc/s-box/sing_box_client.json , copy and build according to the json file format." && sleep 2
 echo
@@ -2289,7 +2298,7 @@ fi
 if [[ -n $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
 echo -e "Sing-box status: $green is running $plain"
 elif [[ -z $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
-echo -e "Sing-box status: $yellow has not been started. You can try to select 6 to restart. If it is still the same, select 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box $plain."
+echo -e "Sing-box status: $yellow is not started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
 else
 echo -e "Sing-box status: $red is not installed $plain"
 fi

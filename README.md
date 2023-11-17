@@ -14,6 +14,7 @@ This script automates setting up TUIC, hysteria and other proxy-related tools in
 - Reverse TLS Tunnel( Thanks to [Radkesvat](https://github.com/radkesvat/ReverseTlsTunnel) and [Peyman](https://github.com/Ptechgithub/ReverseTlsTunnel) )
 - Different Panels( [X-Ui by Alireza](https://github.com/alireza0/x-ui), [X-Ui Sanaei](https://github.com/MHSanaei/3x-ui), [RealityEZPZ by Aleskxyz](https://github.com/aleskxyz/reality-ezpz), [Hiddify](https://github.com/hiddify/Hiddify-Server), and [Marzban](https://github.com/Gozargah/Marzban/) )
 - Install, disable, and enable Warp(using [yonggekkk's script](https://github.com/yonggekkk/warp-yg) )
+- Sing Box 4-in-1 script by [Yongge](https://gitlab.com/rwkgyg/sing-box-yg)
 - Show Ports in use and their corresponding processes
 
    

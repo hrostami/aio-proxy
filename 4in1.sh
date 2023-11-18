@@ -207,7 +207,7 @@ inscertificate(){
 ymzs(){
 ym_vl_re=www.yahoo.com
 blue "The SNI domain name of Vless-reality defaults to www.yahoo.com"
-blue "Vmess-ws enables TLS, and both Hysteria-2 and Tuic-v5 will use the applied $ym certificate."
+blue "Vmess-ws turns on TLS, and both Hysteria-2 and Tuic-v5 will use the applied $(cat /root/ygkkkca/ca.log 2>/dev/null) certificate"
 tlsyn=true
 ym_vm_ws=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 certificatec_vmess_ws='/root/ygkkkca/cert.crt'
@@ -1502,7 +1502,7 @@ else
 changeport
 fi
 elif [ "$menu" = "4" ]; then
-green "1: Replace the Tuic5 main port (the original multi-port automatic reset is deleted)"
+green "1: Replace Tuic5 main port (original multi-port automatic reset and delete)"
 green "2: Add Tuic5 multi-port"
 green "3: Reset and delete Tuic5 multi-port"
 green "0: Return to the upper level"
@@ -1850,7 +1850,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else
@@ -2240,7 +2240,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

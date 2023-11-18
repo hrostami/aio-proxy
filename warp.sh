@@ -1358,7 +1358,7 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white "Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white "Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
 WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$v4  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 

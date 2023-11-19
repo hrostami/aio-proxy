@@ -806,13 +806,11 @@ cat > /etc/s-box/sing_box_client.json <<EOF
             {
                 "tag": "remote",
                 "address": "$sbdnsip",
-                "strategy": "ipv4_only",
                 "detour": "select"
             },
             {
                 "tag": "local",
                 "address": "https://223.5.5.5/dns-query",
-                "strategy": "ipv4_only",
                 "detour": "direct"
             },
             {
@@ -1285,7 +1283,7 @@ changeym(){
 [ -f /root/ygkkkca/ca.log ] && ymzs="$yellow switches to domain name certificate: $(cat /root/ygkkkca/ca.log 2>/dev/null)$plain" || ymzs="$yellow has not applied for a domain name certificate and cannot switch to $plain"
 vl_na="Domain name certificate in use: $(jq -r '.inbounds[0].tls.server_name' /etc/s-box/sb.json). $yellow replaces the domain name certificate that meets the requirements of reality $plain"
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
-[[ "$tls" = "false" ]] && vm_na="TLS is currently turned off. $ymzs ${yellow}, the Argo tunnel will be closed. You can enter the main menu option 4 and change the port to an https 443 series port to achieve CDN preferred IP${plain}" || vm_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow switches to turn off TLS, Argo tunnel will be available, you can enter the main menu option 4, change the port to http 80 series port, the main protocol implements CDN preferred IP$plain"
+[[ "$tls" = "false" ]] && vm_na="TLS is currently turned off. $ymzs ${yellow}, the Argo tunnel will be closed. You can enter the main menu option 4 and change the port to an https 443 series port to achieve CDN preferred IP${plain}" || vm_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow is switched to turn off TLS, Argo tunnel will be available, you can enter the main menu option 4, change the port to http 80 series port, the main protocol implements CDN preferred IP$plain"
 hy2_sniname=$(jq -r '.inbounds[2].tls.key_path' /etc/s-box/sb.json)
 [[ "$hy2_sniname" = '/etc/s-box/private.key' ]] && hy2_na="Using self-signed bing certificate. $ymzs" || hy2_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow switches to self-signed bing certificate $plain"
 tu5_sniname=$(jq -r '.inbounds[3].tls.key_path' /etc/s-box/sb.json)
@@ -1333,7 +1331,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1351,7 +1349,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1369,7 +1367,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1502,7 +1500,7 @@ else
 changeport
 fi
 elif [ "$menu" = "4" ]; then
-green "1: Replace Tuic5 main port (original multi-port automatic reset and delete)"
+green "1: Replace the Tuic5 main port (the original multi-port automatic reset is deleted)"
 green "2: Add Tuic5 multi-port"
 green "3: Reset and delete Tuic5 multi-port"
 green "0: Return to the upper level"
@@ -2240,7 +2238,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
+echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

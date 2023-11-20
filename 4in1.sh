@@ -78,26 +78,28 @@ cd
 fi
 update
 packages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "wget" "cron")
-for package in "${packages[@]}"
-do
+inspackages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "wget" "cron")
+for i in "${!packages[@]}"; do
+package="${packages[$i]}"
+inspackage="${inspackages[$i]}"
 if ! command -v "$package" &> /dev/null; then
 if [ -x "$(command -v apt-get)" ]; then
-apt-get install -y "$package" 
+apt-get install -y "$inspackage"
 elif [ -x "$(command -v yum)" ]; then
-yum install -y "$package"
+yum install -y "$inspackage"
 elif [ -x "$(command -v dnf)" ]; then
-dnf install -y "$package"
+dnf install -y "$inspackage"
 fi
 fi
 done
 if [ -x "$(command -v yum)" ] || [ -x "$(command -v dnf)" ]; then
-if ! command -v "cronie" &> /dev/null; then
 if [ -x "$(command -v yum)" ]; then
-yum install -y cronie
+yum install -y cronie iptables-services
 elif [ -x "$(command -v dnf)" ]; then
-dnf install -y cronie
+dnf install -y cronie iptables-services
 fi
-fi
+systemctl enable iptables >/dev/null 2>&1
+systemctl start iptables >/dev/null 2>&1
 fi
 update
 touch sbyg_update
@@ -207,7 +209,7 @@ inscertificate(){
 ymzs(){
 ym_vl_re=www.yahoo.com
 blue "The SNI domain name of Vless-reality defaults to www.yahoo.com"
-blue "Vmess-ws turns on TLS, and both Hysteria-2 and Tuic-v5 will use the applied $(cat /root/ygkkkca/ca.log 2>/dev/null) certificate"
+blue "Vmess-ws will enable TLS, Hysteria-2 and Tuic-v5 will use the $(cat /root/ygkkkca/ca.log 2>/dev/null) certificate and enable SNI certificate verification."
 tlsyn=true
 ym_vm_ws=$(cat /root/ygkkkca/ca.log 2>/dev/null)
 certificatec_vmess_ws='/root/ygkkkca/cert.crt'
@@ -220,7 +222,7 @@ certificatep_tuic='/root/ygkkkca/private.key'
 zqzs(){
 ym_vl_re=www.yahoo.com
 blue "The SNI domain name of Vless-reality defaults to www.yahoo.com"
-blue "Vmess-ws turns off TLS, Hysteria-2 and Tuic-v5 will apply bing self-signed certificates"
+blue "Vmess-ws will turn off TLS, Hysteria-2 and Tuic-v5 will use bing self-signed certificates and turn off SNI certificate verification."
 tlsyn=false
 ym_vm_ws=www.bing.com
 certificatec_vmess_ws='/etc/s-box/cert.pem'
@@ -246,7 +248,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -255,8 +257,8 @@ else
 ymzs
 fi
 else
-green "If the domain name has been resolved, should I apply for an Acme domain name certificate? (Composed into dual certificate mode, it can coexist with the generated self-signed certificate, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -1223,11 +1225,11 @@ fi
 sleep 5
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
-blue "The Argo tunnel application is successful and the verification is valid. Domain name: $argo" && sleep 2
+blue "Argo tunnel application is successful, domain name verification is valid: $argo" && sleep 2
 break
 fi
 if [ $i -eq 5 ]; then
-yellow "The Argo tunnel domain name verification is unavailable and may be automatically restored or the application reset again." && sleep 2
+yellow "Argo domain name verification is temporarily unavailable. It may be automatically restored after a while, or the application may be reset." && sleep 2
 fi
 done
 else
@@ -1281,9 +1283,9 @@ echo
 }
 changeym(){
 [ -f /root/ygkkkca/ca.log ] && ymzs="$yellow switches to domain name certificate: $(cat /root/ygkkkca/ca.log 2>/dev/null)$plain" || ymzs="$yellow has not applied for a domain name certificate and cannot switch to $plain"
-vl_na="Domain name certificate in use: $(jq -r '.inbounds[0].tls.server_name' /etc/s-box/sb.json). $yellow replaces the domain name certificate that meets the requirements of reality $plain"
+vl_na="Domain name certificate in use: $(jq -r '.inbounds[0].tls.server_name' /etc/s-box/sb.json). $yellow replaces the domain name certificate that meets the requirements of reality. It is not recommended to use the domain name with its own resolution $plain"
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
-[[ "$tls" = "false" ]] && vm_na="TLS is currently turned off. $ymzs ${yellow}, the Argo tunnel will be closed. You can enter the main menu option 4 and change the port to an https 443 series port to achieve CDN preferred IP${plain}" || vm_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow is switched to turn off TLS, Argo tunnel will be available, you can enter the main menu option 4, change the port to http 80 series port, the main protocol implements CDN preferred IP$plain"
+[[ "$tls" = "false" ]] && vm_na="TLS is currently turned off. $ymzs ${yellow} switches to enable TLS, the Argo tunnel will be closed, you can enter the main menu option 4, change the port to https 443 series port, the main protocol can achieve CDN preferred IP${plain}" || vm_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow is switched to turn off TLS, Argo tunnel will be available, you can enter the main menu option 4, change the port to http 80 series port, the main protocol can realize CDN preferred IP$plain"
 hy2_sniname=$(jq -r '.inbounds[2].tls.key_path' /etc/s-box/sb.json)
 [[ "$hy2_sniname" = '/etc/s-box/private.key' ]] && hy2_na="Using self-signed bing certificate. $ymzs" || hy2_na="Domain name certificate in use: $(cat /root/ygkkkca/ca.log 2>/dev/null). $yellow switches to self-signed bing certificate $plain"
 tu5_sniname=$(jq -r '.inbounds[3].tls.key_path' /etc/s-box/sb.json)
@@ -1295,7 +1297,7 @@ green "2: vmess-ws protocol, $vm_na"
 green "3: Hysteria2 protocol, $hy2_na"
 green "4: Tuic5 protocol, $tu5_na"
 else
-red "Only option 1 (vless-reality) is supported. Because the domain name certificate has not been applied for, the certificate switching options for vmess-ws, Hysteria2, and Tuic5 are not displayed for the time being."
+red "Only option 1 (vless-reality) is supported. Because the domain name certificate has not been applied for, the certificate switching options for vmess-ws, Hysteria-2, and Tuic-v5 are not displayed for the time being."
 fi
 green "0: Return to the upper level"
 readp "please choose:" menu
@@ -1308,6 +1310,7 @@ c=$(cat /etc/s-box/vl_reality.txt | cut -d'=' -f5 | cut -d'&' -f1)
 sed -i "23s/$a/$ym_vl_re/" /etc/s-box/sb.json
 sed -i "27s/$b/$ym_vl_re/" /etc/s-box/sb.json
 systemctl restart sing-box
+blue "The vless-reality domain name has been changed to $ym_vl_re"
 result_vl_vm_hy_tu && resvless && sb_client
 elif [ "$menu" = "2" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1395,6 +1398,7 @@ if [[ $b -ge 1000 && $b -le 65535 && $c -ge 1000 && $c -le 65535 && $b -lt $c ]]
 iptables -t nat -A PREROUTING -p udp --dport $rangeport -j DNAT --to-destination :$port
 ip6tables -t nat -A PREROUTING -p udp --dport $rangeport -j DNAT --to-destination :$port
 netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 blue "Confirmed forwarded port range: $rangeport"
 else
 red "The entered port range is not within the valid range" && fports
@@ -1410,6 +1414,7 @@ if [[ $onlyport -ge 1000 && $onlyport -le 65535 ]]; then
 iptables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
 ip6tables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
 netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 blue "Confirmed forwarded port: $onlyport"
 else
 blue "The entered port is not within the valid range" && fport
@@ -1425,6 +1430,7 @@ iptables -t nat -D PREROUTING -p udp --dport $port -j DNAT --to-destination :$hy
 ip6tables -t nat -D PREROUTING -p udp --dport $port -j DNAT --to-destination :$hy2_port
 done
 netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 }
 tu5deports(){
 allports
@@ -1435,6 +1441,7 @@ iptables -t nat -D PREROUTING -p udp --dport $port -j DNAT --to-destination :$tu
 ip6tables -t nat -D PREROUTING -p udp --dport $port -j DNAT --to-destination :$tu5_port
 done
 netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 }
 allports
 green "vless-reality and vmess-ws can only change the unique port"
@@ -2045,6 +2052,7 @@ kill -15 $(pgrep cloudflared) >/dev/null 2>&1
 uncronsb
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
+service iptables save >/dev/null 2>&1
 green "Sing-box uninstallation completed!"
 }
 sblog(){
@@ -2065,7 +2073,7 @@ echo
 yellow "1: View the latest sharing links and QR codes of each agreement"
 yellow "2: View the latest Clash-Meta and Sing-box client SFA/SFI/SFW unified configuration files"
 yellow "3: View the latest V2rayN client configuration files of Hysteria2 and Tuic5"
-yellow "4: Execute Telegram push of the latest node configuration information (1+2)"
+yellow "4: Push the latest node configuration information (1+2) to Telegram"
 yellow "0: Return to the upper level"
 readp "Please select【0-4】：" menu
 if [ "$menu" = "1" ]; then

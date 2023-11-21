@@ -1855,7 +1855,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else
@@ -2246,7 +2246,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
+echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

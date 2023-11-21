@@ -338,10 +338,14 @@ else
 numbers=("8080" "8880" "2052" "2082" "2086" "2095")
 fi
 port_vm_ws=${numbers[$RANDOM % ${#numbers[@]}]}
+echo
+blue "Depending on whether the Vmess-ws protocol enables TLS, randomly specify the port that supports the CDN preferred IP: $port_vm_ws"
+echo
 else
 vlport && vmport && hy2port && tu5port
 fi
 echo
+blue "Each protocol port has been confirmed:"
 blue "Vless-reality port: $port_vl_re"
 blue "Vmess-ws port: $port_vm_ws"
 blue "Hysteria-2 port: $port_hy2"
@@ -654,6 +658,7 @@ systemctl start warp-go >/dev/null 2>&1
 fi
 }
 result_vl_vm_hy_tu(){
+rm -rf /etc/s-box/vm_ws_argo.txt /etc/s-box/vm_ws.txt /etc/s-box/vm_ws_tls.txt
 wgcfgo
 vl_port=$(jq -r '.inbounds[0].listen_port' /etc/s-box/sb.json)
 vl_name=$(jq -r '.inbounds[0].tls.server_name' /etc/s-box/sb.json)
@@ -1263,7 +1268,7 @@ x86_64) cpu=amd64;;
 esac
 curl -sL -o /etc/s-box/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu
 chmod +x /etc/s-box/cloudflared
-/etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > argo.log 2>&1 &
+/etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
 sleep 5
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')

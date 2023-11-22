@@ -194,6 +194,7 @@ mkdir -p /etc/s-box
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
+if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
 tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
 mv /etc/s-box/$sbname/sing-box /etc/s-box
 rm -rf /etc/s-box/{sing-box.tar.gz,$sbname}
@@ -202,7 +203,10 @@ chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
 blue "Successfully installed Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')"
 else
-red "Installation of Sing-box kernel failed" && exit
+red "Failed to install Sing-box kernel, please run the installation again" && exit
+fi
+else
+red "Failed to download the Sing-box kernel. Please run the installation again and check whether the VPS network can access Github." && exit
 fi
 }
 inscertificate(){
@@ -1234,7 +1238,7 @@ blue "Argo tunnel application is successful, domain name verification is valid: 
 break
 fi
 if [ $i -eq 5 ]; then
-yellow "Argo domain name verification is temporarily unavailable. It may be automatically restored after a while, or the application may be reset." && sleep 2
+yellow "Argo domain name verification is temporarily unavailable. It may be automatically restored later, or you may directly apply for reset." && sleep 2
 fi
 done
 else
@@ -1860,7 +1864,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else
@@ -2036,6 +2040,7 @@ sb
 fi
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
+if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
 tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
 mv /etc/s-box/$sbname/sing-box /etc/s-box
 rm -rf /etc/s-box/{sing-box.tar.gz,$sbname}
@@ -2043,9 +2048,12 @@ if [[ -f '/etc/s-box/sing-box' ]]; then
 chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
 systemctl restart sing-box
-blue "Successfully installed Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb 
+blue "Successfully upgraded/switched Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb
 else
-red "Installation of Sing-box kernel failed" && exit
+red "Upgrading/switching Sing-box kernel failed, please run the installation again" && upsbcroe
+fi
+else
+red "Failed to download the Sing-box kernel. Please run the installation again and check whether the VPS network can access Github." && exit
 fi
 }
 unins(){
@@ -2220,7 +2228,7 @@ green " 6. Close and restart Sing-box"
 green " 7. Update Sing-box-yg script"
 green " 8. Update and switch Sing-box dual core"
 white "----------------------------------------------------------------------------------"
-green " 9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
+green "9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
 green "10. View Sing-box operation log"
 green "11. One-click original BBR+FQ acceleration"
 green "12. Manage Acme certificate applications"
@@ -2251,7 +2259,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

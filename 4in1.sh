@@ -252,7 +252,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -262,7 +262,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -344,12 +344,11 @@ fi
 port_vm_ws=${numbers[$RANDOM % ${#numbers[@]}]}
 echo
 blue "Depending on whether the Vmess-ws protocol enables TLS, randomly specify the port that supports the CDN preferred IP: $port_vm_ws"
-echo
 else
 vlport && vmport && hy2port && tu5port
 fi
 echo
-blue "Each protocol port has been confirmed:"
+blue "Each protocol port is confirmed as follows:"
 blue "Vless-reality port: $port_vl_re"
 blue "Vmess-ws port: $port_vm_ws"
 blue "Hysteria-2 port: $port_hy2"
@@ -536,11 +535,11 @@ cat > /etc/s-box/sb.json <<EOF
 ],
 "route":{
 "geoip":{
-"download_url":"https://github.com/soffchen/sing-geoip/releases/latest/download/geoip.db",
+"download_url":"https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
 "download_detour":"direct"
 },
 "geosite":{
-"download_url":"https://github.com/soffchen/sing-geosite/releases/latest/download/geosite.db",
+"download_url":"https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
 "download_detour":"direct"
 },
 "rules":[
@@ -1019,11 +1018,11 @@ cat > /etc/s-box/sing_box_client.json <<EOF
   ],
   "route": {
       "geoip": {
-      "download_url": "https://cdn.jsdelivr.net/gh/soffchen/sing-geoip@release/geoip.db",
+      "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
       "download_detour": "select"
     },
     "geosite": {
-      "download_url": "https://cdn.jsdelivr.net/gh/soffchen/sing-geosite@release/geosite.db",
+      "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
       "download_detour": "select"
     },
     "auto_detect_interface": true,
@@ -1257,8 +1256,8 @@ private_key=$(echo "$key_pair" | awk '/PrivateKey/ {print $2}' | tr -d '"')
 public_key=$(echo "$key_pair" | awk '/PublicKey/ {print $2}' | tr -d '"')
 echo "$public_key" > /etc/s-box/public.key
 short_id=$(/etc/s-box/sing-box generate rand --hex 4)
-wget -q -O /root/geosite.db https://github.com/soffchen/sing-geosite/releases/latest/download/geosite.db
-wget -q -O /root/geoip.db https://github.com/soffchen/sing-geoip/releases/latest/download/geoip.db
+wget -q -O /root/geosite.db https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
+wget -q -O /root/geoip.db https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db
 inssbjsonser && sbservice && sbactive
 if [[ ! $vi =~ lxc|openvz ]]; then
 sysctl -w net.core.rmem_max=2500000 > /dev/null

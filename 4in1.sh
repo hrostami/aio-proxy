@@ -1231,7 +1231,7 @@ kill -15 $(pgrep cloudflared) >/dev/null 2>&1
 fi
 /etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
 sleep 5
-if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
+if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 blue "Argo tunnel application is successful, domain name verification is valid: $argo" && sleep 2
 break
@@ -1273,7 +1273,7 @@ curl -sL -o /etc/s-box/cloudflared https://github.com/cloudflare/cloudflared/rel
 chmod +x /etc/s-box/cloudflared
 /etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
 sleep 5
-if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
+if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
 blue "The Argo tunnel application is successful and the verification is valid. Domain name: $argo" && sleep 2
 else
@@ -2166,7 +2166,7 @@ allports
 sbymfl
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
 if [[ "$tls" = "false" ]]; then
-if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
+if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 vm_zs="TLS off"
 argoym="Turned on"
 else

@@ -252,7 +252,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -262,7 +262,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -2164,9 +2164,19 @@ fi
 showprotocol(){
 allports
 sbymfl
-[[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]] && argoym="Running" || argoym="Closed"
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
-[[ "$tls" = "false" ]] && vm_zs="TLS off" || vm_zs="TLS enabled"
+if [[ "$tls" = "false" ]]; then
+if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | grep -E -w "HTTP/2 (404|400)") ]]; then
+vm_zs="TLS off"
+argoym="Turned on"
+else
+vm_zs="TLS off"
+argoym="Not turned on, can be reset to turn on"
+fi
+else
+vm_zs="TLS enabled"
+argoym="Does not support opening"
+fi
 hy2_sniname=$(jq -r '.inbounds[2].tls.key_path' /etc/s-box/sb.json)
 [[ "$hy2_sniname" = '/etc/s-box/private.key' ]] && hy2_zs="self-signed certificate" || hy2_zs="Domain name certificate"
 tu5_sniname=$(jq -r '.inbounds[3].tls.key_path' /etc/s-box/sb.json)
@@ -2180,7 +2190,7 @@ echo -e "🚀[ Vmess-ws-tls ] ${yellow} port: $vm_port Certificate format: $vm_z
 fi
 echo -e "🚀【 Hysteria-2 】${yellow} port: $hy2_port Certificate format: $hy2_zs Forwarding multiple ports: $hy2zfport${plain}"
 echo -e "🚀【 Tuic-v5 】${yellow} port: $tu5_port Certificate format: $tu5_zs Forwarding multiple ports: $tu5zfport${plain}"
-if [ "$argoym" = "Running" ]; then
+if [ "$argoym" = "Turned on" ]; then
 echo -e "UUID (password): ${yellow}$(jq -r '.inbounds[0].users[0].uuid' /etc/s-box/sb.json)${plain}"
 echo -e "Argo temporary domain name: ${yellow}$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2} ' | awk '{print $1}')${plain}"
 fi

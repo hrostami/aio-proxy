@@ -330,7 +330,6 @@ chisel_tunnel_setup() {
 
         readp "Enter domain: " USER_DOMAIN
         DOMAIN=${USER_DOMAIN:-example.com}
-        cd chisel
 
         "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$USER_PORT"
     }

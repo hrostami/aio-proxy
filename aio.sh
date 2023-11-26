@@ -286,6 +286,7 @@ display_domains_menu() {
 }
 # ----------------------------------------Chisel Tunnel stuff----------------------------------------------
 chisel_tunnel_setup() {
+    echo
     CONFIG_FILE="/etc/chisel/config.json"
     CHISEL_DIR="/etc/chisel"
 
@@ -374,10 +375,11 @@ chisel_tunnel_setup() {
         PORT=$(jq -r '.PORT' $CONFIG_FILE)
         SOCKS5_PORT=$(jq -r '.SOCKS5_PORT' $CONFIG_FILE)
         DOMAIN=$(jq -r '.DOMAIN' $CONFIG_FILE)
-        echo "Current config:"
-        echo "Port: $PORT"
-        echo "SOCKS5 Port: $SOCKS5_PORT"
-        echo "Domain: $DOMAIN"
+        echo "----------------Current Config-----------------"
+        echo -e "${plain} HTTP Port:${yellow} $PORT${plain}"
+        echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
+        echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
+        echo "--------------------------------------------"
     }
 
     get_user_input() {
@@ -444,7 +446,7 @@ chisel_tunnel_setup() {
                         ;;
                     *)
                         echo "Invalid choice. Exiting."
-                        exit 1
+                        return
                         ;;
                 esac
             else

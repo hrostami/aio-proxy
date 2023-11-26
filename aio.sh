@@ -324,10 +324,10 @@ chisel_tunnel_setup() {
         chmod +x "chisel_${LATEST_VERSION}_linux_arm64"
         termux-chroot
 
-        read -p "Enter port number: " USER_PORT
+        readp "Enter port number: " USER_PORT
         PORT=${USER_PORT:-5050}
 
-        read -p "Enter domain: " USER_DOMAIN
+        readp "Enter domain: " USER_DOMAIN
         DOMAIN=${USER_DOMAIN:-example.com}
 
         "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "$USER_PORT:127.0.0.1:$SOCKS5_PORT"
@@ -383,7 +383,7 @@ chisel_tunnel_setup() {
     get_user_input() {
         if [ -f "$CONFIG_FILE" ]; then
             load_config
-            read -p "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
+            readp "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
             if [ "$CHANGE_CONFIG" == "y" ]; then
                 :
             else
@@ -394,13 +394,13 @@ chisel_tunnel_setup() {
             SOCKS5_PORT=443
             DOMAIN="example.com"
         fi
-        read -p "Enter port (default $PORT): " USER_PORT
+        readp "Enter port (default $PORT): " USER_PORT
         PORT=${USER_PORT:-$PORT}
 
-        read -p "Enter SOCKS5 port (default $SOCKS5_PORT): " USER_SOCKS5_PORT 
+        readp "Enter SOCKS5 port (default $SOCKS5_PORT): " USER_SOCKS5_PORT 
         SOCKS5_PORT=${USER_SOCKS5_PORT:-$SOCKS5_PORT}
 
-        read -p "Enter domain: " USER_DOMAIN
+        readp "Enter domain: " USER_DOMAIN
         DOMAIN=${USER_DOMAIN:-$DOMAIN}
         echo -e "{\n\"PORT\": \"$PORT\", \n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
     }
@@ -408,12 +408,18 @@ chisel_tunnel_setup() {
     start_chisel() {
         load_config
         tmux new-session -d "./$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
-        echo "Chisel is now running with config:"
-        echo "Port: $PORT"
-        echo "SOCKS5 Port: $SOCKS5_PORT"
-        echo "Domain: $DOMAIN"
-        echo "To connect on Windows run:"
+        green "Chisel is now running with config:"
+        
+        
+        echo "----------------config info-----------------"
+        echo -e "${plain} HTTP Port:${yellow} $PORT${plain}"
+        echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
+        echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
+        echo "--------------------------------------------"
+        echo
+        yellow "To connect on Windows run:"
         echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
+        
     }
 
     if [ -n "$ANDROID_ROOT" ]; then
@@ -424,7 +430,7 @@ chisel_tunnel_setup() {
             install_chisel
         else
             if pgrep -f "chisel_$INSTALLED_VERSION" > /dev/null; then
-                read -p "Chisel is already running. Do you want to: (s)top/(u)pdate/(r)estart Chisel? " USER_CHOICE
+                readp "Chisel is already running. Do you want to: (s)top/(u)pdate/(r)estart Chisel? " USER_CHOICE
                 case $USER_CHOICE in
                     s)
                         stop_chisel

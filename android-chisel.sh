@@ -24,6 +24,7 @@ pkg install jq -y
 apt install go -y
 pkg install golang -y
 
+clear
 termux-setup-storage
 
 if [ ! -d "$CHISEL_DIR" ]; then
@@ -65,5 +66,6 @@ get_user_input() {
     DOMAIN=${USER_DOMAIN:-$DOMAIN}
     echo -e "{\n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
 }
+get_user_input
 
 "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"

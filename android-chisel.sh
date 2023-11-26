@@ -19,10 +19,25 @@ CHISEL_DIR="chisel"
 LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
 
 apt-get update
-pkg install curl -y 
-pkg install jq -y
-apt install go -y
-pkg install golang -y
+pkg update
+
+# Function to check if a package is installed
+check_package() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Install required packages if not already installed
+if ! check_package "curl"; then
+    pkg install curl -y
+fi
+
+if ! check_package "jq"; then
+    pkg install jq -y
+fi
+
+if ! check_package "go" || ! check_package "golang"; then
+    pkg install golang -y
+fi
 
 clear
 termux-setup-storage
@@ -46,6 +61,7 @@ load_config() {
     echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
     echo "--------------------------------------------"
 }
+
 get_user_input() {
     if [ -f "$CONFIG_FILE" ]; then
         load_config
@@ -67,6 +83,7 @@ get_user_input() {
     DOMAIN=${USER_DOMAIN:-$DOMAIN}
     echo -e "{\n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
 }
+
 get_user_input
 
 "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"

@@ -31,6 +31,7 @@ if [ ! -d "$CHISEL_DIR" ]; then
     mkdir "$CHISEL_DIR" && cd "$CHISEL_DIR"
 else
     cd "$CHISEL_DIR"
+fi
 
 curl -LO "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
 gunzip "chisel_${LATEST_VERSION}_linux_arm64.gz"

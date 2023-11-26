@@ -18,8 +18,6 @@ CONFIG_FILE="config.json"
 CHISEL_DIR="chisel"
 LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
 
-apt-get update
-pkg update
 
 # Function to check if a package is installed
 check_package() {
@@ -27,12 +25,14 @@ check_package() {
 }
 
 # Install required packages if not already installed
-if ! check_package "curl"; then
-    pkg install curl -y
+if ! check_package "jq"; then
+    apt-get update
+    pkg update
+    pkg install jq -y
 fi
 
-if ! check_package "jq"; then
-    pkg install jq -y
+if ! check_package "curl"; then
+    pkg install curl -y
 fi
 
 if ! check_package "go" || ! check_package "golang"; then
@@ -83,6 +83,19 @@ get_user_input() {
     DOMAIN=${USER_DOMAIN:-$DOMAIN}
     echo -e "{\n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
 }
+bblue "             █████╗ ██╗ ██████╗              "
+bblue "            ██╔══██╗██║██╔═══██╗             "
+bblue "            ███████║██║██║   ██║             "
+bblue "            ██╔══██║██║██║   ██║             "
+bblue "            ██║  ██║██║╚██████╔╝             "
+bblue "            ╚═╝  ╚═╝╚═╝ ╚═════╝              "
+bblue "           All-in-one Proxy Tool             "
+white "              Created by Hosy                "
+white "---------------------------------------------"
+white " Github: https://github.com/hrostami"
+white " Twitter: https://twitter.com/hosy000"
+echo
+echo -e "    ${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
 
 get_user_input
 

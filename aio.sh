@@ -354,17 +354,27 @@ chisel_tunnel_setup() {
     }
 
     get_user_input() {
-        read -p "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
-        if [ "$CHANGE_CONFIG" == "y" ]; then
-            read -p "Enter port (default $PORT): " USER_PORT
-            PORT=${USER_PORT:-$PORT}
-
-            read -p "Enter SOCKS5 port (default $SOCKS5_PORT): " USER_SOCKS5_PORT 
-            SOCKS5_PORT=${USER_SOCKS5_PORT:-$SOCKS5_PORT}
-
-            read -p "Enter domain: " USER_DOMAIN
-            DOMAIN=${USER_DOMAIN:-$DOMAIN}
+        if [ -f "$CONFIG_FILE" ]; then
+            read -p "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
+            if [ "$CHANGE_CONFIG" == "y" ]; then
+                load_config
+            else
+                break
+            fi
+        else 
+            PORT=80
+            SOCKS5_PORT=443
+            DOMAIN="example.com"
         fi
+        read -p "Enter port (default $PORT): " USER_PORT
+        PORT=${USER_PORT:-$PORT}
+
+        read -p "Enter SOCKS5 port (default $SOCKS5_PORT): " USER_SOCKS5_PORT 
+        SOCKS5_PORT=${USER_SOCKS5_PORT:-$SOCKS5_PORT}
+
+        read -p "Enter domain: " USER_DOMAIN
+        DOMAIN=${USER_DOMAIN:-$DOMAIN}
+        echo -e "{\n\"PORT\": \"$PORT\", \n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
     }
 
     start_chisel() {

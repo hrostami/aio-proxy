@@ -1342,7 +1342,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1360,7 +1360,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1378,7 +1378,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1863,7 +1863,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else

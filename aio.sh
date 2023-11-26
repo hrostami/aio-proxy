@@ -1654,6 +1654,7 @@ while true; do
                 reality_scanner
                 echo
                 readp "Press Enter to continue..."
+                systemctl stop xray
                 break
             done
             ;;

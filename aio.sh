@@ -1064,10 +1064,10 @@ reality_scanner() {
 	echo "pip install -U hiddify_reality_scanner"
 	echo
     echo "-------------------Scan IPv4------------------"
-	echo -e "{$plain}hiddify_reality_scanner \"{$yellow}$IPV4_LINK{$plain}\""
+	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV4_LINK${plain}\""
     echo
     echo "-------------------Scan IPv6------------------"
-	echo -e "{$plain}hiddify_reality_scanner \"{$yellow}$IPV6_LINK{$plain}\""
+	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV6_LINK${plain}\""
     echo
     echo "----------------------------------------------"
 

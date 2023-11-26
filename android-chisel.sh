@@ -95,7 +95,7 @@ white "---------------------------------------------"
 white " Github: https://github.com/hrostami"
 white " Twitter: https://twitter.com/hosy000"
 echo
-echo -e "    ${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
+echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
 
 get_user_input
 

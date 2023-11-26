@@ -326,7 +326,7 @@ chisel_tunnel_setup() {
         termux-chroot
 
         readp "Enter port number: " USER_PORT
-        PORT=${USER_PORT:-5050}
+        PORT=${USER_PORT:-80}
 
         readp "Enter domain: " USER_DOMAIN
         DOMAIN=${USER_DOMAIN:-example.com}

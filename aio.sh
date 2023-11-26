@@ -77,11 +77,12 @@ display_main_menu() {
     white "---------------------------------------------"
     white " Github: https://github.com/hrostami"
     white " Twitter: https://twitter.com/hosy000"
+    echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
     echo
     yellow "-------------------Protocols------------------"
-    green "1. Hysteria              2. Hysteria V2"
+    green "1. Chisel                2. Hysteria V2"
     echo
-    green "3. Tuic                  4. Reality"
+    green "3. Tuic                  4. Hiddify Reality Scanner"
     echo
     green "5. SSH                   6. 4 In 1 Script"
     echo
@@ -96,18 +97,16 @@ display_main_menu() {
     echo "----------------------------------------------"
 }
 
-display_hysteria_menu() {
+display_chisel_menu() {
     clear
     echo "**********************************************"
-    yellow "                Hysteria Menu                 "
+    yellow "                Chisel Menu                 "
     echo "**********************************************"
-    green "1. Install/Update"
+    green "1. Server Setup"
     echo
-    green "2. Change Parameters"
+    green "2. Android Setup"
     echo
-    green "3. Show Configs"
-    echo
-    green "4. Delete"
+    green "3. Windows Command"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
@@ -285,212 +284,166 @@ display_domains_menu() {
     echo -e "${plain}IPv6 Domain:${red} $IPV6_DOMAIN${plain}"
     echo "**********************************************"
 }
-# ----------------------------------------Hysteria stuff------------------------------------------------
-run_hysteria_setup() {
-    clear
-    echo "Running Hysteria Setup..."
-    sleep 2
-    #!/bin/bash
+# ----------------------------------------Chisel Tunnel stuff----------------------------------------------
+chisel_tunnel_setup() {
 
-    apt-get update 
-    apt-get install wget nano -y
-    apt-get install net-tools -y
+    install_chisel_termux() {
+        apt-get update
+        pkg install wget
+        apt install go
+        pkg install golang
+        termux-setup-storage
+        mkdir chisel && cd chisel
+        wget "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
+        gunzip "chisel_${LATEST_VERSION}_linux_arm64.gz"
+        chmod +x "chisel_${LATEST_VERSION}_linux_arm64"
+        termux-chroot
 
-    if [ "$EUID" -eq 0 ]; then
-        user_directory="/root/hy"
-    else
-        user_directory="/home/$USER/hy"
-    fi
+        read -p "Enter port number: " USER_PORT
+        PORT=${USER_PORT:-5050}
 
-    if [ -d "$user_directory" ]; then
-        clear
-        echo "--------------------------------------------------------------------------------"
-        echo -e "\e[1;33mHysteria directory already exists. Checking for latest version..\e[0m"
-        echo "--------------------------------------------------------------------------------"
-        sleep 2
+        read -p "Enter domain: " USER_DOMAIN
+        DOMAIN=${USER_DOMAIN:-example.com}
 
-        if [ -f "$user_directory/config.json" ]; then
-            port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
-            password=$(jq -r '.obfs' "$user_directory/config.json")
+        "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "$USER_PORT:127.0.0.1:$SOCKS5_PORT"
+    }
+
+    install_chisel() {
+        mkdir -p "$CHISEL_DIR"
+        cd "$CHISEL_DIR"
+
+        wget "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/${CHISEL_BIN}.gz"
+        gunzip "$CHISEL_BIN".gz
+        chmod +x "$CHISEL_BIN"
+    }
+
+    stop_chisel() {
+        CHISEL_PID=$(pgrep -f "chisel_$INSTALLED_VERSION")  
+
+        if [ -n "$CHISEL_PID" ]; then
+            echo "Stopping chisel server (PID $CHISEL_PID)"   
+            kill "$CHISEL_PID" 
         else
-            echo "Error: config.json file not found in Hysteria directory."
-            return
+            echo "Chisel server not running"
         fi
-    else
-        readp "Enter the listening port: " port
-        readp "Enter the obfuscation password: " password
+    }
 
-        mkdir -p "$user_directory"
-        cd "$user_directory"
-
-        cat << EOF > "$user_directory/config.json"
-        {
-        "listen": ":$port",
-        "cert": "$user_directory/ca.crt",
-        "key": "$user_directory/ca.key",
-        "obfs": "$password",
-        "recv_window_conn": 3407872,
-        "recv_window": 13631488,
-        "disable_mtu_discovery": true,
-        "resolver": "https://223.5.5.5/dns-query"
-        }
-EOF
-    fi
-
-    # latest_version=$(curl -s https://api.github.com/repos/apernet/hysteria/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
-    latest_version="v1.3.5"
-    echo -e "\e[1;33m---> Installing hysteria ver $latest_version\e[0m"
-    echo "--------------------------------------------------------------------------------"
-    sleep 2
-
-    rm hysteria-linux-amd64
-
-    architecture=$(uname -m)
-    if [ "$architecture" = "x86_64" ]; then
-        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-amd64"
-    else
-        wget "https://github.com/apernet/hysteria/releases/download/$latest_version/hysteria-linux-arm"
-        mv hysteria-linux-arm hysteria-linux-amd64
-    fi
-
-    chmod 755 hysteria-linux-amd64
-
-    # Generate encryption keys if they don't exist
-    if [ ! -f "$user_directory/ca.key" ] || [ ! -f "$user_directory/ca.crt" ]; then
-        openssl ecparam -genkey -name prime256v1 -out "$user_directory/ca.key"
-        openssl req -new -x509 -days 36500 -key "$user_directory/ca.key" -out "$user_directory/ca.crt" -subj "/CN=bing.com"
-    fi
-
-    # Create a systemd service for hysteria if it doesn't exist
-    if [ ! -f "/etc/systemd/system/hy.service" ]; then
-        cat << EOF > /etc/systemd/system/hy.service
-        [Unit]
-        After=network.target nss-lookup.target
-
-        [Service]
-        User=root
-        WorkingDirectory=$user_directory
-        CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
-        AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE CAP_NET_RAW
-        ExecStart=$user_directory/hysteria-linux-amd64 -c $user_directory/config.json server
-        ExecReload=/bin/kill -HUP $MAINPID
-        Restart=always
-        RestartSec=5
-        LimitNOFILE=infinity
-
-        [Install]
-        WantedBy=multi-user.target
-EOF
-
-        systemctl daemon-reload
-        systemctl enable hy
-    fi
-
-
-    systemctl restart hy
-}
-
-show_hy_configs() {
-    local user_directory
-
-    if [ "$EUID" -eq 0 ]; then
-        user_directory="/root/hy"
-    else
-        user_directory="/home/$USER/hy"
-    fi
-
-    if [ -d "$user_directory" ]; then
-        echo "Here are the current configurations:"
-        
-        password=$(jq -r '.obfs' "$user_directory/config.json")
-        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
-        
-        
-        systemctl stop wg-quick@wgcf
-
-        if [ -z "$IPV4_DOMAIN" ]; then
-            IPV4=$(curl -s https://v4.ident.me)
+    update_chisel() {
+        if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ]; then
+            stop_chisel
+            echo "Updating chisel $INSTALLED_VERSION -> $LATEST_VERSION"
+            
+            if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then
+                rm "$CHISEL_DIR/$CHISEL_BIN" 
+            fi
+            
+            install_chisel
         else
-            IPV4="$IPV4_DOMAIN"
+            echo "Chisel already latest version ($LATEST_VERSION)"
+        fi
+    }
+
+    load_config() {
+        PORT=$(jq -r '.PORT' $CONFIG_FILE)
+        SOCKS5_PORT=$(jq -r '.SOCKS5_PORT' $CONFIG_FILE)
+        DOMAIN=$(jq -r '.DOMAIN' $CONFIG_FILE)
+        echo "Current config:"
+        echo "Port: $PORT"
+        echo "SOCKS5 Port: $SOCKS5_PORT"
+        echo "Domain: $DOMAIN"
+    }
+
+    get_user_input() {
+        read -p "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
+        if [ "$CHANGE_CONFIG" == "y" ]; then
+            read -p "Enter port (default $PORT): " USER_PORT
+            PORT=${USER_PORT:-$PORT}
+
+            read -p "Enter SOCKS5 port (default $SOCKS5_PORT): " USER_SOCKS5_PORT 
+            SOCKS5_PORT=${USER_SOCKS5_PORT:-$SOCKS5_PORT}
+
+            read -p "Enter domain: " USER_DOMAIN
+            DOMAIN=${USER_DOMAIN:-$DOMAIN}
+        fi
+    }
+
+    start_chisel() {
+        load_config
+        tmux new-session -d "./$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
+    }
+
+    CONFIG_FILE="/etc/chisel/config.json"
+    CHISEL_DIR="/etc/chisel"
+
+    UNAME_M=$(uname -m)
+
+    case ${UNAME_M} in
+        x86_64)
+            ARCH=amd64
+            ;;
+        aarch64)  
+            ARCH=arm64  
+            ;; 
+        armv*)  
+            ARCH=${UNAME_M}     
+            ;;  
+        *)  
+            ARCH=amd64
+    esac
+
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
+    CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
+
+    if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then
+        INSTALLED_VERSION=$(echo $CHISEL_BIN | cut -d_ -f2)
+    fi 
+
+    if [ -n "$ANDROID_ROOT" ]; then
+        install_chisel_termux
+    else
+        if [ -f "$CONFIG_FILE" ]; then
+            load_config
+            get_user_input
+        else 
+            get_user_input
+            echo -e "{\n\"PORT\": \"$PORT\", \n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
         fi
 
-        if [ -z "$IPV6_DOMAIN" ]; then
-            IPV6=$(curl -s https://v6.ident.me)
-        else
-            IPV6="$IPV6_DOMAIN"
+        if [ ! -d "$CHISEL_DIR" ]; then
+            install_chisel
         fi
 
-        systemctl restart wg-quick@wgcf
-
-        IPV4_URL="hysteria://$IPV4:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv4"
-        IPV6_URL="hysteria://[$IPV6]:$port?protocol=udp&insecure=1&upmbps=100&downmbps=100&obfs=xplus&obfsParam=$password#hysteria IPv6"
-
-        echo "----------------config info-----------------"
-        echo -e "\e[1;33mPassword: $password\e[0m"
-        echo "--------------------------------------------"
-        echo
-        echo "----------------IP and Port-----------------"
-        echo -e "\e[1;33mPort: $port\e[0m"
-        echo -e "\e[1;33mIPv4: $IPV4\e[0m"
-        echo -e "\e[1;33mIPv6: $IPV6\e[0m"
-        echo "--------------------------------------------"
-        echo
-        echo "----------------Hysteria Config IPv4-----------------"
-        echo -e "\e[1;33m$IPV4_URL\e[0m"
-        qrencode -t ANSIUTF8 "$IPV4_URL"
-        echo "--------------------------------------------"
-        echo
-        echo "-----------------Hysteria Config IPv6----------------"
-        echo -e "\e[1;33m$IPV6_URL\e[0m"
-        qrencode -t ANSIUTF8 "$IPV6_URL"
-        echo "--------------------------------------------"
-    else
-        echo "Hysteria directory does not exist. Please install Hysteria first."
-    fi
-
-    readp "Press Enter to continue..."
-}
-
-change_hy_parameters() {
-    local user_directory
-
-    if [ "$EUID" -eq 0 ]; then
-        user_directory="/root/hy"
-    else
-        user_directory="/home/$USER/hy"
-    fi
-
-    if [ -d "$user_directory" ]; then
-        echo "Hysteria directory exists. You can change parameters here."
-        
-        port=$(jq -r '.listen' "$user_directory/config.json" | cut -c 2-)
-        password=$(jq -r '.obfs' "$user_directory/config.json")
-        
-        readp "Enter a new listening port [$port]: " new_port
-        readp "Enter a new obfuscation password [$password]: " new_password
-        
-        # Update the config.json file with the new or existing values
-        jq ".listen = \":${new_port:-$port}\" | .obfs = \"$new_password\"" "$user_directory/config.json" > tmp_config.json
-        mv tmp_config.json "$user_directory/config.json"
-
-        systemctl restart hy
-
-        echo "Parameters updated successfully."
-    else
-        echo "Hysteria directory does not exist. Please install Hysteria first."
+        if pgrep -f "chisel_$INSTALLED_VERSION" > /dev/null; then
+            read -p "Chisel is already running. Do you want to: (s)top/(c)hange config/(u)pdate Chisel? " USER_CHOICE
+            case $USER_CHOICE in
+                s)
+                    stop_chisel
+                    ;;
+                c)
+                    get_user_input
+                    ;;
+                u)
+                    update_chisel
+                    ;;
+                *)
+                    echo "Invalid choice. Exiting."
+                    exit 1
+                    ;;
+            esac
+        else
+            update_chisel
+            start_chisel
+            echo "Chisel is now running with config:"
+            echo "Port: $PORT"
+            echo "SOCKS5 Port: $SOCKS5_PORT"
+            echo "Domain: $DOMAIN"
+            echo "To connect on Windows run:"
+            echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
+        fi
     fi
 
 }
 
-delete_hysteria() {
-    clear
-    echo "Deleting Hysteria Proxy..."
-    sleep 2
-    rm -r ~/hy
-    systemctl stop hy
-    systemctl disable hy
-    readp "Press Enter to continue..."
-}
 
 # ----------------------------------------Hysteria V2 stuff------------------------------------------------
 run_hysteria_v2_setup() {
@@ -1574,31 +1527,11 @@ while true; do
     readp "Enter your choice: " main_choice
 
     case "$main_choice" in
-        1) # Hysteria
+        1) # Chisel
             while true; do
-                display_hysteria_menu
-                readp "Enter your choice: " hysteria_choice
-
-                case "$hysteria_choice" in
-                    1) # Install/Update
-                        run_hysteria_setup
-                        show_hy_configs
-                        ;;
-                    2) # Change Parameters
-                        change_hy_parameters
-                        show_hy_configs
-                        ;;
-                    3) # Show Configs
-                        show_hy_configs
-                        ;;
-                    4) # Delete
-                        delete_hysteria
-                        ;;
-                    0) # Back to Main Menu
-                        break
-                        ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
-                esac
+                chisel_tunnel_setup
+                readp "Press Enter to continue..."
+                break
             done
             ;;
         2) # Hysteria v2

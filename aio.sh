@@ -423,10 +423,14 @@ chisel_tunnel_setup() {
             install_chisel
         else
             if pgrep -f "chisel_$INSTALLED_VERSION" > /dev/null; then
-                read -p "Chisel is already running. Do you want to: (s)top/(u)pdate Chisel? " USER_CHOICE
+                read -p "Chisel is already running. Do you want to: (s)top/(u)pdate/(r)estart Chisel? " USER_CHOICE
                 case $USER_CHOICE in
                     s)
                         stop_chisel
+                        ;;
+                    r)
+                        stop_chisel
+                        start_chisel
                         ;;
                     u)
                         update_chisel

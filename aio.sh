@@ -286,6 +286,31 @@ display_domains_menu() {
 }
 # ----------------------------------------Chisel Tunnel stuff----------------------------------------------
 chisel_tunnel_setup() {
+    CONFIG_FILE="/etc/chisel/config.json"
+    CHISEL_DIR="/etc/chisel"
+
+    UNAME_M=$(uname -m)
+
+    case ${UNAME_M} in
+        x86_64)
+            ARCH=amd64
+            ;;
+        aarch64)  
+            ARCH=arm64  
+            ;; 
+        armv*)  
+            ARCH=${UNAME_M}     
+            ;;  
+        *)  
+            ARCH=amd64
+    esac
+
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
+    CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
+
+    if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then
+        INSTALLED_VERSION=$(echo $CHISEL_BIN | cut -d_ -f2)
+    fi
 
     install_chisel_termux() {
         apt-get update
@@ -389,32 +414,6 @@ chisel_tunnel_setup() {
         echo "To connect on Windows run:"
         echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
     }
-
-    CONFIG_FILE="/etc/chisel/config.json"
-    CHISEL_DIR="/etc/chisel"
-
-    UNAME_M=$(uname -m)
-
-    case ${UNAME_M} in
-        x86_64)
-            ARCH=amd64
-            ;;
-        aarch64)  
-            ARCH=arm64  
-            ;; 
-        armv*)  
-            ARCH=${UNAME_M}     
-            ;;  
-        *)  
-            ARCH=amd64
-    esac
-
-    LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
-    CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
-
-    if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then
-        INSTALLED_VERSION=$(echo $CHISEL_BIN | cut -d_ -f2)
-    fi 
 
     if [ -n "$ANDROID_ROOT" ]; then
         install_chisel_termux

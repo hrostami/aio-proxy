@@ -1029,31 +1029,27 @@ delete_tuic() {
 
 # ----------------------------------------reality scanner stuff------------------------------------------------
 reality_scanner() {
-    # Remove old Xray
 	bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ remove
 
 	systemctl stop hiddify-xray
 
-	# Install Hiddify custom Xray
 	bash -c "$(curl -L https://github.com/hiddify/Xray-core-custom/raw/main/install-release.sh)" @ install
 
-	# Ask the user for a port
 	readp "Enter the port for the Xray server: " xray_port
 
-	# Create a config with empty nameserver or use the provided server_config.json
 	curl -o server_config.json https://raw.githubusercontent.com/hiddify/Hiddify_Reality_Scanner/main/server_config.json
 
-	# Replace the port in the config file
 	sed -i "s/\"port\": 11443/\"port\": $xray_port/" server_config.json
 	
 	IPV6=$(curl -6 -s ip.sb)
 	IPV4=$(curl -4 -s ip.sb)
-	# Display IPV6 and IPV4 configurations
+
 	IPV6_LINK="vless://hiddify@[$IPV6]:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
 	
 	IPV4_LINK="vless://hiddify@$IPV4:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
 	echo
 	yellow "Run the following commands:"
+    echo "----------------------------------------------"
 	echo
 	echo "pip install virtualenv"
 	echo
@@ -1067,11 +1063,14 @@ reality_scanner() {
 	echo
 	echo "pip install -U hiddify_reality_scanner"
 	echo
-    echo "--------------------------------------------"
-	green "hiddify_reality_scanner \"$IPV4_LINK\""
-    echo "--------------------------------------------"
+    echo "-------------------Scan IPv4------------------"
+	echo -e "{$plain}hiddify_reality_scanner \"{$yellow}$IPV4_LINK{$plain}\""
     echo
-	# Run the Xray server with the created config
+    echo "-------------------Scan IPv6------------------"
+	echo -e "{$plain}hiddify_reality_scanner \"{$yellow}$IPV6_LINK{$plain}\""
+    echo
+    echo "----------------------------------------------"
+
 	xray run -c server_config.json
 }
 # ----------------------------------------SSH stuff------------------------------------------------
@@ -1653,6 +1652,7 @@ while true; do
         4) # Reality
             while true; do
                 reality_scanner
+                echo
                 readp "Press Enter to continue..."
                 break
             done

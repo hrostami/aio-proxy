@@ -320,7 +320,7 @@ chisel_tunnel_setup() {
         pkg install golang
         termux-setup-storage
         mkdir chisel && cd chisel
-        wget "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
+        curl -LO "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
         gunzip "chisel_${LATEST_VERSION}_linux_arm64.gz"
         chmod +x "chisel_${LATEST_VERSION}_linux_arm64"
         termux-chroot

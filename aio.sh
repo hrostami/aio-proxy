@@ -382,9 +382,10 @@ chisel_tunnel_setup() {
 
     get_user_input() {
         if [ -f "$CONFIG_FILE" ]; then
+            load_config
             read -p "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
             if [ "$CHANGE_CONFIG" == "y" ]; then
-                load_config
+                :
             else
                 return
             fi

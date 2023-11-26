@@ -386,7 +386,7 @@ chisel_tunnel_setup() {
             if [ "$CHANGE_CONFIG" == "y" ]; then
                 load_config
             else
-                break
+                return
             fi
         else 
             PORT=80

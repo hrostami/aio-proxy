@@ -558,7 +558,8 @@ if [[ $(systemctl is-active warp-svc) = active ]]; then
 mport=`warp-cli --accept-tos settings 2>/dev/null | grep 'WarpProxy on port' | awk -F "port " '{print $2}'`
 s5ip=`curl -sx socks5h://localhost:$mport ip.me -k`
 nfs5
-[[ $(curl -sx socks5h://localhost:$mport https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+#[[ $(curl -sx socks5h://localhost:$mport https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+[[ -z $(curl -sx socks5h://localhost:$mport https://chat.openai.com/ -I | grep -w "cross-origin-embedder-policy") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
 #NF=$(./nf -proxy socks5h://localhost:$mport | awk '{print $1}' | sed -n '3p')
 nonf=$(curl -sx socks5h://localhost:$mport --user-agent "${UA_Browser}" http://ip-api.com/json/$s5ip?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
 #sunf=$(./nf | awk '{print $1}' | sed -n '4p')
@@ -753,8 +754,8 @@ flow=`echo "scale=2; $warppflow/1000000000" | bc`
 [[ -e /usr/local/bin/warpplus.log ]] && cfplus="WARP+ account (limited WARP+ traffic: $flow GB), device name: $(sed -n 1p /usr/local/bin/warpplus.log)" || cfplus="WARP+Teams account (unlimited WARP+ traffic)"
 if [[ -n $v4 ]]; then
 nf4
-#curl -s4 "https://chat.openai.com/" | grep -qw "Sorry, you have been blocked" && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-[[ $(curl -s4 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+[[ -z $(curl -s4 https://chat.openai.com/ -I | grep -w "cross-origin-embedder-policy") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+#[[ $(curl -s4 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
 wgcfv4=$(curl -s4 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 isp4a=`curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f13 -d ":" | cut -f2 -d '"'`
 isp4b=`curl -sm3 --user-agent "${UA_Browser}" https://api.ip.sb/geoip/$v4 -k | awk -F "isp" '{print $2}' | awk -F "offset" '{print $1}' | sed "s/[,\":]//g"`
@@ -776,9 +777,8 @@ WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
 fi 
 if [[ -n $v6 ]]; then
 nf6
-#[[ -z $(curl -s6 https://chat.openai.com/ -I | grep -w "HTTP/2 307") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-#curl -s6 "https://chat.openai.com/" | grep -qw "Sorry, you have been blocked" && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-[[ $(curl -s6 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+[[ -z $(curl -s6 https://chat.openai.com/ -I | grep -w "cross-origin-embedder-policy") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+#[[ $(curl -s6 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
 wgcfv6=$(curl -s6 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 isp6a=`curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-CN -k | cut -f13 -d":" | cut -f2 -d '"'`
 isp6b=`curl -sm3 --user-agent "${UA_Browser}" https://api.ip.sb/geoip/$v6 -k | awk -F "isp" '{print $2}' | awk -F "offset" '{print $1}' | sed "s/[,\":]//g"`
@@ -968,7 +968,7 @@ if [[ $release = Centos ]]; then
 if [[ ${vsid} =~ 8 ]]; then
 yum clean all && yum makecache
 fi
-yum install epel-release -y;yum install iproute iputils-ping -y
+yum install epel-release -y;yum install iproute iputils -y
 elif [[ $release = Debian ]]; then
 apt install lsb-release -y
 echo "deb http://deb.debian.org/debian $(lsb_release -sc)-backports main" | tee /etc/apt/sources.list.d/backports.list
@@ -1345,9 +1345,8 @@ flow=`echo "scale=2; $warppflow/1000000000" | bc`
 [[ -e /etc/wireguard/wgcf+p.log ]] && cfplus="WARP+ account (limited WARP+ traffic: $flow GB), device name: $(grep -s 'Device name' /etc/wireguard/wgcf+p.log | awk '{ print $NF }')" || cfplus="WARP+Teams account (unlimited WARP+ traffic)"
 if [[ -n $v4 ]]; then
 nf4
-#[[ -z $(curl -s4 https://chat.openai.com/ -I | grep -w "HTTP/2 307") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-#curl -s4 "https://chat.openai.com/" | grep -qw "Sorry, you have been blocked" && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-[[ $(curl -s4 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+[[ -z $(curl -s4 https://chat.openai.com/ -I | grep -w "cross-origin-embedder-policy") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+#[[ $(curl -s4 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
 wgcfv4=$(curl -s4 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 isp4a=`curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f13 -d ":" | cut -f2 -d '"'`
 isp4b=`curl -sm3 --user-agent "${UA_Browser}" https://api.ip.sb/geoip/$v4 -k | awk -F "isp" '{print $2}' | awk -F "offset" '{print $1}' | sed "s/[,\":]//g"`
@@ -1369,8 +1368,8 @@ WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
 fi 
 if [[ -n $v6 ]]; then
 nf6
-#curl -s6 "https://chat.openai.com/" | grep -qw "Sorry, you have been blocked" && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
-[[ $(curl -s6 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+[[ -z $(curl -s6 https://chat.openai.com/ -I | grep -w "cross-origin-embedder-policy") ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
+#[[ $(curl -s6 https://chat.openai.com/ -I | grep "text/plain") != "" ]] && chat='遗憾，当前IP无法访问ChatGPT官网服务' || chat='恭喜，当前IP支持访问ChatGPT官网服务'
 wgcfv6=$(curl -s6 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
 isp6a=`curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-CN -k | cut -f13 -d":" | cut -f2 -d '"'`
 isp6b=`curl -sm3 --user-agent "${UA_Browser}" https://api.ip.sb/geoip/$v6 -k | awk -F "isp" '{print $2}' | awk -F "offset" '{print $1}' | sed "s/[,\":]//g"`

@@ -1026,6 +1026,54 @@ delete_tuic() {
     readp "Press Enter to continue..."
 }
 
+
+# ----------------------------------------reality scanner stuff------------------------------------------------
+reality_scanner() {
+    # Remove old Xray
+	bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ remove
+
+	systemctl stop hiddify-xray
+
+	# Install Hiddify custom Xray
+	bash -c "$(curl -L https://github.com/hiddify/Xray-core-custom/raw/main/install-release.sh)" @ install
+
+	# Ask the user for a port
+	readp "Enter the port for the Xray server: " xray_port
+
+	# Create a config with empty nameserver or use the provided server_config.json
+	curl -o server_config.json https://raw.githubusercontent.com/hiddify/Hiddify_Reality_Scanner/main/server_config.json
+
+	# Replace the port in the config file
+	sed -i "s/\"port\": 11443/\"port\": $xray_port/" server_config.json
+	
+	IPV6=$(curl -6 -s ip.sb)
+	IPV4=$(curl -4 -s ip.sb)
+	# Display IPV6 and IPV4 configurations
+	IPV6_LINK="vless://hiddify@[$IPV6]:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
+	
+	IPV4_LINK="vless://hiddify@$IPV4:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
+	echo
+	yellow "Run the following commands:"
+	echo
+	echo "pip install virtualenv"
+	echo
+	echo "py -m venv reality"
+	echo
+	rred "or"
+	echo
+	echo "python -m venv reality"
+	echo
+	echo "reality\Scripts\activate"
+	echo
+	echo "pip install -U hiddify_reality_scanner"
+	echo
+    echo "--------------------------------------------"
+	green "hiddify_reality_scanner \"$IPV4_LINK\""
+    echo "--------------------------------------------"
+    echo
+	# Run the Xray server with the created config
+	xray run -c server_config.json
+}
 # ----------------------------------------SSH stuff------------------------------------------------
 contains_substring() {
     string="$1"
@@ -1604,44 +1652,11 @@ while true; do
             ;;
         4) # Reality
             while true; do
-                display_reality_menu
-                readp "Enter your choice: " reality_choice
-
-                case "$reality_choice" in
-                    1) # Install tcp
-                        bash <(curl -sL https://bit.ly/realityez) -t tcp -d www.datadoghq.com
-                        readp "Press Enter to continue..."
-                        ;;
-                    2) # Install grpc
-                        bash <(curl -sL https://bit.ly/realityez) -t grpc -d www.datadoghq.com
-                        readp "Press Enter to continue..."
-                        ;;
-                    3) # Show Configs
-                        bash <(curl -sL https://bit.ly/realityez)
-                        readp "Press Enter to continue..."
-                        ;;
-                    4) # Change port
-                        readp "Please enter port number: " port
-                        bash <(curl -sL https://bit.ly/realityez) --port $port 
-                        readp "Press Enter to continue..."
-                        ;;
-                    5) # Change SNI
-                        readp "Please enter new SNI: " sni
-                        bash <(curl -sL https://bit.ly/realityez) -d "$sni"
-                        readp "Press Enter to continue..."
-                        ;;
-                    6) # Delete
-                        bash <(curl -sL https://bit.ly/realityez) -u
-                        readp "Press Enter to continue..."
-                        ;;
-                    0) # Back to Main Menu
-                        break
-                        ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
-                esac
+                reality_scanner
+                readp "Press Enter to continue..."
+                break
             done
             ;;
-
         5) # SSH
             while true; do
                 display_ssh_menu

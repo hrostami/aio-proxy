@@ -315,6 +315,7 @@ chisel_tunnel_setup() {
         wget "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/${CHISEL_BIN}.gz"
         gunzip "$CHISEL_BIN".gz
         chmod +x "$CHISEL_BIN"
+        start_chisel
     }
 
     stop_chisel() {
@@ -338,6 +339,7 @@ chisel_tunnel_setup() {
             fi
             
             install_chisel
+            start_chisel
         else
             echo "Chisel already latest version ($LATEST_VERSION)"
         fi
@@ -380,6 +382,12 @@ chisel_tunnel_setup() {
     start_chisel() {
         load_config
         tmux new-session -d "./$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
+        echo "Chisel is now running with config:"
+        echo "Port: $PORT"
+        echo "SOCKS5 Port: $SOCKS5_PORT"
+        echo "Domain: $DOMAIN"
+        echo "To connect on Windows run:"
+        echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
     }
 
     CONFIG_FILE="/etc/chisel/config.json"
@@ -411,44 +419,27 @@ chisel_tunnel_setup() {
     if [ -n "$ANDROID_ROOT" ]; then
         install_chisel_termux
     else
-        if [ -f "$CONFIG_FILE" ]; then
-            load_config
-            get_user_input
-        else 
-            get_user_input
-            echo -e "{\n\"PORT\": \"$PORT\", \n\"SOCKS5_PORT\": \"$SOCKS5_PORT\", \n\"DOMAIN\": \"$DOMAIN\"\n}" > "$CONFIG_FILE"
-        fi
-
+        get_user_input
         if [ ! -d "$CHISEL_DIR" ]; then
             install_chisel
-        fi
-
-        if pgrep -f "chisel_$INSTALLED_VERSION" > /dev/null; then
-            read -p "Chisel is already running. Do you want to: (s)top/(c)hange config/(u)pdate Chisel? " USER_CHOICE
-            case $USER_CHOICE in
-                s)
-                    stop_chisel
-                    ;;
-                c)
-                    get_user_input
-                    ;;
-                u)
-                    update_chisel
-                    ;;
-                *)
-                    echo "Invalid choice. Exiting."
-                    exit 1
-                    ;;
-            esac
         else
-            update_chisel
-            start_chisel
-            echo "Chisel is now running with config:"
-            echo "Port: $PORT"
-            echo "SOCKS5 Port: $SOCKS5_PORT"
-            echo "Domain: $DOMAIN"
-            echo "To connect on Windows run:"
-            echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
+            if pgrep -f "chisel_$INSTALLED_VERSION" > /dev/null; then
+                read -p "Chisel is already running. Do you want to: (s)top/(u)pdate Chisel? " USER_CHOICE
+                case $USER_CHOICE in
+                    s)
+                        stop_chisel
+                        ;;
+                    u)
+                        update_chisel
+                        ;;
+                    *)
+                        echo "Invalid choice. Exiting."
+                        exit 1
+                        ;;
+                esac
+            else
+                update_chisel                
+            fi
         fi
     fi
 

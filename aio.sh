@@ -350,7 +350,7 @@ chisel_tunnel_setup() {
 
         if [ -n "$CHISEL_PID" ]; then
             echo "Stopping chisel server (PID $CHISEL_PID)"   
-            kill "$CHISEL_PID" 
+            pkill "$CHISEL_PID" 
         else
             echo "Chisel server not running"
         fi

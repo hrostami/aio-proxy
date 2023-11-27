@@ -15,7 +15,7 @@ readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
 
 
-CHISEL_DIR="~/chisel"
+CHISEL_DIR="/home/chisel"
 CONFIG_FILE="$CHISEL_DIR/config.json"
 LATEST_VERSION=$(curl -sL https://github.com/jpillora/chisel/releases/latest | grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' | awk '{sub(/^v/, ""); print; exit}')
 

@@ -415,16 +415,7 @@ chisel_tunnel_setup() {
 
     start_chisel() {
         load_config
-        clear
         tmux new-session -d "$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
-        echo
-        green "Chisel is now running with config:"
-        echo "--------------------------------------------"
-        echo -e "${plain} HTTP Port:${yellow} $PORT${plain}"
-        echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
-        echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
-        echo "--------------------------------------------"
-        echo
         yellow "To connect on Windows run:"
         echo "chisel.exe client http://$DOMAIN 127.0.0.1:$PORT:127.0.0.1:$SOCKS5_PORT"
         

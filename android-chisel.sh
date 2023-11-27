@@ -101,4 +101,4 @@ echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
 
 get_user_input
 
-"chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"
+"./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"

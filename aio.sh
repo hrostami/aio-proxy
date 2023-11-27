@@ -1857,6 +1857,7 @@ while true; do
                         readp "Press Enter to continue..."
                         ;;
                     2) # add website
+                        echo "Lets add domains"
                         add_domain_smartsni
                         readp "Press Enter to continue..."
                         ;;

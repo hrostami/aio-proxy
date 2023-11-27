@@ -307,7 +307,7 @@ chisel_tunnel_setup() {
             ARCH=amd64
     esac
 
-    LATEST_VERSION=$(curl -s https://api.github.com/repos/jpillora/chisel/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')
+    LATEST_VERSION=$(curl -sL https://github.com/jpillora/chisel/releases/latest | grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' | awk '{sub(/^v/, ""); print; exit}')
     CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
 
     if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then

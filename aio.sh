@@ -302,10 +302,12 @@ add_domain_smartsni() {
     fi
 
     if [ ! -f "$JSON_FILE" ]; then
+        red "Config file doesnt exist!"
         exit 1
     fi
 
     if ! command -v jq >/dev/null 2>&1; then
+        red "jq is not installed"
         exit 1
     fi
 
@@ -1858,7 +1860,6 @@ while true; do
                         readp "Press Enter to continue..."
                         ;;
                     2) # add website
-                        echo "Lets add domains"
                         add_domain_smartsni
                         readp "Press Enter to continue..."
                         ;;

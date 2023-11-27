@@ -2223,6 +2223,7 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 white "Yongge Github project: github.com/yonggekkk"
 white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
+yellow "Translated by Hosy: https://github.com/hrostami"
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
 white "Vless-reality-vision, Vmess-ws(tls)+Argo, Hysteria-2, Tuic-v5 one-click four-protocol coexistence"
 white "Sing-box-yg script shortcut: sb"

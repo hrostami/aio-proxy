@@ -14,36 +14,38 @@ rred(){ echo -e "\033[35m\033[01m$1\033[0m";}
 readtp(){ read -t5 -n26 -p "$(yellow "$1")" $2;}
 readp(){ read -p "$(yellow "$1")" $2;}
 
-termux-chroot
+
 CHISEL_DIR="/home/chisel"
 CONFIG_FILE="$CHISEL_DIR/config.json"
 LATEST_VERSION=$(curl -sL https://github.com/jpillora/chisel/releases/latest | grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' | awk '{sub(/^v/, ""); print; exit}')
 
-if [ -n "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" ]; then
-    INSTALLED_VERSION=$(basename "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" | cut -d_ -f2)
-    CHISEL_BIN="chisel_${INSTALLED_VERSION}_linux_arm64"
-fi
+
 
 # Function to check if a package is installed
 check_package() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Install required packages if not already installed
-if ! check_package "jq"; then
+if ! check_package "proot"; then
     apt-get update
     pkg update
     clear
-    termux-setup-storage
-    pkg install jq -y
+    pkg install proot -y
 fi
-
-if ! check_package "curl"; then
-    pkg install curl -y
+# Install required packages if not already installed
+if ! check_package "jq"; then
+    pkg install jq -y
 fi
 
 if ! check_package "go" || ! check_package "golang"; then
     pkg install golang -y
+fi
+
+termux-chroot
+
+if [ -n "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" ]; then
+    INSTALLED_VERSION=$(basename "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" | cut -d_ -f2)
+    CHISEL_BIN="chisel_${INSTALLED_VERSION}_linux_arm64"
 fi
 
 INSTALL_CHISEL=0

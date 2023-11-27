@@ -356,7 +356,8 @@ blue "Tuic-v5 port: $port_tu"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "4. Automatically generate a unified uuid (password) for each protocol"
 uuid=$(/etc/s-box/sing-box generate uuid)
-blue "Confirmed uuid: ${uuid}"
+blue "Confirmed uuid (password): ${uuid}"
+blue "The path of Vmess has been confirmed: ${uuid}-vm"
 }
 inssbjsonser(){
 cat > /etc/s-box/sb.json <<EOF
@@ -1227,9 +1228,10 @@ i=0
 while [ $i -le 4 ]; do let i++
 yellow "The $i-th refresh verifies the validity of the Cloudflared Argo tunnel domain name, please wait..."
 if [[ -n $(ps -e | grep cloudflared) ]]; then
-kill -15 $(pgrep cloudflared) >/dev/null 2>&1
+kill -15 $(cat /etc/s-box/sbargopid.log) >/dev/null 2>&1
 fi
 /etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
+echo "$!" > /etc/s-box/sbargopid.log
 sleep 5
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
@@ -1272,6 +1274,7 @@ esac
 curl -sL -o /etc/s-box/cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$cpu
 chmod +x /etc/s-box/cloudflared
 /etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
+echo "$!" > /etc/s-box/sbargopid.log
 sleep 5
 if [[ -n $(curl -sL https://$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 argo=$(cat /etc/s-box/argo.log 2>/dev/null | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')
@@ -1562,7 +1565,7 @@ fi
 }
 changeuuid(){
 olduuid=$(jq -r '.inbounds[0].users[0].uuid' /etc/s-box/sb.json)
-green "Current uuid and related password: $olduuid"
+green "Current uuid (password): $olduuid"
 echo
 readp "Enter the custom uuid, which must be in uuid format. If you don’t understand, press Enter (reset and randomly generate uuid):" menu
 if [ -z "$menu" ]; then
@@ -1570,7 +1573,8 @@ uuid=$(/etc/s-box/sing-box generate uuid)
 else
 uuid=$menu
 fi
-blue "Confirmed uuid: ${uuid}" && sleep 2
+blue "Confirmed uuid (password): ${uuid}" 
+blue "The path of Vmess has been confirmed: ${uuid}-vm" && sleep 2
 sed -i "s/$olduuid/$uuid/g" /etc/s-box/sb.json
 systemctl restart sing-box
 sbshare
@@ -1995,14 +1999,14 @@ cronsb(){
 uncronsb
 crontab -l > /tmp/crontab.tmp
 echo "0 1 * * * systemctl restart sing-box" >> /tmp/crontab.tmp
-echo '@reboot /bin/bash -c "/etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1"' >> /tmp/crontab.tmp
+echo '@reboot /bin/bash -c "/etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 & pid=\$! && echo \$pid > /etc/s-box/sbargopid.log"' >> /tmp/crontab.tmp
 crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
 }
 uncronsb(){
 crontab -l > /tmp/crontab.tmp
 sed -i '/sing-box/d' /tmp/crontab.tmp
-sed -i '/argo.log/d' /tmp/crontab.tmp
+sed -i '/sb.json/d' /tmp/crontab.tmp
 crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
 }
@@ -2058,9 +2062,9 @@ fi
 unins(){
 systemctl stop sing-box >/dev/null 2>&1
 systemctl disable sing-box >/dev/null 2>&1
+kill -15 $(cat /etc/s-box/sbargopid.log) >/dev/null 2>&1
 rm -f /etc/systemd/system/sing-box.service
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geosite.db /root/geoip.db
-kill -15 $(pgrep cloudflared) >/dev/null 2>&1
 uncronsb
 iptables -t nat -F PREROUTING >/dev/null 2>&1
 netfilter-persistent save >/dev/null 2>&1
@@ -2269,7 +2273,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
+echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
@@ -2332,7 +2336,7 @@ fi
 if [[ -n $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
 echo -e "Sing-box status: $green is running $plain"
 elif [[ -z $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
-echo -e "Sing-box status: $yellow is not started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
+echo -e "Sing-box status: $yellow has not been started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
 else
 echo -e "Sing-box status: $red is not installed $plain"
 fi

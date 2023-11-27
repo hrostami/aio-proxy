@@ -294,6 +294,7 @@ display_domains_menu() {
 
 # ----------------------------------------SmartSNI stuff----------------------------------------------
 add_domain_smartsni() {
+    JSON_FILE="/root/smartSNI/config.json"
     IPV4=$(curl -s https://v4.ident.me)
     if [ $? -ne 0 ]; then
         echo "Error: Failed to get IPv4 address"

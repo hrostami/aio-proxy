@@ -294,8 +294,6 @@ display_domains_menu() {
 
 # ----------------------------------------SmartSNI stuff----------------------------------------------
 add_domain_smartsni() {
-    local url=$1
-    local ip=$2
     IPV4=$(curl -s https://v4.ident.me)
     if [ $? -ne 0 ]; then
         echo "Error: Failed to get IPv4 address"
@@ -1790,7 +1788,6 @@ while true; do
             while true; do
                 display_telegram_menu
                 readp "Enter your choice: " telegram_choice
-
                 case "$telegram_choice" in
                     1) # Python
                         curl -o MTProtoProxyInstall.sh -L https://git.io/fjo34 && bash MTProtoProxyInstall.sh
@@ -1830,7 +1827,6 @@ while true; do
             while true; do
                 display_domains_menu
                 readp "Enter your choice: " domains_choice
-
                 case "$domains_choice" in
                     1) # IPv4 Domain
                         setup_ipv4_domain

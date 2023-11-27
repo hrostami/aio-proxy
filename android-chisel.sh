@@ -105,4 +105,5 @@ white "---------------------------------------------"
 white "server: 127.0.0.1"
 white "Remote Port: 5050"
 white "---------------------------------------------"
-"./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"
+
+termux-chroot "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"

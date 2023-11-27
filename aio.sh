@@ -1028,11 +1028,14 @@ delete_tuic() {
 
 # ----------------------------------------reality scanner stuff------------------------------------------------
 reality_scanner() {
-	bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ remove
 
-	systemctl stop hiddify-xray
-
-	bash -c "$(curl -L https://github.com/hiddify/Xray-core-custom/raw/main/install-release.sh)" @ install
+    if [[ -f '/usr/local/bin/xray' ]]; then
+        :
+    else
+        bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ remove
+	    systemctl stop hiddify-xray
+        bash -c "$(curl -L https://github.com/hiddify/Xray-core-custom/raw/main/install-release.sh)" @ install
+    fi
 
 	readp "Enter the port for the Xray server: " xray_port
 

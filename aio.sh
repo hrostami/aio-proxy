@@ -81,11 +81,11 @@ display_main_menu() {
     echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
     echo
     yellow "-------------------Protocols------------------"
-    green "1. Chisel                2. Hysteria V2"
+    green "1. Chisel Tunnel         2. Hysteria V2"
     echo
     green "3. Tuic                  4. Hiddify Reality Scanner"
     echo
-    green "5. SSH                   6. 4 In 1 Script"
+    green "5. SSH                   6. Reality+Tuic+Hy2+ws+Argo"
     echo
     yellow "---------------------Tools--------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"

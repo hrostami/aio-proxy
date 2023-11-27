@@ -454,7 +454,7 @@ chisel_tunnel_setup() {
                         ;;
                 esac
             else
-                update_chisel                
+                start_chisel             
             fi
         fi
     fi

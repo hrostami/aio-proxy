@@ -315,7 +315,7 @@ add_domain_smartsni() {
 
     read -p "Enter website URL: " domain
 
-    new_json_data=$(echo "$json_data" | jq --arg domain "$domain" --arg ip "$IPV4" '.domains += { ($domain): $ip }')
+    new_json_data=$(echo "$json_data" | jq --arg domain "$domain" --arg ip "$IPV4" '.domains += { ($domain): $ip, }')
 
     echo "$new_json_data" > "$JSON_FILE"
 

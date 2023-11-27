@@ -379,17 +379,18 @@ chisel_tunnel_setup() {
         PORT=$(jq -r '.PORT' $CONFIG_FILE)
         SOCKS5_PORT=$(jq -r '.SOCKS5_PORT' $CONFIG_FILE)
         DOMAIN=$(jq -r '.DOMAIN' $CONFIG_FILE)
+        echo
         echo "----------------Current Config-----------------"
         echo -e "${plain} HTTP Port:${yellow} $PORT${plain}"
         echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
         echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
         echo "--------------------------------------------"
+        echo
     }
 
     get_user_input() {
         if [ -f "$CONFIG_FILE" ]; then
             load_config
-            echo
             readp "Do you want to change Chisel configuration? (y/n): " CHANGE_CONFIG
             if [ "$CHANGE_CONFIG" == "y" ]; then
                 :
@@ -415,7 +416,6 @@ chisel_tunnel_setup() {
     start_chisel() {
         load_config
         clear
-        echo -e "tmux new-session -d "$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v "
         tmux new-session -d "$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
         echo
         green "Chisel is now running with config:"

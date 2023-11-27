@@ -1469,7 +1469,7 @@ EOF
         sudo ln -s /etc/nginx/sites-available/$your_domain /etc/nginx/sites-enabled/
 
         # Test the Nginx configuration and restart Nginx
-        sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default_disabled
+        # sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/default_disabled
         sudo service apache2 stop
         sudo nginx -t
         sudo systemctl restart nginx

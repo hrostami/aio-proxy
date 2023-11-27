@@ -19,27 +19,6 @@ CHISEL_DIR="$HOME/chisel"
 CONFIG_FILE="$CHISEL_DIR/config.json"
 LATEST_VERSION=$(curl -sL https://github.com/jpillora/chisel/releases/latest | grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' | awk '{sub(/^v/, ""); print; exit}')
 
-
-
-check_package() {
-    command -v "$1" >/dev/null 2>&1
-}
-
-if ! check_package "proot"; then
-    apt-get update
-    pkg update
-    clear
-    pkg install proot -y
-fi
-# Install required packages if not already installed
-if ! check_package "jq"; then
-    pkg install jq -y
-fi
-
-if ! check_package "go" || ! check_package "golang"; then
-    pkg install golang -y
-fi
-
 if [ -n "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" ]; then
     INSTALLED_VERSION=$(basename "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" | cut -d_ -f2)
     CHISEL_BIN="chisel_${INSTALLED_VERSION}_linux_arm64"

@@ -310,9 +310,11 @@ chisel_tunnel_setup() {
     LATEST_VERSION=$(curl -sL https://github.com/jpillora/chisel/releases/latest | grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' | awk '{sub(/^v/, ""); print; exit}')
     CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
 
-    if [ -f "$CHISEL_DIR/$CHISEL_BIN" ]; then
-        INSTALLED_VERSION=$(echo $CHISEL_BIN | cut -d_ -f2)
+    if [ -n "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" ]; then
+        INSTALLED_VERSION=$(basename "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" | cut -d_ -f2)
+        CHISEL_BIN="chisel_${INSTALLED_VERSION}_linux_${ARCH}"
     fi
+    
 
     install_chisel_termux() {
         apt-get update
@@ -338,7 +340,7 @@ chisel_tunnel_setup() {
     install_chisel() {
         mkdir -p "$CHISEL_DIR"
         cd "$CHISEL_DIR"
-
+        CHISEL_BIN="chisel_${LATEST_VERSION}_linux_${ARCH}"
         wget "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/${CHISEL_BIN}.gz"
         gunzip "$CHISEL_BIN".gz
         chmod +x "$CHISEL_BIN"
@@ -380,7 +382,7 @@ chisel_tunnel_setup() {
         SOCKS5_PORT=$(jq -r '.SOCKS5_PORT' $CONFIG_FILE)
         DOMAIN=$(jq -r '.DOMAIN' $CONFIG_FILE)
         echo
-        echo "----------------Current Config-----------------"
+        echo "--------------------------------------------"
         echo -e "${plain} HTTP Port:${yellow} $PORT${plain}"
         echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
         echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
@@ -414,6 +416,7 @@ chisel_tunnel_setup() {
     }
 
     start_chisel() {
+        green "Chisel is now running with the config below:"
         load_config
         tmux new-session -d "$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
         yellow "To connect on Windows run:"

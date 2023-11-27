@@ -16,8 +16,9 @@ This script automates setting up TUIC, hysteria and other proxy-related tools in
 - Install, disable, and enable Warp(using [yonggekkk's script](https://github.com/yonggekkk/warp-yg) )
 - Sing Box 4-in-1 (reality+hyseria2+tuic+argo) script by [Yongge](https://gitlab.com/rwkgyg/sing-box-yg)
 - Show Ports in use and their corresponding processes
-- Android Script to use Chisel tunnel, just run the code below in Termux then enter the proxy port and domain:
+- Android Script to use Chisel tunnel, just run the commands below:(run the first command with VPN)
 ```
+pkg update -y && pkg install -y jq proot
 bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/android-chisel.sh)
 ```
 

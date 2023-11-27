@@ -94,20 +94,26 @@ display_main_menu() {
     echo
     green "11. Show used Ports      12. Set Domains"
     echo
+    green "13. DNS(SmartSNI)"
+    echo
     rred "0. Exit"
     echo "------------------------------------------------------"
 }
 
-display_chisel_menu() {
+display_dns_menu() {
     clear
-    echo "**********************************************"
-    yellow "                Chisel Menu                 "
-    echo "**********************************************"
-    green "1. Server Setup"
+    echo "------------------------------------------------------"
+    echo -e "${plain}SmartSNI is created by ${yellow}bepass-org${plain}"
+    echo -e "Please check out and ${yellow}star ${plain}his Github repo"
+    echo -e "${yellow}https://github.com/bepass-org/smartSNI${plain}"
+    echo "------------------------------------------------------"
     echo
-    green "2. Android Setup"
+    echo "**********************************************"
+    yellow "                DNS Menu                 "
+    echo "**********************************************"
+    green "1. Auto Install"
     echo
-    green "3. Windows Command"
+    green "2. Add website"
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
@@ -223,10 +229,10 @@ display_warp_menu() {
     echo "**********************************************"
     white "Getting current IPs, please wait..."
     IPV4=$(curl -s https://v4.ident.me)
-        if [ $? -ne 0 ]; then
-            echo "Error: Failed to get IPv4 address"
-            return
-        fi
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv4 address"
+        return
+    fi
 
     IPV6=$(curl -s https://v6.ident.me)
     if [ $? -ne 0 ]; then
@@ -285,6 +291,36 @@ display_domains_menu() {
     echo -e "${plain}IPv6 Domain:${red} $IPV6_DOMAIN${plain}"
     echo "**********************************************"
 }
+
+# ----------------------------------------SmartSNI stuff----------------------------------------------
+add_domain_smartsni() {
+    local url=$1
+    local ip=$2
+    IPV4=$(curl -s https://v4.ident.me)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to get IPv4 address"
+        return
+    fi
+
+    if [ ! -f "$JSON_FILE" ]; then
+        exit 1
+    fi
+
+    if ! command -v jq >/dev/null 2>&1; then
+        exit 1
+    fi
+
+    json_data=$(jq '.' "$JSON_FILE")
+
+    read -p "Enter website URL: " domain
+
+    new_json_data=$(echo "$json_data" | jq --arg domain "$domain" --arg ip "$IPV4" '.domains += { ($domain): $ip }')
+
+    echo "$new_json_data" > "$JSON_FILE"
+
+    echo "Domain $domain added to $JSON_FILE."
+}
+
 # ----------------------------------------Chisel Tunnel stuff----------------------------------------------
 chisel_tunnel_setup() {
     echo
@@ -317,24 +353,8 @@ chisel_tunnel_setup() {
     
 
     install_chisel_termux() {
-        apt-get update
-        pkg install wget
-        apt install go
-        pkg install golang
-        termux-setup-storage
-        mkdir chisel && cd chisel
-        curl -LO "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
-        gunzip "chisel_${LATEST_VERSION}_linux_arm64.gz"
-        chmod +x "chisel_${LATEST_VERSION}_linux_arm64"
-        termux-chroot
-
-        readp "Enter port number: " USER_PORT
-        PORT=${USER_PORT:-80}
-
-        readp "Enter domain: " USER_DOMAIN
-        DOMAIN=${USER_DOMAIN:-example.com}
-
-        "./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$USER_PORT"
+        pkg update -y && pkg install -y jq proot
+        bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/android-chisel.sh)
     }
 
     install_chisel() {
@@ -1823,6 +1843,26 @@ while true; do
                         ;;
                     4) # NAT nginx setup
                         setup_nginx_nat
+                        ;;
+                    0) # Back to Main Menu
+                        break
+                        ;;
+                    *) echo "Invalid choice. Please select a valid option." ;;
+                esac
+            done
+            ;;
+        13) # Telegram Proxy
+            while true; do
+                display_dns_menu
+                readp "Enter your choice: " dns_choice
+                case "$dns_choice" in
+                    1) # auto install script
+                        bash <(curl -fsSL https://raw.githubusercontent.com/bepass-org/smartSNI/main/install.sh)
+                        readp "Press Enter to continue..."
+                        ;;
+                    2) # add website
+                        add_domain_smartsni
+                        readp "Press Enter to continue..."
                         ;;
                     0) # Back to Main Menu
                         break

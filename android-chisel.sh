@@ -41,8 +41,6 @@ if ! check_package "go" || ! check_package "golang"; then
     pkg install golang -y
 fi
 
-termux-chroot
-
 if [ -n "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" ]; then
     INSTALLED_VERSION=$(basename "$(find "$CHISEL_DIR" -maxdepth 1 -type f -name 'chisel_*' -print -quit)" | cut -d_ -f2)
     CHISEL_BIN="chisel_${INSTALLED_VERSION}_linux_arm64"

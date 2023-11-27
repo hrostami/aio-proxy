@@ -28,6 +28,9 @@ check_package() {
 if ! check_package "jq"; then
     apt-get update
     pkg update
+    clear
+    termux-setup-storage
+    termux-chroot
     pkg install jq -y
 fi
 
@@ -39,8 +42,6 @@ if ! check_package "go" || ! check_package "golang"; then
     pkg install golang -y
 fi
 
-clear
-termux-setup-storage
 
 if [ ! -d "$CHISEL_DIR" ]; then
     mkdir "$CHISEL_DIR" && cd "$CHISEL_DIR"
@@ -51,15 +52,16 @@ fi
 curl -LO "https://github.com/jpillora/chisel/releases/download/v${LATEST_VERSION}/chisel_${LATEST_VERSION}_linux_arm64.gz"
 gunzip "chisel_${LATEST_VERSION}_linux_arm64.gz"
 chmod +x "chisel_${LATEST_VERSION}_linux_arm64"
-termux-chroot
 
 load_config() {
     SOCKS5_PORT=$(jq -r '.SOCKS5_PORT' $CONFIG_FILE)
     DOMAIN=$(jq -r '.DOMAIN' $CONFIG_FILE)
+    echo
     echo "----------------Current Config-----------------"
     echo -e "${plain} Proxy Port:${yellow} $SOCKS5_PORT${plain}"
     echo -e "${plain} Domain:${yellow} $DOMAIN${plain}"
     echo "--------------------------------------------"
+    echo
 }
 
 get_user_input() {
@@ -99,4 +101,4 @@ echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
 
 get_user_input
 
-"./chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"
+"chisel_${LATEST_VERSION}_linux_arm64" client "http://$DOMAIN" "5050:127.0.0.1:$SOCKS5_PORT"

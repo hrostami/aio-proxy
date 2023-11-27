@@ -78,7 +78,7 @@ display_main_menu() {
     white " Github: https://github.com/hrostami"
     white " Twitter: https://twitter.com/hosy000"
     echo
-    echo -e "${plain}Thank you ${red}iSegaro${plain} for tutorials and new methods! "
+    echo -e "${plain}Thank you ${red}iSegaro${plain} for all the tutorials and new methods! "
     echo
     yellow "-----------------Protocols----------------------------"
     green "1. Chisel Tunnel         2. Hysteria V2"

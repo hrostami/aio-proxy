@@ -117,6 +117,12 @@ display_dns_menu() {
     echo
     green "0. Back to Main Menu"
     echo "**********************************************"
+    JSON_FILE="/root/smartSNI/config.json"
+    existing_domains=$(jq -r '.domains | keys[]' "$JSON_FILE")
+    yellow "Existing domains: "
+    white "$existing_domains"
+    echo
+    echo "**********************************************"
 }
 
 display_hysteria_v2_menu() {
@@ -318,9 +324,7 @@ add_domain_smartsni() {
     new_json_data=$(echo "$json_data" | jq --arg domain "$domain" --arg ip "$IPV4" '.domains += { ($domain): $ip, }')
 
     echo "$new_json_data" > "$JSON_FILE"
-    existing_domains=$(jq -r '.domains | keys[]' "$JSON_FILE")
-    yellow "Existing domains: $existing_domains"
-    echo
+    green "Domain $domain added to list."
 }
 
 # ----------------------------------------Chisel Tunnel stuff----------------------------------------------

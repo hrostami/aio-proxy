@@ -346,11 +346,14 @@ chisel_tunnel_setup() {
     }
 
     stop_chisel() {
-        CHISEL_PID=$(pgrep -f "chisel_$INSTALLED_VERSION")  
+        CHISEL_PIDS=$(pgrep -f "chisel_$INSTALLED_VERSION")
 
-        if [ -n "$CHISEL_PID" ]; then
-            echo "Stopping chisel server (PID $CHISEL_PID)"   
-            pkill "$CHISEL_PID" 
+        if [ -n "$CHISEL_PIDS" ]; then
+            echo "Stopping chisel server(s):"
+            for PID in $CHISEL_PIDS; do
+                echo "  - PID $PID"
+                kill "$PID"
+            done
         else
             echo "Chisel server not running"
         fi

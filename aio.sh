@@ -66,28 +66,28 @@ display_main_menu() {
     clear 
     echo
     echo
-    bblue "             █████╗ ██╗ ██████╗              "
-    bblue "            ██╔══██╗██║██╔═══██╗             "
-    bblue "            ███████║██║██║   ██║             "
-    bblue "            ██╔══██║██║██║   ██║             "
-    bblue "            ██║  ██║██║╚██████╔╝             "
-    bblue "            ╚═╝  ╚═╝╚═╝ ╚═════╝              "
-    bblue "           All-in-one Proxy Tool             "
-    white "              Created by Hosy                "
-    white "---------------------------------------------"
+    bblue "                 █████╗ ██╗ ██████╗              "
+    bblue "                ██╔══██╗██║██╔═══██╗             "
+    bblue "                ███████║██║██║   ██║             "
+    bblue "                ██╔══██║██║██║   ██║             "
+    bblue "                ██║  ██║██║╚██████╔╝             "
+    bblue "                ╚═╝  ╚═╝╚═╝ ╚═════╝              "
+    bblue "               All-in-one Proxy Tool             "
+    white "                  Created by Hosy                "
+    white "------------------------------------------------------"
     white " Github: https://github.com/hrostami"
     white " Twitter: https://twitter.com/hosy000"
     echo
-    echo -e "${plain}Thank you ${red}iSegaro${plain} for all your efforts! "
+    echo -e "${plain}Thank you ${red}iSegaro${plain} for introducing new methods! "
     echo
-    yellow "-------------------Protocols------------------"
+    yellow "-----------------Protocols----------------------------"
     green "1. Chisel Tunnel         2. Hysteria V2"
     echo
     green "3. Tuic                  4. Hiddify Reality Scanner"
     echo
     green "5. SSH                   6. Reality+Tuic+Hy2+ws+Argo"
     echo
-    yellow "---------------------Tools--------------------"
+    yellow "--------------------Tools-----------------------------"
     green "7. Reverse TLS Tunnel    8. Install Panels"
     echo
     green "9. Warp                  10. Telegram Proxy"
@@ -95,7 +95,7 @@ display_main_menu() {
     green "11. Show used Ports      12. Set Domains"
     echo
     rred "0. Exit"
-    echo "----------------------------------------------"
+    echo "------------------------------------------------------"
 }
 
 display_chisel_menu() {

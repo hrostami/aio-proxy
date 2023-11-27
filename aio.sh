@@ -414,7 +414,8 @@ chisel_tunnel_setup() {
 
     start_chisel() {
         load_config
-        tmux new-session -d "./$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
+        clear
+        tmux new-session -d ".$CHISEL_DIR/$CHISEL_BIN" server --port "$PORT" --socks5 "$SOCKS5_PORT" --proxy "http://$DOMAIN" -v  
         echo
         green "Chisel is now running with config:"
         echo "--------------------------------------------"

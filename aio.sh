@@ -313,13 +313,14 @@ add_domain_smartsni() {
 
     json_data=$(jq '.' "$JSON_FILE")
 
-    read -p "Enter website URL: " domain
+    readp "Enter website URL: " domain
 
     new_json_data=$(echo "$json_data" | jq --arg domain "$domain" --arg ip "$IPV4" '.domains += { ($domain): $ip, }')
 
     echo "$new_json_data" > "$JSON_FILE"
-
-    echo "Domain $domain added to $JSON_FILE."
+    existing_domains=$(jq -r '.domains | keys[]' "$JSON_FILE")
+    yellow "Existing domains: $existing_domains"
+    echo
 }
 
 # ----------------------------------------Chisel Tunnel stuff----------------------------------------------

@@ -28,33 +28,48 @@ release="Centos"
 else 
 red "Your current system is not supported, please choose to use Ubuntu, Debian, Centos system" && exit 
 fi
+vsid=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
+op=$(cat /etc/redhat-release 2>/dev/null || cat /etc/os-release 2>/dev/null | grep -i pretty_name | cut -d \" -f2)
+if [[ $(echo "$op" | grep -i -E "arch|alpine") ]]; then
+red "The script does not support your current $op system, please choose to use Ubuntu, Debian, Centos system." && exit
+fi
 v4v6(){
-v4=$(curl -s4m6 ip.me -k)
-v6=$(curl -s6m6 ip.me -k)
+v4=$(curl -s4m6 icanhazip.com -k)
+v6=$(curl -s6m6 icanhazip.com -k)
 }
 acme1(){
 if [ ! -f acyg_update ]; then
-green "First time installation detects necessary dependencies..."
+green "Install the necessary dependencies of the Acme-yg script for the first time..."
 update(){
 if [ -x "$(command -v apt-get)" ]; then
-apt update
+apt update -y
 elif [ -x "$(command -v yum)" ]; then
 yum update && yum install epel-release -y
 elif [ -x "$(command -v dnf)" ]; then
-dnf update
+dnf update -y
 fi
 }
+if [[ $release = Centos && ${vsid} =~ 8 ]]; then
+cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
+curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
+sed -i -e "s|mirrors.cloud.aliyuncs.com|mirrors.aliyun.com|g " /etc/yum.repos.d/CentOS-*
+sed -i -e "s|releasever|releasever-stream|g" /etc/yum.repos.d/CentOS-*
+yum clean all && yum makecache
+cd
+fi
 update
 packages=("curl" "openssl" "lsof" "socat" "dnsutils" "tar" "wget" "cron")
-for package in "${packages[@]}"
-do
+inspackages=("curl" "openssl" "lsof" "socat" "bind9-utils" "tar" "wget" "cron")
+for i in "${!packages[@]}"; do
+package="${packages[$i]}"
+inspackage="${inspackages[$i]}"
 if ! command -v "$package" &> /dev/null; then
 if [ -x "$(command -v apt-get)" ]; then
-apt-get install -y "$package" 
+apt-get install -y "$inspackage"
 elif [ -x "$(command -v yum)" ]; then
-yum install -y "$package"
+yum install -y "$inspackage"
 elif [ -x "$(command -v dnf)" ]; then
-dnf install -y "$package"
+dnf install -y "$inspackage"
 fi
 fi
 done
@@ -414,11 +429,12 @@ green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white "Yongge Github project: github.com/yonggekkk"
 white "Yongge blogger’s blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
+yellow "Translated by Hosy: https://github.com/hrostami"
 yellow "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
 yellow " hint:"
-yellow "1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
+yellow " 1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
 yellow " 2. The independent 80 port mode only supports single domain name certificate application, and supports automatic renewal when port 80 is not occupied."
-yellow " 3. The DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
+yellow " 3. DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
 yellow " 4. Before applying for a pan-domain name, you need to set a resolution record with the name * on the resolution platform."
 yellow " Public key file crt storage path: /root/ygkkkca/cert.crt"
 yellow " Key file key storage path: /root/ygkkkca/private.key"

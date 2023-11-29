@@ -1087,10 +1087,10 @@ reality_scanner() {
         readp "Enter your choice: " choice
         case "$choice" in
             1)  # first time
-                echo
-                white "------------------------------------------------------"
+                clear
+                rred "------------------------------------------------------"
                 echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
-                white "------------------------------------------------------"
+                rred "------------------------------------------------------"
                 echo
                 echo "mkdir reality-scan-result && reality-scan-result"
                 echo
@@ -1111,10 +1111,10 @@ reality_scanner() {
                 ;;
 
             2)  # not first
-                echo
-                white "------------------------------------------------------"
+                clear
+                rred "------------------------------------------------------"
                 echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
-                white "------------------------------------------------------"
+                rred "------------------------------------------------------"
                 echo
                 echo "cd reality-scan-result && reality\Scripts\activate"
                 echo
@@ -1129,13 +1129,17 @@ reality_scanner() {
         esac
     done
 	echo
-    echo "-------------------Scan IPv4------------------"
-	echo -e "${bblue}hiddify_reality_scanner \"${plain}$IPV4_LINK\""
+    echo "Scan IPv4:"
     echo
-    echo "-------------------Scan IPv6------------------"
-	echo -e "${bblue}hiddify_reality_scanner \"${plain}$IPV6_LINK\""
+	echo -e "${bblue}hiddify_reality_scanner${plain} \"$IPV4_LINK\""
     echo
-    echo "----------------------------------------------"
+    echo "Scan IPv6:"
+    echo
+	echo -e "${bblue}hiddify_reality_scanner${plain} \"$IPV6_LINK\""
+    echo
+    rred "------------------------------------------------------"
+
+    echo -e "Hit ${yellow}Ctrl+C${plain} to stopthe script."
 
 	xray run -c server_config.json
 }

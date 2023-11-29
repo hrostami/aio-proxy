@@ -1105,8 +1105,6 @@ reality_scanner() {
                 echo "reality\Scripts\activate"
                 echo
                 echo "pip install -U hiddify_reality_scanner"
-                echo
-                yellow "now run the scan command below:"
                 break
                 ;;
 
@@ -1117,8 +1115,6 @@ reality_scanner() {
                 rred "------------------------------------------------------"
                 echo
                 echo "cd reality-scan-result && reality\Scripts\activate"
-                echo
-                yellow "now run the scan command below:"
                 break
                 ;;
             *)
@@ -1129,13 +1125,11 @@ reality_scanner() {
         esac
     done
 	echo
-    echo "Scan IPv4:"
+    yellow "Scan IPv4:"
+	echo -e "hiddify_reality_scanner \"$IPV4_LINK\""
     echo
-	echo -e "${bblue}hiddify_reality_scanner${plain} \"$IPV4_LINK\""
-    echo
-    echo "Scan IPv6:"
-    echo
-	echo -e "${bblue}hiddify_reality_scanner${plain} \"$IPV6_LINK\""
+    yellow "Scan IPv6:"
+	echo -e "hiddify_reality_scanner \"$IPV6_LINK\""
     echo
     rred "------------------------------------------------------"
     echo -e "Hit ${yellow}Ctrl+C${plain} to stopthe script."

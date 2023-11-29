@@ -737,7 +737,7 @@ echo
 }
 resvmess(){
 if [[ "$tls" = "false" ]]; then
-if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' ]]; then
+if [[ -n $(ps -ef | grep cloudflared) && -s '/etc/s-box/argo.log' ]]; then
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo】The node information is as follows:" && sleep 2
@@ -821,7 +821,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
             },
             {
                 "tag": "local",
-                "address": "https://223.5.5.5/dns-query",
+                "address": "https://dns.alidns.com/dns-query",
                 "detour": "direct"
             },
             {
@@ -1227,7 +1227,7 @@ if [[ "$tls" = "false" ]]; then
 i=0
 while [ $i -le 4 ]; do let i++
 yellow "The $i-th refresh verifies the validity of the Cloudflared Argo tunnel domain name, please wait..."
-if [[ -n $(ps -e | grep cloudflared) ]]; then
+if [[ -n $(ps -ef | grep cloudflared) ]]; then
 kill -15 $(cat /etc/s-box/sbargopid.log) >/dev/null 2>&1
 fi
 /etc/s-box/cloudflared tunnel --url http://localhost:$(jq -r '.inbounds[1].listen_port' /etc/s-box/sb.json) --edge-ip-version auto --no-autoupdate --protocol http2 > /etc/s-box/argo.log 2>&1 &
@@ -1345,7 +1345,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1363,7 +1363,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1381,7 +1381,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1635,7 +1635,7 @@ res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${M
 if [[ -f /etc/s-box/vm_ws.txt ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Vmess-ws sharing link ]: Support v2rayng, nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m2}")
 fi
-if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' ]]; then
+if [[ -n $(ps -ef | grep cloudflared) && -s '/etc/s-box/argo.log' ]]; then
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【 Vmess-ws(tls)+Argo sharing link】: Support v2rayng, nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m3}")
 fi
 if [[ -f /etc/s-box/vm_ws_tls.txt ]]; then
@@ -1867,7 +1867,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else
@@ -2170,7 +2170,7 @@ allports
 sbymfl
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
 if [[ "$tls" = "false" ]]; then
-if [[ -n $(ps -e | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
+if [[ -n $(ps -ef | grep cloudflared) && -s '/etc/s-box/argo.log' && -n $(curl -sL https://$(cat /etc/s-box/argo.log | grep -a trycloudflare.com | awk 'NR==2{print}' | awk -F// '{print $2}' | awk '{print $1}')/ -I | awk 'NR==1 && /404|400/') ]]; then
 vm_zs="TLS off"
 argoym="Turned on"
 else

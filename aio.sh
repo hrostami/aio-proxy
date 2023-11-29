@@ -1064,7 +1064,8 @@ reality_scanner() {
     fi
     curl -o server_config.json https://raw.githubusercontent.com/hiddify/Hiddify_Reality_Scanner/main/server_config.json
     default_port=11443
-	readp "Enter an open port:(or press enter for default $default_port)" user_port
+    echo
+	readp "Enter an open port(or press enter for default $default_port): " user_port
     xray_port=${user_port:-$default_port}
 
 	sed -i "s/\"port\": 11443/\"port\": $xray_port/" server_config.json

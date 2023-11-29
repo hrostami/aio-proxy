@@ -1684,7 +1684,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1711,7 +1715,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1719,8 +1727,8 @@ while true; do
             while true; do
                 reality_scanner
                 echo
-                readp "Press Enter to continue..."
                 systemctl stop xray
+                readp "Press Enter to continue..."
                 break
             done
             ;;
@@ -1753,7 +1761,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1803,7 +1815,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1825,7 +1841,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1853,7 +1873,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1888,7 +1912,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1908,7 +1936,11 @@ while true; do
                     0) # Back to Main Menu
                         break
                         ;;
-                    *) echo "Invalid choice. Please select a valid option." ;;
+                    *)
+                        echo
+                        echo "Invalid choice. Please select a valid option!"
+                        readp "Press enter to select again..."
+                        ;;
                 esac
             done
             ;;
@@ -1917,6 +1949,10 @@ while true; do
             echo "Exiting..."
             exit
             ;;
-        *) echo "Invalid choice. Please select a valid option." ;;
+        *)
+            echo
+            echo "Invalid choice. Please select a valid option!"
+            readp "Press enter to select again..."
+            ;;
     esac
 done

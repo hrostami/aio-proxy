@@ -1115,7 +1115,6 @@ reality_scanner() {
                 ;;
         esac
     done
-    ;;
 	echo
     echo "-------------------Scan IPv4------------------"
 	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV4_LINK${plain}\""

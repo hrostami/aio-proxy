@@ -1130,10 +1130,10 @@ reality_scanner() {
     done
 	echo
     echo "-------------------Scan IPv4------------------"
-	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV4_LINK${plain}\""
+	echo -e "${bblue}hiddify_reality_scanner \"${plain}$IPV4_LINK\""
     echo
     echo "-------------------Scan IPv6------------------"
-	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV6_LINK${plain}\""
+	echo -e "${bblue}hiddify_reality_scanner \"${plain}$IPV6_LINK\""
     echo
     echo "----------------------------------------------"
 

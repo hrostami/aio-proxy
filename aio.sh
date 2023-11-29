@@ -1082,13 +1082,13 @@ reality_scanner() {
         white "1) Yes, show me the commands i need to run on windows for the 1st time."
         white "2) No, I have installed hiddify-reality-scanner on my windows computer before."
         readp "Enter your choice: " choice
-        echo
-        yellow "------------------------------------------------------"
-        echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
-        yellow "------------------------------------------------------"
-        echo
         case "$choice" in
             1)  # first time
+                echo
+                white "------------------------------------------------------"
+                echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
+                white "------------------------------------------------------"
+                echo
                 echo "mkdir reality-scan-result && reality-scan-result"
                 echo
                 echo "pip install virtualenv"
@@ -1107,11 +1107,17 @@ reality_scanner() {
                 ;;
 
             2)  # not first
+                echo
+                white "------------------------------------------------------"
+                echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
+                white "------------------------------------------------------"
+                echo
                 echo "cd reality-scan-result && reality\Scripts\activate"
+                echo
                 yellow "now run the scan command below:"
                 ;;
             *)
-                echo "Invalid choice. Please select a valid option."
+                echo "Invalid choice. Please select a valid option!"
                 readp "Press enter to select again..."
                 ;;
         esac

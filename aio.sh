@@ -1107,6 +1107,7 @@ reality_scanner() {
                 echo "pip install -U hiddify_reality_scanner"
                 echo
                 yellow "now run the scan command below:"
+                break
                 ;;
 
             2)  # not first
@@ -1118,6 +1119,7 @@ reality_scanner() {
                 echo "cd reality-scan-result && reality\Scripts\activate"
                 echo
                 yellow "now run the scan command below:"
+                break
                 ;;
             *)
                 echo

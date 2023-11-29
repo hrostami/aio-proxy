@@ -1075,21 +1075,47 @@ reality_scanner() {
 	IPV6_LINK="vless://hiddify@[$IPV6]:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
 	
 	IPV4_LINK="vless://hiddify@$IPV4:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
-	echo
-	yellow "Run the following commands:"
-    echo "----------------------------------------------"
-	echo
-	echo "pip install virtualenv"
-	echo
-	echo "py -m venv reality"
-	echo
-	rred "or"
-	echo
-	echo "python -m venv reality"
-	echo
-	echo "reality\Scripts\activate"
-	echo
-	echo "pip install -U hiddify_reality_scanner"
+	while true; do
+        echo
+        yellow "Is it your first time using the scanner?"
+        white "1) Yes, show me the commands i need to run on windows for the 1st time."
+        white "2) No, I have installed hiddify-reality-scanner on my windows computer before."
+        readp "Enter your choice: " choice
+        echo
+        yellow "------------------------------------------------------"
+        echo -e "Run the following commands on your ${yellow}Windows ${plain}computer:"
+        yellow "------------------------------------------------------"
+        echo
+        case "$choice" in
+            1)  # first time
+                echo "mkdir reality-scan-result && reality-scan-result"
+                echo
+                echo "pip install virtualenv"
+                echo
+                echo "py -m venv reality"
+                echo
+                rred "or"
+                echo
+                echo "python -m venv reality"
+                echo
+                echo "reality\Scripts\activate"
+                echo
+                echo "pip install -U hiddify_reality_scanner"
+                echo
+                yellow "now run the scan command below:"
+                ;;
+
+            2)  # not first
+                echo "cd reality-scan-result && reality\Scripts\activate"
+                yellow "now run the scan command below:"
+                ;;
+            *)
+                echo "Invalid choice. Please select a valid option."
+                readp "Press enter to select again..."
+                ;;
+        esac
+    done
+    ;;
 	echo
     echo "-------------------Scan IPv4------------------"
 	echo -e "${plain}hiddify_reality_scanner \"${yellow}$IPV4_LINK${plain}\""

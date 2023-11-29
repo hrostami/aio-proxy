@@ -1138,9 +1138,9 @@ reality_scanner() {
 	echo -e "${bblue}hiddify_reality_scanner${plain} \"$IPV6_LINK\""
     echo
     rred "------------------------------------------------------"
-
     echo -e "Hit ${yellow}Ctrl+C${plain} to stopthe script."
-
+    rred "------------------------------------------------------"
+    echo
 	xray run -c server_config.json
 }
 # ----------------------------------------SSH stuff------------------------------------------------

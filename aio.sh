@@ -1054,7 +1054,7 @@ delete_tuic() {
 
 # ----------------------------------------reality scanner stuff------------------------------------------------
 reality_scanner() {
-
+    clear
     if [[ -f '/usr/local/bin/xray' ]]; then
         :
     else
@@ -1076,6 +1076,7 @@ reality_scanner() {
 	
 	IPV4_LINK="vless://hiddify@$IPV4:$xray_port/?fp=chrome&security=reality&pbk=Z84J2IelR9ch3k8VtlVhhs5ycBUlXA7wHBWcBrjqnAw&sid=6ba85179e30d4fc2&sni=www.google.com&type=tcp&flow=xtls-rprx-vision&encryption=none#Hiddify"
 	while true; do
+        clear
         echo
         yellow "Is it your first time using the scanner?"
         white "1) Yes, show me the commands i need to run on windows for the 1st time."

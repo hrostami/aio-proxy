@@ -1079,8 +1079,11 @@ reality_scanner() {
         clear
         echo
         yellow "Is it your first time using the scanner?"
-        white "1) Yes, show me the commands i need to run on windows for the 1st time."
-        white "2) No, I have installed hiddify-reality-scanner on my windows computer before."
+        white "------------------------------------------------------"
+        echo -e "1) ${green}Yes${plain}, show me the commands i need to run on windows for the 1st time."
+        echo
+        echo -e "2) ${red}No${plain}, I have installed hiddify-reality-scanner on my windows computer before."
+        white "------------------------------------------------------"
         readp "Enter your choice: " choice
         case "$choice" in
             1)  # first time
@@ -1117,6 +1120,7 @@ reality_scanner() {
                 yellow "now run the scan command below:"
                 ;;
             *)
+                echo
                 echo "Invalid choice. Please select a valid option!"
                 readp "Press enter to select again..."
                 ;;

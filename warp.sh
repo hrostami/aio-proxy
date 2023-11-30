@@ -57,15 +57,15 @@ insV=$(cat /root/warpip/v 2>/dev/null)
 latestV=$(curl -s https://gitlab.com/rwkgyg/CFwarp/-/raw/main/version/version | awk -F "update content" '{print $1}' | head -n 1)
 if [[ -f /root/warpip/v ]]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e " Current CFwarp script version number: ${bblue}${insV}${plain} is the latest version\n"
+echo -e " The current CFwarp-yg script version number: ${bblue}${insV}${plain} is the latest version"
 else
-echo -e " Current CFwarp script version number: ${bblue}${insV}${plain}"
-echo -e " The latest CFwarp script version number detected: ${yellow}${latestV}${plain}"
+echo -e " Current CFwarp-yg script version number: ${bblue}${insV}${plain}"
+echo -e " The latest CFwarp-yg script version number detected: ${yellow}${latestV}${plain} (8 can be selected for update)"
 echo -e "${yellow}$(curl -s https://gitlab.com/rwkgyg/CFwarp/-/raw/main/version/version)${plain}"
-echo -e " You can select 8 to update\n"
 fi
 else
-echo -e " The current CFwarp script version number: ${bblue}${latestV}${plain} is the latest version\n"
+echo -e " Current CFwarp-yg script version number: ${bblue}${latestV}${plain}"
+echo -e " Please select the plan (1, 2, 3) first and install the desired warp mode"
 fi
 }
 tun(){
@@ -131,8 +131,8 @@ result6=`curl -sx socks5h://localhost:$mport -4sL "https://www.netflix.com/title
 NF="Congratulations, the current IP supports watching Netflix non-homemade dramas" && return
 }
 v4v6(){
-v4=$(curl -s4m5 ip.me -k)
-v6=$(curl -s6m5 ip.me -k)
+v4=$(curl -s4m5 icanhazip.com -k)
+v6=$(curl -s6m5 icanhazip.com -k)
 }
 checkwgcf(){
 wgcfv6=$(curl -s6m5 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2) 
@@ -577,7 +577,7 @@ fi
 ShowSOCKS5(){
 if [[ $(systemctl is-active warp-svc) = active ]]; then
 mport=`warp-cli --accept-tos settings 2>/dev/null | grep 'WarpProxy on port' | awk -F "port " '{print $2}'`
-s5ip=`curl -sx socks5h://localhost:$mport ip.me -k`
+s5ip=`curl -sx socks5h://localhost:$mport icanhazip.com -k`
 nfs5
 gpt1=$(curl -sx socks5h://localhost:$mport https://chat.openai.com 2>&1)
 gpt2=$(curl -sx socks5h://localhost:$mport https://android.chat.openai.com 2>&1)
@@ -590,9 +590,9 @@ country=$nonf
 socks5=$(curl -sx socks5h://localhost:$mport www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 2 | grep warp | cut -d= -f2) 
 case ${socks5} in 
 plus) 
-S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port:\c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port:\c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
+S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port: \c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
 S5Status=$(white "Socks5 WARP status:\c" ; yellow "Socks5-WARP client installed but port is closed")
 esac 
@@ -635,9 +635,6 @@ fi
 #red "Wgcf-WARP-IPV4+IPV6 has been installed, but Socks5-WARP is not supported." && cf
 #fi
 if [[ $release = Centos ]]; then 
-if [[ ${vsid} =~ 8 ]]; then
-yum clean all && yum makecache
-fi
 yum -y install epel-release && yum -y install net-tools
 curl -fsSl https://pkg.cloudflareclient.com/cloudflare-warp-ascii.repo | tee /etc/yum.repos.d/cloudflare-warp.repo
 yum update
@@ -724,7 +721,7 @@ fi
 }
 S5menu(){
 white "------------------------------------------------------------------------------------------------"
-white "Option 2: The current Socks5-WARP official client local agent situation is as follows"
+white " Option 2: The current Socks5-WARP official client local agent situation is as follows"
 blue " ${S5Status}"
 white "------------------------------------------------------------------------------------------------"
 }
@@ -755,7 +752,7 @@ chmod +x warpplus.sh
 timeout 60s ./warpplus.sh
 }
 ONEWARPGO(){
-yellow "\n Please wait, it is currently in warp-go core installation mode, detecting outbound and unlocking..."
+yellow "\n Please wait, it is currently in warp-go core installation mode, detecting the peer IP and outbound status..."
 warpip
 wgo1='sed -i "s#.*AllowedIPs.*#AllowedIPs = 0.0.0.0/0#g" /usr/local/bin/warp.conf'
 wgo2='sed -i "s#.*AllowedIPs.*#AllowedIPs = ::/0#g" /usr/local/bin/warp.conf'
@@ -791,11 +788,11 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
+WARPIPv4Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv4Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status: \c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
+WARPIPv4Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status: \c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
 esac 
 else
 WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
@@ -814,7 +811,7 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh
 country=$nonf
 case ${wgcfv6} in 
 plus) 
-WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; rred "$v6  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; rred "$v6  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
 WARPIPv6Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; green "$v6  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
@@ -990,9 +987,6 @@ fi
 }
 WGCFins(){
 if [[ $release = Centos ]]; then
-if [[ ${vsid} =~ 8 ]]; then
-yum clean all && yum makecache
-fi
 yum install epel-release -y;yum install iproute iputils -y
 elif [[ $release = Debian ]]; then
 apt install lsb-release -y
@@ -1284,7 +1278,7 @@ echo -e "${bblue}     ░██ ${plain}        ░██    ░░██       
 echo -e "${bblue}     ░█${plain}█          ░██ ██ ██         ░██  ░░${red}██     ░██  ░░██     ░██  ░░██ ${plain}  "
 echo
 white "Yongge Github project: github.com/yonggekkk"
-white "Yongge blogger’s blog: ygkkk.blogspot.com"
+white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -1352,7 +1346,7 @@ start_menu
 fi
 }
 ONEWGCFWARP(){
-yellow "\n Please wait, it is currently in wgcf core installation mode, detecting outbound and unlocking..."
+yellow "\n Please wait, it is currently in wgcf core installation mode, detecting the peer IP and outbound status..."
 warpip
 ud4='sed -i "7 s/^/PostUp = ip -4 rule add from $(ip route get 162.159.192.1 | grep -oP '"'src \K\S+') lookup main\n/"'" /etc/wireguard/wgcf.conf && sed -i "7 s/^/PostDown = ip -4 rule delete from $(ip route get 162.159.192.1 | grep -oP '"'src \K\S+') lookup main\n/"'" /etc/wireguard/wgcf.conf'
 ud6='sed -i "7 s/^/PostUp = ip -6 rule add from $(ip route get 2606:4700:d0::a29f:c001 | grep -oP '"'src \K\S+') lookup main\n/"'" /etc/wireguard/wgcf.conf && sed -i "7 s/^/PostDown = ip -6 rule delete from $(ip route get 2606:4700:d0::a29f:c001 | grep -oP '"'src \K\S+') lookup main\n/"'" /etc/wireguard/wgcf.conf'
@@ -1591,9 +1585,6 @@ fi
 WGCFins(){
 rm -rf /usr/local/bin/wgcf /etc/wireguard/wgcf.conf /etc/wireguard/wgcf-profile.conf /etc/wireguard/wgcf-account.toml /etc/wireguard/wgcf+p.log /etc/wireguard/ID /usr/bin/wireguard-go /usr/bin/wgcf wgcf-account.toml wgcf-profile.conf /etc/wireguard/buckup-profile.conf
 if [[ $release = Centos ]]; then
-if [[ ${vsid} =~ 8 ]]; then
-yum clean all && yum makecache
-fi
 yum install epel-release -y;yum install iproute iptables wireguard-tools -y
 elif [[ $release = Debian ]]; then
 apt install lsb-release -y
@@ -1800,7 +1791,7 @@ echo -e "${bblue}     ░██ ${plain}        ░██    ░░██       
 echo -e "${bblue}     ░█${plain}█          ░██ ██ ██         ░██  ░░${red}██     ░██  ░░██     ░██  ░░██ ${plain}  "
 echo
 white "Yongge Github project: github.com/yonggekkk"
-white "Yongge blogger’s blog: ygkkk.blogspot.com"
+white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -1847,27 +1838,37 @@ fi
 }
 checkyl(){
 if [ ! -f warp_update ]; then
-green "The necessary dependencies for the first installation script..."
+green "Install the necessary dependencies of the CFwarp-yg script for the first time..."
 update(){
 if [ -x "$(command -v apt-get)" ]; then
-apt update
+apt update -y
 elif [ -x "$(command -v yum)" ]; then
 yum update && yum install epel-release -y
 elif [ -x "$(command -v dnf)" ]; then
-dnf update
+dnf update -y
 fi
 }
+if [[ $release = Centos && ${vsid} =~ 8 ]]; then
+cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
+curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
+sed -i -e "s|mirrors.cloud.aliyuncs.com|mirrors.aliyun.com|g " /etc/yum.repos.d/CentOS-*
+sed -i -e "s|releasever|releasever-stream|g" /etc/yum.repos.d/CentOS-*
+yum clean all && yum makecache
+cd
+fi
 update
 packages=("curl" "openssl" "bc" "python3" "screen" "qrencode" "wget" "cron")
-for package in "${packages[@]}"
-do
+inspackages=("curl" "openssl" "bc" "python3" "screen" "qrencode" "wget" "cron")
+for i in "${!packages[@]}"; do
+package="${packages[$i]}"
+inspackage="${inspackages[$i]}"
 if ! command -v "$package" &> /dev/null; then
 if [ -x "$(command -v apt-get)" ]; then
-apt-get install -y "$package" 
+apt-get install -y "$inspackage"
 elif [ -x "$(command -v yum)" ]; then
-yum install -y "$package"
+yum install -y "$inspackage"
 elif [ -x "$(command -v dnf)" ]; then
-dnf install -y "$package"
+dnf install -y "$inspackage"
 fi
 fi
 done
@@ -1882,8 +1883,7 @@ fi
 fi
 update
 touch warp_update
-yellow "The first installation detects the VPS environment and selects the peer IP... Please wait for 30 seconds..."
-tun && warpip
+tun
 fi
 }
 startCFwarp(){
@@ -1902,14 +1902,42 @@ white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-yellow " Tip: If warp-go installation fails, change to wgcf. Mutual switching installation is supported."
-white " ================================================================="
-green "  1. Select the warp-go plan to enter the WARP menu"
-green "  2. Select the wgcf plan to enter the WARP menu"
-green "  0. Exit script"
-white " ================================================================="
+blue "Please wait for 5 seconds to check whether Netflix and ChatGPT are unlocked"
 echo
-readp " Please enter the number:" Input
+echo
+v4v6
+UA_Browser="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36"
+if [[ -n $v6 ]]; then
+nonf=$(curl -s6 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
+nf6;chatgpt6;checkgpt
+v6Status=$(white "IPV6 address:\c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+else
+v6Status=$(white "IPV6 address:\c" ; red "No IPV6 address exists")
+fi
+if [[ -n $v4 ]]; then
+nonf=$(curl -s4 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
+nf4;chatgpt4;checkgpt
+v4Status=$(white "IPv4 address: \c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+else
+v4Status=$(white "IPv4 address: \c" ; red "No IPV4 address exists")
+fi
+white "-----------------------------------------------------------------------"
+white " ${v4Status}"
+white "-----------------------------------------------------------------------"
+white " ${v6Status}"
+white "-----------------------------------------------------------------------"
+echo
+echo
+white "=================================================================="
+yellow " Install warp and add IPV4 or IPV6 to have a chance of unlocking full Netflix and ChatGPT"
+yellow " Tip: If warp-go installation fails, change to wgcf. Mutual switching installation is supported."
+echo
+green " 1. Select the warp-go solution to enter the WARP menu (recommended)"
+green " 2. Select the wgcf plan to enter the WARP menu"
+green " 0. Exit script"
+white "=================================================================="
+echo
+readp " Please enter a number [0-2]:" Input
 case "$Input" in
  1 ) ONEWARPGO;;
  2 ) ONEWGCFWARP;;

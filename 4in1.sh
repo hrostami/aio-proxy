@@ -191,7 +191,6 @@ inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green "1. Start installing the official version of Sing-box kernel..."
 echo
-mkdir -p /etc/s-box
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
@@ -1274,6 +1273,7 @@ instsllsingbox(){
 if [[ -f '/etc/systemd/system/sing-box.service' ]]; then
 red "Sing-box service has been installed and cannot be installed again" && exit
 fi
+mkdir -p /etc/s-box
 v6 ; openyn ; inssb ; inscertificate ; insport
 echo
 blue "Vless-reality related keys and ids will be automatically generated..."
@@ -1387,7 +1387,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1405,7 +1405,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -2269,8 +2269,8 @@ white "-------------------------------------------------------------------------
 green "9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
 green "10. View Sing-box operation log"
 green "11. One-click original BBR+FQ acceleration"
-green "12. Manage Acme certificate applications"
-green "13. Manage Warp"
+green "12. Manage Acme to apply for domain name certificate"
+green "13. Manage Warp to view Netflix and ChatGPT unlocking status"
 green " 0. Exit script"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 insV=$(cat /etc/s-box/v 2>/dev/null)

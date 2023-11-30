@@ -139,6 +139,7 @@ ipv=prefer_ipv6
 else
 endip=162.159.193.10
 ipv=prefer_ipv4
+echo '4' > /etc/s-box/i
 fi
 }
 warpcheck
@@ -817,32 +818,42 @@ cat > /etc/s-box/sing_box_client.json <<EOF
             {
                 "tag": "remote",
                 "address": "$sbdnsip",
+                "address_resolver": "dns_resolver",               
                 "detour": "select"
             },
             {
                 "tag": "local",
-                "address": "https://223.5.5.5/dns-query",
+                "address": "https://dns.alidns.com/dns-query",
+                "address_resolver": "dns_resolver",
                 "detour": "direct"
             },
             {
-                "address": "rcode://success",
+                "address": "rcode://refused",
                 "tag": "block"
             },
             {
                 "tag": "dns_fakeip",
-                "strategy": "ipv4_only",
                 "address": "fakeip"
+            },
+            {
+                "tag": "dns_resolver",
+                "address": "223.5.5.5",
+                "detour": "direct"
             }
         ],
         "rules": [
             {
-                "outbound": "any",
-                "server": "local"
+                "outbound": [
+                    "any"
+                ],
+                "server": "dns_resolver"
             },
             {
-                "disable_cache": true,
-                "geosite": "category-ads-all",
-                "server": "block"
+                "geosite": [
+                    "category-ads-all"
+                ],
+                "server": "block",
+                "disable_cache": true
             },
             {
                 "clash_mode": "Global",
@@ -853,15 +864,20 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "server": "local"
             },
             {
-                "geosite": "cn",
-                "server": "local"
+                "geosite": [
+                    "geolocation-!cn"
+                ],
+                "server": "remote"
             },
              {
-               "query_type": [
-                "A",
-                "AAAA"
-               ],
-              "server": "dns_fakeip"
+                "geosite": [
+                    "geolocation-!cn"
+                ],
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "dns_fakeip"
             }
           ],
            "fakeip": {
@@ -869,16 +885,20 @@ cat > /etc/s-box/sing_box_client.json <<EOF
            "inet4_range": "198.18.0.0/15",
            "inet6_range": "fc00::/18"
          },
-          "independent_cache": true
+          "independent_cache": true,
+          "final": "local"
         },
       "inbounds": [
     {
       "type": "tun",
+      "tag": "tun-in",
       "inet4_address": "172.19.0.1/30",
       "inet6_address": "fdfe:dcba:9876::1/126",
       "auto_route": true,
       "strict_route": true,
-      "sniff": true
+      "stack": "mixed",
+      "sniff": true,
+      "sniff_override_destination": false
     }
   ],
   "experimental": {
@@ -1027,6 +1047,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "download_detour": "select"
     },
     "auto_detect_interface": true,
+    "final": "select",
     "rules": [
       {
         "geosite": "category-ads-all",
@@ -1220,6 +1241,9 @@ a=$hy2_ports
 sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
 fi
 sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
+if [[ -f /etc/s-box/i ]]; then
+sed -i 's/"inet6_address":/\/\/&/' /etc/s-box/sing_box_client.json
+fi
 }
 cfargo(){
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)

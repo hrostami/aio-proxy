@@ -189,7 +189,7 @@ fi
 }
 inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green "1. Start installing the official version of Sing-box kernel..."
+green "1. Start downloading and installing the official version of Sing-box kernel... Please wait a moment"
 echo
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
@@ -203,7 +203,7 @@ chown root:root /etc/s-box/sing-box
 chmod +x /etc/s-box/sing-box
 blue "Successfully installed Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')"
 else
-red "Failed to install Sing-box kernel, please run the installation again" && exit
+red "The download of Sing-box kernel is incomplete and the installation failed. Please run the installation again." && exit
 fi
 else
 red "Failed to download the Sing-box kernel. Please run the installation again and check whether the VPS network can access Github." && exit
@@ -869,9 +869,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "server": "remote"
             },
              {
-                "geosite": [
-                    "geolocation-!cn"
-                ],
                 "query_type": [
                     "A",
                     "AAAA"
@@ -2065,6 +2062,7 @@ upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | se
 else
 sb
 fi
+green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
@@ -2077,7 +2075,7 @@ chmod +x /etc/s-box/sing-box
 systemctl restart sing-box
 blue "Successfully upgraded/switched Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb
 else
-red "Upgrading/switching Sing-box kernel failed, please run the installation again" && upsbcroe
+red "The download of Sing-box kernel is incomplete and the installation failed. Please run the installation again." && upsbcroe
 fi
 else
 red "Failed to download the Sing-box kernel. Please run the installation again and check whether the VPS network can access Github." && exit
@@ -2264,9 +2262,9 @@ green " 4. Change ports and add multi-port hop multiplexing"
 green " 5. Three major channels for custom domain name diversion" 
 green " 6. Close and restart Sing-box"   
 green " 7. Update Sing-box-yg script"
-green " 8. Update and switch Sing-box dual core"
+green "8. Update and switch Sing-box dual core"
 white "----------------------------------------------------------------------------------"
-green "9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
+green " 9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
 green "10. View Sing-box operation log"
 green "11. One-click original BBR+FQ acceleration"
 green "12. Manage Acme to apply for domain name certificate"

@@ -252,7 +252,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -262,7 +262,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -536,11 +536,11 @@ cat > /etc/s-box/sb.json <<EOF
 ],
 "route":{
 "geoip":{
-"download_url":"https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
+"download_url":"https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db",
 "download_detour":"direct"
 },
 "geosite":{
-"download_url":"https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
+"download_url":"https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db",
 "download_detour":"direct"
 },
 "rules":[
@@ -848,13 +848,6 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "server": "dns_resolver"
             },
             {
-                "geosite": [
-                    "category-ads-all"
-                ],
-                "server": "block",
-                "disable_cache": true
-            },
-            {
                 "clash_mode": "Global",
                 "server": "remote"
             },
@@ -869,6 +862,9 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "server": "remote"
             },
              {
+                "geosite": [
+                    "geolocation-!cn"
+                ],             
                 "query_type": [
                     "A",
                     "AAAA"
@@ -881,8 +877,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
            "inet4_range": "198.18.0.0/15",
            "inet6_range": "fc00::/18"
          },
-          "independent_cache": true,
-          "final": "local"
+          "independent_cache": true
         },
       "inbounds": [
     {
@@ -1035,20 +1030,15 @@ cat > /etc/s-box/sing_box_client.json <<EOF
   ],
   "route": {
       "geoip": {
-      "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db",
+      "download_url": "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db",
       "download_detour": "select"
     },
     "geosite": {
-      "download_url": "https://mirror.ghproxy.com/https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db",
+      "download_url": "https://mirror.ghproxy.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db",
       "download_detour": "select"
     },
     "auto_detect_interface": true,
-    "final": "select",
     "rules": [
-      {
-        "geosite": "category-ads-all",
-        "outbound": "block"
-      },
       {
         "outbound": "dns-out",
         "protocol": "dns"
@@ -1279,8 +1269,8 @@ private_key=$(echo "$key_pair" | awk '/PrivateKey/ {print $2}' | tr -d '"')
 public_key=$(echo "$key_pair" | awk '/PublicKey/ {print $2}' | tr -d '"')
 echo "$public_key" > /etc/s-box/public.key
 short_id=$(/etc/s-box/sing-box generate rand --hex 4)
-wget -q -O /root/geosite.db https://github.com/SagerNet/sing-geosite/releases/latest/download/geosite.db
-wget -q -O /root/geoip.db https://github.com/SagerNet/sing-geoip/releases/latest/download/geoip.db
+wget -q -O /root/geosite.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db
+wget -q -O /root/geoip.db https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db
 inssbjsonser && sbservice && sbactive
 if [[ ! $vi =~ lxc|openvz ]]; then
 sysctl -w net.core.rmem_max=2500000 > /dev/null
@@ -1366,7 +1356,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1384,7 +1374,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1402,7 +1392,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -2130,8 +2120,8 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The SFA/SFI/SFW configuration file is displayed as follows:"
-red "Android SFA, Apple SFI (supports Gitlab private subscription link online configuration update), download the Sing-box official client of SFW on win computer by yourself,"
-red "File directory /etc/s-box/sing_box_client.json , copy and build according to the json file format." && sleep 2
+red "Android SFA, Apple SFI (supports Gitlab private subscription link online configuration update), win computer official file package SFW, please go to the Yongge Github project to download it yourself."
+red "File directory /etc/s-box/sing_box_client.json, copy and build according to the json file format." && sleep 2
 echo
 cat /etc/s-box/sing_box_client.json
 echo
@@ -2295,7 +2285,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

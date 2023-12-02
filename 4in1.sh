@@ -816,36 +816,28 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "servers": [
             {
                 "tag": "remote",
-                "address": "$sbdnsip",
-                "address_resolver": "dns_resolver",               
+                "address": "$sbdnsip",             
                 "detour": "select"
             },
             {
                 "tag": "local",
-                "address": "https://dns.alidns.com/dns-query",
-                "address_resolver": "dns_resolver",
+                "address": "h3://223.5.5.5/dns-query",
                 "detour": "direct"
             },
             {
-                "address": "rcode://refused",
+                "address": "rcode://success",
                 "tag": "block"
             },
             {
                 "tag": "dns_fakeip",
                 "address": "fakeip"
-            },
-            {
-                "tag": "dns_resolver",
-                "address": "223.5.5.5",
-                "detour": "direct"
             }
         ],
         "rules": [
             {
-                "outbound": [
-                    "any"
-                ],
-                "server": "dns_resolver"
+                "outbound": "any",
+                "server": "local",
+                "disable_cache": true
             },
             {
                 "clash_mode": "Global",
@@ -856,15 +848,15 @@ cat > /etc/s-box/sing_box_client.json <<EOF
                 "server": "local"
             },
             {
-                "geosite": [
-                    "geolocation-!cn"
-                ],
+                "geosite": "cn",
+                "server": "local"
+            },
+            {
+                "geosite": "geolocation-!cn",
                 "server": "remote"
             },
              {
-                "geosite": [
-                    "geolocation-!cn"
-                ],             
+                "geosite": "geolocation-!cn",             
                 "query_type": [
                     "A",
                     "AAAA"
@@ -877,19 +869,18 @@ cat > /etc/s-box/sing_box_client.json <<EOF
            "inet4_range": "198.18.0.0/15",
            "inet6_range": "fc00::/18"
          },
-          "independent_cache": true
+          "independent_cache": true,
+          "final": "remote"
         },
       "inbounds": [
     {
       "type": "tun",
-      "tag": "tun-in",
       "inet4_address": "172.19.0.1/30",
       "inet6_address": "fdfe:dcba:9876::1/126",
       "auto_route": true,
       "strict_route": true,
       "stack": "mixed",
-      "sniff": true,
-      "sniff_override_destination": false
+      "sniff": true
     }
   ],
   "experimental": {
@@ -1038,6 +1029,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
       "download_detour": "select"
     },
     "auto_detect_interface": true,
+    "final": "select",
     "rules": [
       {
         "outbound": "dns-out",

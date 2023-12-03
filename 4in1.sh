@@ -252,7 +252,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -262,7 +262,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -743,15 +743,15 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀【 vmess-ws(tls)+Argo】The node information is as follows:" && sleep 2
 echo
 echo "Share link [v2rayn, v2rayng, nekobox, shadowrocket]"
-echo -e "${yellow}vmess://$(echo '{"add":"www.wto.org","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"ygkkk-vm-argo","tls":"tls","sni":"'$argo'","type":"none","v":"2"}' | base64 -w 0)${plain}"
+echo -e "${yellow}vmess://$(echo '{"add":"www.visa.com","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"ygkkk-vm-argo","tls":"tls","sni":"'$argo'","type":"none","v":"2"}' | base64 -w 0)${plain}"
 echo
 echo "QR code [v2rayn, v2rayng, nekobox, shadowrocket]"
-echo 'vmess://'$(echo '{"add":"www.wto.org","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"ygkkk-vm-argo","tls":"tls","sni":"'$argo'","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argo.txt
+echo 'vmess://'$(echo '{"add":"www.visa.com","aid":"0","host":"'$argo'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"443","ps":"ygkkk-vm-argo","tls":"tls","sni":"'$argo'","type":"none","v":"2"}' | base64 -w 0) > /etc/s-box/vm_ws_argo.txt
 qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vm_ws_argo.txt)"
 fi
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀【 vmess-ws 】The node information is as follows:" && sleep 2
+red "🚀【 vmess-ws 】The node information is as follows (it is recommended to set it as a CDN priority node):" && sleep 2
 echo
 echo "Share link [v2rayn, v2rayng, nekobox, shadowrocket]"
 echo -e "${yellow}vmess://$(echo '{"add":"'$server_ip'","aid":"0","host":"'$vm_name'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"'$vm_port'","ps":"ygkkk-vm-ws","tls":"","type":"none","v":"2"}' | base64 -w 0)${plain}"
@@ -1348,7 +1348,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1366,7 +1366,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1384,7 +1384,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -2113,7 +2113,7 @@ echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀[ vless-reality, vmess-ws, Hysteria2, Tuic5 ] The SFA/SFI/SFW configuration file is displayed as follows:"
 red "Android SFA, Apple SFI (supports Gitlab private subscription link online configuration update), win computer official file package SFW, please go to the Yongge Github project to download it yourself."
-red "File directory /etc/s-box/sing_box_client.json, copy and build according to the json file format." && sleep 2
+red "File directory /etc/s-box/sing_box_client.json , copy and build according to the json file format." && sleep 2
 echo
 cat /etc/s-box/sing_box_client.json
 echo

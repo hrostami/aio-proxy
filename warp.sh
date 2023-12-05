@@ -92,8 +92,7 @@ result=`curl --connect-timeout 5 -4sSL "https://www.netflix.com/" 2>&1`
 result=`curl -4sL "https://www.netflix.com/title/80018499" 2>&1`
 [[ "$result" == *"page-404"* || "$result" == *"NSEZ-403"* ]] && NF="Sorry, the current IP cannot watch Netflix" && return
 result1=`curl -4sL "https://www.netflix.com/title/70143836" 2>&1`
-[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" && return
-NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas" && return
+[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" || NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas"
 }
 nf6(){
 result=`curl --connect-timeout 5 -6sSL "https://www.netflix.com/" 2>&1`
@@ -102,8 +101,7 @@ result=`curl --connect-timeout 5 -6sSL "https://www.netflix.com/" 2>&1`
 result=`curl -6sL "https://www.netflix.com/title/80018499" 2>&1`
 [[ "$result" == *"page-404"* || "$result" == *"NSEZ-403"* ]] && NF="Sorry, the current IP cannot watch Netflix" && return
 result1=`curl -6sL "https://www.netflix.com/title/70143836" 2>&1`
-[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" && return
-NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas" && return
+[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" || NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas"
 }
 nfs5() {
 result=`curl -sx socks5h://localhost:$mport --connect-timeout 5 -4sSL "https://www.netflix.com/" 2>&1`
@@ -112,8 +110,7 @@ result=`curl -sx socks5h://localhost:$mport --connect-timeout 5 -4sSL "https://w
 result=`curl -sx socks5h://localhost:$mport -4sL "https://www.netflix.com/title/80018499" 2>&1`
 [[ "$result" == *"page-404"* || "$result" == *"NSEZ-403"* ]] && NF="Sorry, the current IP cannot watch Netflix" && return
 result1=`curl -sx socks5h://localhost:$mport -4sL "https://www.netflix.com/title/70143836" 2>&1`
-[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" && return
-NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas" && return
+[[ "$result1" == *"page-404"* ]] && NF="Unfortunately, the current IP only unlocks Netflix’s homemade dramas" || NF="Congratulations, the current IP has fully unlocked Netflix’s non-self-produced dramas"
 }
 v4v6(){
 v4=$(curl -s4m5 icanhazip.com -k)
@@ -642,17 +639,18 @@ warp-cli --accept-tos set-mode proxy >/dev/null 2>&1
 warp-cli --accept-tos set-custom-endpoint "$endpoint" >/dev/null 2>&1
 warp-cli --accept-tos connect >/dev/null 2>&1
 warp-cli --accept-tos enable-always-on >/dev/null 2>&1
-wppluskey >/dev/null 2>&1
-ID=$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)
-if [[ -n $ID ]]; then
-green "Use warp+key"
-green "$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1)"
-warp-cli --accept-tos set-license $ID >/dev/null 2>&1
-fi
-rm -rf warpplus.sh
-if [[ $(warp-cli --accept-tos account) =~ 'Limited' ]]; then
-green "Upgraded to Socks5-WARP+ account\nSocks5-WARP+ account remaining traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB"
-fi
+#wppluskey >/dev/null 2>&1
+#ID=$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)
+#if [[ -n $ID ]]; then
+#green "Use warp+key"
+#green "$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1)"
+#warp-cli --accept-tos set-license $ID >/dev/null 2>&1
+#fi
+#rm -rf warpplus.sh
+#if [[ $(warp-cli --accept-tos account) =~ 'Limited' ]]; then
+#green "Upgraded to Socks5-WARP+ account\nSocks5-WARP+ account remaining traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB"
+#fi
+green "The installation is complete, return to the menu"
 sleep 2 && lncf && reswarp && cf
 }
 SOCKS5WARPUP(){
@@ -773,14 +771,14 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv4Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status: \c" ; green "$chat");;
+WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$v4  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv4Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status: \c" ; yellow "$NF" ; white " ChatGPT unlocking status: \c" ; yellow "$chat");; 
+WARPIPv4Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address:\c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
 esac 
 else
-WARPIPv4Status=$(white "IPV4 status: \c" ; red "No IPV4 address exists")
+WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
 fi 
 if [[ -n $v6 ]]; then
 nf6
@@ -796,7 +794,7 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh
 country=$nonf
 case ${wgcfv6} in 
 plus) 
-WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; rred "$v6  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
+WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; rred "$v6  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
 on) 
 WARPIPv6Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status: \c" ; green "$chat");;
 off) 
@@ -1128,7 +1126,7 @@ SOCKS5WARPUP
 fi
 if [[ $warpup == 2 ]]; then
 [[ ! $(type -P warp-go) ]] && red "warp-go is not installed" && exit
-green "Please copy the key license key in the WARP+ state of the mobile WARP client or the secret key shared on the network (26 characters), and enter it as you like to have a chance of getting a 1G traffic WARP+ account"
+green "Please copy the key license key in the WARP+ state of the mobile WARP client or the key shared on the network (26 characters). Currently, due to a bug in WARP-GO, there is a high probability that the upgrade will fail."
 readp "Please enter the upgrade WARP+ key:" ID
 if [[ -z $ID ]]; then
 red "No content entered" && WARPup
@@ -1190,7 +1188,7 @@ Endpoint = 162.159.193.10:1701
 KeepAlive = 30
 EOF
 fi
-/usr/local/bin/warp-go --update --config=/usr/local/bin/warp.conf.bak --team-config=$token --device-name=vps+warp+teams+$(date +%s%N |md5sum | cut -c 1-3)
+/usr/local/bin/warp-go --register --config=/usr/local/bin/warp.conf.bak --team-config=$token --device-name=vps+warp+teams+$(date +%s%N |md5sum | cut -c 1-3)
 sed -i "2s#.*#$(sed -ne 2p /usr/local/bin/warp.conf.bak)#;3s#.*#$(sed -ne 3p /usr/local/bin/warp.conf.bak)#" /usr/local/bin/warp.conf >/dev/null 2>&1
 sed -i "4s#.*#$(sed -ne 4p /usr/local/bin/warp.conf.bak)#;5s#.*#$(sed -ne 5p /usr/local/bin/warp.conf.bak)#" /usr/local/bin/warp.conf >/dev/null 2>&1
 i=0
@@ -1267,7 +1265,7 @@ white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-yellow " Feel free to choose a realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
+yellow " You can choose any realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
 yellow " Enter the script shortcut: cf"
 white " ================================================================="
 green "  1. Option 1: Install/Switch WARP-GO"
@@ -1590,8 +1588,8 @@ echo | wgcf register --accept-tos
 done
 wgcf generate
 mtuwarp
-blue "Check whether the warp+ account can be automatically generated and used. Please wait for 10 seconds."
-wppluskey >/dev/null 2>&1
+#blue "Check whether the warp+ account can be automatically generated and used. Please wait for 10 seconds."
+#wppluskey >/dev/null 2>&1
 sed -i "s/MTU.*/MTU = $MTU/g" wgcf-profile.conf
 cp -f wgcf-profile.conf /etc/wireguard/wgcf.conf >/dev/null 2>&1
 cp -f wgcf-account.toml /etc/wireguard/buckup-account.toml  >/dev/null 2>&1
@@ -1599,21 +1597,21 @@ cp -f wgcf-profile.conf /etc/wireguard/buckup-profile.conf  >/dev/null 2>&1
 ABC
 mv -f wgcf-profile.conf /etc/wireguard >/dev/null 2>&1
 mv -f wgcf-account.toml /etc/wireguard >/dev/null 2>&1
-ID=$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)
-if [[ -n $ID ]]; then
-green "Use warp+key"
-green "$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)"
-sed -i "s/license_key.*/license_key = '$ID'/g" /etc/wireguard/wgcf-account.toml
-sbmc=warp+$(date +%s%N |md5sum | cut -c 1-3)
-SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
-rm -rf warpplus.sh
-cd /etc/wireguard && wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
-wgcf generate && cd
-sed -i "2s#.*#$(sed -ne 2p /etc/wireguard/wgcf-profile.conf)#;4s#.*#$(sed -ne 4p /etc/wireguard/wgcf-profile.conf)#" /etc/wireguard/wgcf.conf
-sed -i "2s#.*#$(sed -ne 2p /etc/wireguard/wgcf-profile.conf)#;4s#.*#$(sed -ne 4p /etc/wireguard/wgcf-profile.conf)#" /etc/wireguard/buckup-profile.conf
-else
-yellow "Warp+ cannot be automatically generated, and a normal warp account can be generated directly."
-fi
+#ID=$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)
+#if [[ -n $ID ]]; then
+#green "Use warp+key"
+#green "$(tail -n1 /root/WARP+Keys.txt | cut -d' ' -f1 2>/dev/null)"
+#sed -i "s/license_key.*/license_key = '$ID'/g" /etc/wireguard/wgcf-account.toml
+#sbmc=warp+$(date +%s%N |md5sum | cut -c 1-3)
+#SBID="--name $(echo $sbmc | sed s/[[:space:]]/_/g)"
+#rm -rf warpplus.sh
+#cd /etc/wireguard && wgcf update $SBID > /etc/wireguard/wgcf+p.log 2>&1
+#wgcf generate && cd
+#sed -i "2s#.*#$(sed -ne 2p /etc/wireguard/wgcf-profile.conf)#;4s#.*#$(sed -ne 4p /etc/wireguard/wgcf-profile.conf)#" /etc/wireguard/wgcf.conf
+#sed -i "2s#.*#$(sed -ne 2p /etc/wireguard/wgcf-profile.conf)#;4s#.*#$(sed -ne 4p /etc/wireguard/wgcf-profile.conf)#" /etc/wireguard/buckup-profile.conf
+#else
+#yellow "Warp+ cannot be automatically generated, and a normal warp account can be generated directly."
+#fi
 systemctl enable wg-quick@wgcf
 cat /etc/wireguard/wgcf.conf && sleep 2
 CheckWARP && ShowWGCF && lncf && reswarp
@@ -1780,10 +1778,10 @@ white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-yellow " Feel free to choose a realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
+yellow " You can choose any realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
 yellow " Enter the script shortcut: cf"
 white " ================================================================="
-green "  1. Solution 1: Install/switch WGCF-WARP"
+green "  1. Solution 1: Install/Switch WGCF-WARP"
 [[ $cpu != amd64* ]] && red "  2. Option 2: Install Socks5-WARP (only supports amd64 architecture, currently Option 2 is not available)" || green "  2. Option 2: Install Socks5-WARP"
 green "  3. Option 3: Generate WARP-Wireguard configuration file and QR code"
 green "  4. Uninstall WARP"
@@ -1903,9 +1901,9 @@ fi
 if [[ -n $v4 ]]; then
 nonf=$(curl -s4 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
 nf4;chatgpt4;checkgpt
-v4Status=$(white "IPv4 address:\c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+v4Status=$(white "IPv4 address: \c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
-v4Status=$(white "IPv4 address:\c" ; red "No IPV4 address exists")
+v4Status=$(white "IPv4 address: \c" ; red "No IPV4 address exists")
 fi
 echo "-----------------------------------------------------------------------"
 white " ${v4Status}"
@@ -1916,7 +1914,7 @@ echo
 echo
 white "=================================================================="
 yellow " Do you want to install WARP?"
-yellow " Two major advantages at present:"
+yellow " Two current advantages:"
 yellow " 1. Chance to fully unlock Netflix and ChatGPT"
 yellow " 2. You can choose to take over the outbound IP of local IPV4, IPV6, and Socks5"
 echo "-------------------------------------------------------------------"

@@ -182,7 +182,7 @@ readp "Please enter the resolved domain name:" ym
 green "Domain name entered: $ym" && sleep 1
 checkacmeca
 domainIP=$(curl -sm5 ipget.net/?ip=$ym)
-if [[ -z $domainIP ]]; then
+if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
 abc=$(nslookup $ym 2>&1)
 domainIP=$(echo $abc | awk '{print $NF}')
 fi
@@ -206,7 +206,7 @@ if [[ $freenom =~ tk|ga|gq|ml|cf ]]; then
 red "After detection, you are using freenom free domain name resolution, which does not support the current DNS API mode. The script exits." && exit 
 fi
 domainIP=$(curl -sm5 ipget.net/?ip=$ym)
-if [[ -z $domainIP ]]; then
+if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
 abc=$(nslookup $ym 2>&1)
 domainIP=$(echo $abc | awk '{print $NF}')
 fi
@@ -214,7 +214,7 @@ if [[ -n $(echo $domainIP | grep nginx) && -n $(echo $ym | grep \*) ]]; then
 green "After testing, it is currently a pan-domain name certificate application." && sleep 2
 abcc=ygkkk.acme$(echo $ym | tr -d '*')
 domainIP=$(curl -s ipget.net/?ip=$abcc)
-if [[ -z $domainIP ]]; then
+if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
 abc=$(nslookup $abcc 2>&1)
 domainIP=$(echo $abc | awk '{print $NF}')
 fi
@@ -394,7 +394,7 @@ bash ~/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 }
 start_menu(){
 clear
@@ -414,7 +414,7 @@ yellow "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 yellow " hint:"
 yellow " 1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
 yellow " 2. The independent 80 port mode only supports single domain name certificate application, and supports automatic renewal when port 80 is not occupied."
-yellow " 3. DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
+yellow " 3. The DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
 yellow " 4. Before applying for a pan-domain name, you need to set a resolution record with the name * on the resolution platform."
 yellow " Public key file crt storage path: /root/ygkkkca/cert.crt"
 yellow " Key file key storage path: /root/ygkkkca/private.key"

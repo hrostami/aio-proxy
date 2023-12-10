@@ -59,7 +59,7 @@ cd
 fi
 update
 packages=("curl" "openssl" "lsof" "socat" "dnsutils" "tar" "wget" "cron")
-inspackages=("curl" "openssl" "lsof" "socat" "bind9-utils" "tar" "wget" "cron")
+inspackages=("curl" "openssl" "lsof" "socat" "dnsutils" "tar" "wget" "cron")
 for i in "${!packages[@]}"; do
 package="${packages[$i]}"
 inspackage="${inspackages[$i]}"
@@ -394,7 +394,7 @@ bash ~/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
+[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
 }
 start_menu(){
 clear

@@ -44,7 +44,7 @@ update(){
 if [ -x "$(command -v apt-get)" ]; then
 apt update -y
 elif [ -x "$(command -v yum)" ]; then
-yum update && yum install epel-release -y
+yum update -y && yum install epel-release -y
 elif [ -x "$(command -v dnf)" ]; then
 dnf update -y
 fi
@@ -116,6 +116,9 @@ Aemail=$auto@gmail.com
 fi
 yellow "Currently registered email name: $Aemail"
 green "Start installing the acme.sh certificate application script"
+bash ~/.acme.sh/acme.sh --uninstall >/dev/null 2>&1
+rm -rf ~/.acme.sh acme.sh
+sed -i '/--cron/d' /etc/crontab
 wget -N https://github.com/Neilpang/acme.sh/archive/master.tar.gz >/dev/null 2>&1
 tar -zxvf master.tar.gz >/dev/null 2>&1
 cd acme.sh-master >/dev/null 2>&1
@@ -130,13 +133,6 @@ red "Installation of acme.sh certificate application program failed" && exit
 fi
 }
 checktls(){
-fail(){
-red "Sorry, domain name certificate application failed"
-yellow "Suggestion 1: Change the second-level domain name and try to execute the script (important)"
-green "Example: the original second-level domain name x.ygkkk.eu.org or x.ygkkk.cf, rename the x name in cloudflare, confirm and take effect"
-echo
-yellow "Suggestion 2: Change the current local network IP environment and try to execute the script again" && exit
-}
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 sed -i '/--cron/d' /etc/crontab
 echo "0 0 * * * root bash ~/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
@@ -147,13 +143,13 @@ yellow "The key file key path is as follows and can be copied directly"
 green "/root/ygkkkca/private.key"
 echo $ym > /root/ygkkkca/ca.log
 if [[ -f '/etc/hysteria/config.json' ]]; then
-blue "The Hysteria-1 proxy protocol is detected. If you install Yongge’s Hysteria-yg script, this certificate will be automatically applied."
+blue "The Hysteria-1 proxy protocol is detected. If you installed Yongge's Hysteria-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
 fi
 if [[ -f '/etc/caddy/Caddyfile' ]]; then
-blue "The Naiveproxy proxy protocol is detected. If you install Yongge’s Naiveproxy-yg script, this certificate will be automatically applied."
+blue "The Naiveproxy proxy protocol is detected. If you installed Yongge’s Naiveproxy-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
 fi
 if [[ -f '/etc/tuic/tuic.json' ]]; then
-blue "The Tuic proxy protocol is detected. If you install Yongge’s Tuic-yg script, this certificate will be automatically applied."
+blue "The Tuic proxy protocol is detected. If you installed Yongge’s Tuic-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
 fi
 if [[ -f '/usr/bin/x-ui' ]]; then
 blue "x-ui (xray proxy protocol) is detected. If you install Yongge’s x-ui-yg script, this certificate will be automatically applied."
@@ -162,11 +158,64 @@ if [[ -f '/etc/s-box/sb.json' ]]; then
 blue "Sing-box is detected. If you install Yongge’s Sing-box-yg script, this certificate will be automatically applied."
 fi
 else
-fail
+bash ~/.acme.sh/acme.sh --uninstall >/dev/null 2>&1
+rm -rf /root/ygkkkca
+rm -rf ~/.acme.sh acme.sh
+sed -i '/--cron/d' /etc/crontab
+red "Sorry, domain name certificate application failed"
+yellow "Suggestion 1: Change the second-level domain name and try to execute the script (important)"
+green "Example: the original second-level domain name x.ygkkk.eu.org or x.ygkkk.cf, rename the x name in cloudflare, confirm and take effect"
+echo
+yellow "Suggestion 2: Change the current local network IP environment and try to execute the script again" && exit
 fi
 }
 installCA(){
 bash ~/.acme.sh/acme.sh --install-cert -d ${ym} --key-file /root/ygkkkca/private.key --fullchain-file /root/ygkkkca/cert.crt --ecc
+}
+checkip(){
+v4v6
+if [[ -z $v4 ]]; then
+vpsip=$v6
+elif [[ -n $v4 && -n $v6 ]]; then
+vpsip="$v6 or $v4"
+else
+vpsip=$v4
+fi
+domainIP=$(dig @8.8.8.8 +time=2 +short "$ym" 2>/dev/null)
+if echo $domainIP | grep -q "network unreachable\|timed out" || [[ -z $domainIP ]]; then
+domainIP=$(dig @2001:4860:4860::8888 +time=2 aaaa +short "$ym" 2>/dev/null)
+fi
+if echo $domainIP | grep -q "network unreachable\|timed out" || [[ -z $domainIP ]] ; then
+red "The IP was not resolved. Please check whether the domain name is entered incorrectly." 
+yellow "Have you tried manually typing to force a match?"
+yellow "1: Yes! Enter the IP for domain name resolution"
+yellow "2: No! Exit script"
+readp "please choose:" menu
+if [ "$menu" = "1" ] ; then
+green "VPS local IP: $vpsip"
+readp "Please enter the IP for domain name resolution, consistent with the VPS local IP ($vpsip):" domainIP
+else
+exit
+fi
+elif [[ -n $(echo $domainIP | grep ":") ]]; then
+green "The IPV6 address resolved to the current domain name: $domainIP"
+else
+green "The IPV4 address resolved to the current domain name: $domainIP"
+fi
+if [[ $domainIP != $v4 ]] && [[ $domainIP != $v6 ]]; then
+yellow "Current VPS local IP: $vpsip"
+red "The IP resolved by the current domain name does not match the local IP of the current VPS! ! !"
+green "suggestions below:"
+if [[ "$v6" == "2a09"* || "$v4" == "104.28"* ]]; then
+yellow "WARP failed to shut down automatically, please shut it down manually! Or use the Yongge WARP script that supports automatic closing and opening."
+else
+yellow "1. Please ensure that CDN Xiaohuangyun is turned off (DNS only). The settings for other domain name resolution websites are the same."
+yellow "2. Please check whether the IP set by the domain name resolution website is correct."
+fi
+exit 
+else
+green "The IP matching is correct, and the application for the certificate begins..."
+fi
 }
 checkacmeca(){
 nowca=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
@@ -181,12 +230,7 @@ ACMEstandaloneDNS(){
 readp "Please enter the resolved domain name:" ym
 green "Domain name entered: $ym" && sleep 1
 checkacmeca
-domainIP=$(curl -sm5 ipget.net/?ip=$ym)
-if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
-abc=$(nslookup $ym 2>&1)
-domainIP=$(echo $abc | awk '{print $NF}')
-fi
-wro
+checkip
 if [[ $domainIP = $v4 ]]; then
 bash ~/.acme.sh/acme.sh  --issue -d ${ym} --standalone -k ec-256 --server letsencrypt --insecure
 fi
@@ -197,7 +241,6 @@ installCA
 checktls
 }
 ACMEDNS(){
-green "Tip: Before applying for a pan-domain name, you need to set a resolution record with a name of * characters on the resolution platform (input format: *.first-level primary domain)"
 readp "Please enter the resolved domain name:" ym
 green "Domain name entered: $ym" && sleep 1
 checkacmeca
@@ -205,23 +248,13 @@ freenom=`echo $ym | awk -F '.' '{print $NF}'`
 if [[ $freenom =~ tk|ga|gq|ml|cf ]]; then
 red "After detection, you are using freenom free domain name resolution, which does not support the current DNS API mode. The script exits." && exit 
 fi
-domainIP=$(curl -sm5 ipget.net/?ip=$ym)
-if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
-abc=$(nslookup $ym 2>&1)
-domainIP=$(echo $abc | awk '{print $NF}')
-fi
-if [[ -n $(echo $domainIP | grep nginx) && -n $(echo $ym | grep \*) ]]; then
+if [[ -n $(echo $ym | grep \*) ]]; then
 green "After testing, it is currently a pan-domain name certificate application." && sleep 2
-abcc=ygkkk.acme$(echo $ym | tr -d '*')
-domainIP=$(curl -s ipget.net/?ip=$abcc)
-if [[ -z $domainIP || -n $(echo $domainIP | grep nginx) ]]; then
-abc=$(nslookup $abcc 2>&1)
-domainIP=$(echo $abc | awk '{print $NF}')
-fi
 else
 green "After testing, it is currently a single domain name certificate application." && sleep 2
 fi
-wro
+checkacmeca
+checkip
 echo
 ab="Please select a managed domain name resolution service provider:\n1.Cloudflare\n2.Tencent Cloud DNSPod\n3.Alibaba Cloud Aliyun\n Please select:"
 readp "$ab" cd
@@ -265,36 +298,6 @@ esac
 installCA
 checktls
 }
-wro(){
-v4v6
-if [[ -n $(echo $domainIP | grep nginx) ]]; then
-yellow "IP resolved to the current domain name: None"
-red "The domain name resolution is invalid. Please check whether the domain name is filled in correctly or wait a few minutes for the resolution to complete before executing the script." && exit 
-elif [[ -n $(echo $domainIP | grep ":") || -n $(echo $domainIP | grep ".") ]]; then
-if [[ $domainIP != $v4 ]] && [[ $domainIP != $v6 ]]; then
-yellow "The IP resolved to the current domain name: $domainIP"
-if [[ -z $v4 ]]; then
-vpsip=$v6
-elif [[ -n $v4 && -n $v6 ]]; then
-vpsip="$v6 or $v4"
-else
-vpsip=$v4
-fi
-yellow "Current VPS local IP: $vpsip"
-red "The IP resolved by the current domain name does not match the local IP of the current VPS! ! !"
-green "suggestions below:"
-if [[ "$v6" == "2a09"* || "$v4" == "104.28"* ]]; then
-yellow "WARP failed to shut down automatically, please shut it down manually! Or use the Yongge WARP script that supports automatic closing and opening."
-else
-yellow "1. Please ensure that CDN Xiaohuangyun is turned off (DNS only). The settings for other domain name resolution websites are the same."
-yellow "2. Please check whether the IP set by the domain name resolution website is correct."
-fi
-exit 
-else
-green "Congratulations, the domain name resolution is correct. The IP resolved to the current domain name: $domainIP"
-fi
-fi
-}
 ACMEDNScheck(){
 wgcfv6=$(curl -s6m6 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
 wgcfv4=$(curl -s4m6 https://www.cloudflare.com/cdn-cgi/trace -k | grep warp | cut -d= -f2)
@@ -326,9 +329,8 @@ systemctl start warp-go >/dev/null 2>&1
 fi
 }
 acme(){
-yellow "Wait for 3 seconds to detect the IP environment."
 mkdir -p /root/ygkkkca
-ab="1. Select the independent 80 port mode to apply for a certificate (domain name only, recommended by novices), port 80 will be forcibly released during the installation process\n2. Select the DNS API mode to apply for a certificate (domain name, ID, Key required), automatically identify single domain name and Generic domain name\n0. Return to the previous level\n Please select:"
+ab="1. Select the independent 80 port mode to apply for a certificate (domain name only, recommended by beginners), port 80 will be forcibly released during the installation process\n2. Select the DNS API mode to apply for a certificate (domain name, ID, Key required), automatically identify single domain name and Generic domain name\n0. Return to the previous level\n Please select:"
 readp "$ab" cd
 case "$cd" in 
 1 ) acme1 && acme2 && acme3 && ACMEstandaloneDNScheck;;
@@ -353,7 +355,7 @@ bash ~/.acme.sh/acme.sh --list
 acmeshow(){
 if [[ -n $(~/.acme.sh/acme.sh -v 2>/dev/null) ]]; then
 caacme1=`bash ~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}'`
-if [[ -n $caacme1 ]]; then
+if [[ -n $caacme1 && ! $caacme1 == "Main_Domain" ]] && [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 caacme=$caacme1
 else
 caacme='无证书申请记录'
@@ -394,9 +396,8 @@ bash ~/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 }
-start_menu(){
 clear
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"           
 echo -e "${bblue} ░██     ░██      ░██ ██ ██         ░█${plain}█   ░██     ░██   ░██     ░█${red}█   ░██${plain}  "
@@ -411,13 +412,14 @@ white "Yongge blogger’s blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 yellow "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
-yellow " hint:"
-yellow " 1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
-yellow " 2. The independent 80 port mode only supports single domain name certificate application, and supports automatic renewal when port 80 is not occupied."
-yellow " 3. The DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
-yellow " 4. Before applying for a pan-domain name, you need to set a resolution record with the name * on the resolution platform."
-yellow " Public key file crt storage path: /root/ygkkkca/cert.crt"
-yellow " Key file key storage path: /root/ygkkkca/private.key"
+green "Acme-yg script version number V2023.12.18"
+yellow "hint:"
+yellow "1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
+yellow "2. Port 80 mode only supports single domain name certificate application, and supports automatic renewal when port 80 is not occupied."
+yellow "3. The DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
+yellow "4. Before applying for a pan-domain name, you need to set a resolution record with a name of * characters on the resolution platform (input format: *. primary/secondary primary domain)"
+yellow "Public key file crt storage path: /root/ygkkkca/cert.crt"
+yellow "Key file key storage path: /root/ygkkkca/private.key"
 echo
 red "========================================================================="
 acmeshow
@@ -425,12 +427,13 @@ blue "Certificates that have been successfully applied for (in domain name form)
 yellow "$caacme"
 echo
 red "========================================================================="
-green " 1. acme.sh applies for letsencrypt ECC certificate (supports independent mode and DNS API mode)"
+green " 1. acme.sh applies for letsencrypt ECC certificate (supports port 80 mode and DNS API mode)"
 green " 2. Query the successfully applied domain name and automatic renewal time point"
 green " 3. Manual one-click certificate renewal"
 green " 4. Delete the certificate and uninstall the one-click ACME certificate application script"
 green " 0. Exit"
-read -p "Please enter the number:" NumberInput
+echo
+readp "Please enter the number:" NumberInput
 case "$NumberInput" in     
 1 ) acme;;
 2 ) Certificate;;
@@ -438,5 +441,3 @@ case "$NumberInput" in
 4 ) uninstall;;
 * ) exit      
 esac
-}   
-start_menu "first" 

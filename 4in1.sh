@@ -62,10 +62,13 @@ green "Install the necessary dependencies of the Sing-box-yg script for the firs
 update(){
 if [ -x "$(command -v apt-get)" ]; then
 apt update -y
+apt install wget -y
 elif [ -x "$(command -v yum)" ]; then
 yum update -y && yum install epel-release -y
+yum update wget -y
 elif [ -x "$(command -v dnf)" ]; then
 dnf update -y
+dnf update wget -y
 fi
 }
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -77,8 +80,8 @@ yum clean all && yum makecache
 cd
 fi
 update
-packages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "wget" "cron")
-inspackages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "wget" "cron")
+packages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "cron")
+inspackages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "cron")
 for i in "${!packages[@]}"; do
 package="${packages[$i]}"
 inspackage="${inspackages[$i]}"
@@ -196,7 +199,7 @@ green "1. Start downloading and installing the official version of Sing-box kern
 echo
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
-wget --show-progress -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
+wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$sbcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
 tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
 mv /etc/s-box/$sbname/sing-box /etc/s-box
@@ -1391,7 +1394,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1430,7 +1433,7 @@ fi
 echo
 }
 fport(){
-readp "\nPlease enter a forwarded port (within the range of 1000-65535):" onlyport
+readp "\nPlease enter a forwarded port (in the range of 1000-65535):" onlyport
 if [[ $onlyport -ge 1000 && $onlyport -le 65535 ]]; then
 iptables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
 ip6tables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
@@ -1675,7 +1678,7 @@ fi
 }
 tgnotice(){
 if [[ -f /etc/s-box/sbtg.sh ]]; then
-green "Please wait for 5 seconds, the TG robot is ready to push..."
+green "Please wait 5 seconds, the TG robot is ready to push..."
 sbshare > /dev/null 2>&1
 bash /etc/s-box/sbtg.sh
 else
@@ -2053,7 +2056,7 @@ sb
 fi
 green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
-wget --show-progress -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
+wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
 tar xzf /etc/s-box/sing-box.tar.gz -C /etc/s-box
 mv /etc/s-box/$sbname/sing-box /etc/s-box
@@ -2073,7 +2076,7 @@ fi
 unins(){
 systemctl stop sing-box >/dev/null 2>&1
 systemctl disable sing-box >/dev/null 2>&1
-kill -15 $(cat /etc/s-box/sbargopid.log) >/dev/null 2>&1
+kill -15 $(cat /etc/s-box/sbargopid.log >/dev/null 2>&1) 
 rm -f /etc/systemd/system/sing-box.service
 rm -rf /etc/s-box sbyg_update /usr/bin/sb /root/geosite.db /root/geoip.db
 uncronsb
@@ -2347,7 +2350,7 @@ fi
 if [[ -n $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
 echo -e "Sing-box status: $green is running $plain"
 elif [[ -z $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
-echo -e "Sing-box status: $yellow has not been started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
+echo -e "Sing-box status: $yellow is not started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
 else
 echo -e "Sing-box status: $red is not installed $plain"
 fi

@@ -650,7 +650,7 @@ warp-cli --accept-tos enable-always-on >/dev/null 2>&1
 #if [[ $(warp-cli --accept-tos account) =~ 'Limited' ]]; then
 #green "Upgraded to Socks5-WARP+ account\nSocks5-WARP+ account remaining traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB"
 #fi
-green "The installation is complete, return to the menu"
+green "Installation is complete, return to the menu"
 sleep 2 && lncf && reswarp && cf
 }
 SOCKS5WARPUP(){

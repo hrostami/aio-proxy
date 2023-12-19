@@ -572,9 +572,9 @@ country=$nonf
 socks5=$(curl -sx socks5h://localhost:$mport www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 2 | grep warp | cut -d= -f2) 
 case ${socks5} in 
 plus) 
-S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+S5Status=$(white "Socks5 WARP+ status: \c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
 on) 
-S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port: \c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
+S5Status=$(white "Socks5 WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port: \c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
 S5Status=$(white "Socks5 WARP status:\c" ; yellow "Socks5-WARP client installed but port is closed")
 esac 
@@ -650,7 +650,7 @@ warp-cli --accept-tos enable-always-on >/dev/null 2>&1
 #if [[ $(warp-cli --accept-tos account) =~ 'Limited' ]]; then
 #green "Upgraded to Socks5-WARP+ account\nSocks5-WARP+ account remaining traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB"
 #fi
-green "Installation is complete, return to the menu"
+green "The installation is complete, return to the menu"
 sleep 2 && lncf && reswarp && cf
 }
 SOCKS5WARPUP(){
@@ -1778,10 +1778,10 @@ white "Yongge Blogger Blog: ygkkk.blogspot.com"
 white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-yellow " You can choose any realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
+yellow " Feel free to choose a realistic warp solution that suits you (options 1, 2, and 3, single selection is available, and multiple selections can coexist)"
 yellow " Enter the script shortcut: cf"
 white " ================================================================="
-green "  1. Solution 1: Install/Switch WGCF-WARP"
+green "  1. Solution 1: Install/switch WGCF-WARP"
 [[ $cpu != amd64* ]] && red "  2. Option 2: Install Socks5-WARP (only supports amd64 architecture, currently Option 2 is not available)" || green "  2. Option 2: Install Socks5-WARP"
 green "  3. Option 3: Generate WARP-Wireguard configuration file and QR code"
 green "  4. Uninstall WARP"
@@ -1886,7 +1886,7 @@ white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-yellow "Please wait for 5 seconds to check whether Netflix and ChatGPT are unlocked"
+yellow "Please wait 5 seconds to check whether Netflix and ChatGPT are unlocked"
 echo
 echo
 v4v6
@@ -1896,12 +1896,12 @@ nonf=$(curl -s6 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-
 nf6;chatgpt6;checkgpt
 v6Status=$(white "IPV6 address:\c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
-v6Status=$(white "IPV6 address:\c" ; red "No IPV6 address exists")
+v6Status=$(white "IPV6 address: \c" ; red "No IPV6 address exists")
 fi
 if [[ -n $v4 ]]; then
 nonf=$(curl -s4 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
 nf4;chatgpt4;checkgpt
-v4Status=$(white "IPv4 address:\c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+v4Status=$(white "IPv4 address: \c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
 v4Status=$(white "IPv4 address:\c" ; red "No IPV4 address exists")
 fi
@@ -1914,7 +1914,7 @@ echo
 echo
 white "=================================================================="
 yellow " Do you want to install WARP?"
-yellow " Two current advantages:"
+yellow " Two major advantages at present:"
 yellow " 1. Chance to fully unlock Netflix and ChatGPT"
 yellow " 2. You can choose to take over the outbound IP of local IPV4, IPV6, and Socks5"
 echo "-------------------------------------------------------------------"

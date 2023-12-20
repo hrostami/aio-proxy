@@ -572,9 +572,9 @@ country=$nonf
 socks5=$(curl -sx socks5h://localhost:$mport www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 2 | grep warp | cut -d= -f2) 
 case ${socks5} in 
 plus) 
-S5Status=$(white "Socks5 WARP+ status: \c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
+S5Status=$(white "Socks5 WARP+ status: \c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port: \c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status: \c" ; green "$chat");;  
+S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port: \c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
 S5Status=$(white "Socks5 WARP status:\c" ; yellow "Socks5-WARP client installed but port is closed")
 esac 
@@ -650,7 +650,7 @@ warp-cli --accept-tos enable-always-on >/dev/null 2>&1
 #if [[ $(warp-cli --accept-tos account) =~ 'Limited' ]]; then
 #green "Upgraded to Socks5-WARP+ account\nSocks5-WARP+ account remaining traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB"
 #fi
-green "Installation is complete, return to the menu"
+green "The installation is complete, return to the menu"
 sleep 2 && lncf && reswarp && cf
 }
 SOCKS5WARPUP(){
@@ -923,7 +923,7 @@ green "The current native v4+v6 dual-stack vps is installed for the first time w
 wpgo1=$wgo3 && wpgo2=$wgo4 && wpgo3=$wgo8 && WGCFins
 fi
 if [[ -n $v6 && -z $v4 ]]; then
-green "The current native v6 single stack vps is installed for the first time with warp-go\nWARP IPV4+IPV6 is now added (IP outbound performance: WARP dual stack IPV4 + IPV6)" && sleep 2
+green "The current native v6 single stack vps is installed for the first time with warp-go\nNow add WARP IPV4+IPV6 (IP outbound performance: WARP dual stack IPV4 + IPV6)" && sleep 2
 wpgo1=$wgo3 && wpgo2=$wgo5 && wpgo3=$wgo7 && nat4 && WGCFins
 fi
 if [[ -z $v6 && -n $v4 ]]; then
@@ -1894,9 +1894,9 @@ UA_Browser="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 if [[ -n $v6 ]]; then
 nonf=$(curl -s6 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
 nf6;chatgpt6;checkgpt
-v6Status=$(white "IPV6 address:\c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+v6Status=$(white "IPV6 address: \c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
-v6Status=$(white "IPV6 address:\c" ; red "No IPV6 address exists")
+v6Status=$(white "IPV6 address: \c" ; red "No IPV6 address exists")
 fi
 if [[ -n $v4 ]]; then
 nonf=$(curl -s4 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')

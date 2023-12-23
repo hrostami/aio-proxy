@@ -145,7 +145,6 @@ ipv=prefer_ipv6
 else
 endip=162.159.193.10
 ipv=prefer_ipv4
-echo '4' > /etc/s-box/i
 fi
 }
 warpcheck
@@ -195,7 +194,7 @@ fi
 }
 inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green "1. Start downloading and installing the official version of Sing-box kernel... Please wait a moment"
+green "1. Start downloading and installing the official version of Sing-box kernel... Please wait."
 echo
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
@@ -1225,9 +1224,6 @@ a=$hy2_ports
 sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
 fi
 sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
-if [[ -f /etc/s-box/i ]]; then
-sed -i 's/"inet6_address":/\/\/&/' /etc/s-box/sing_box_client.json
-fi
 }
 cfargo(){
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
@@ -1394,7 +1390,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1657,7 +1653,7 @@ fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Hysteria-2 Sharing Link]: Supports nekobox and shadowrocket"$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Tuic-v5 sharing link ]: Support nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m6}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file】: Support SFA, SFI, SFW"$'"'"'\n\n'"'"'"${message_text_m7}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Supports CMFA, CMFW-V, CMFOC"$'"'"'\n\n'"'"'"${message_text_m8}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Clash-meta configuration file]: Supports CMFA, CMFW-V, CMFOC"$'"'"'\n\n'"'"'"${message_text_m8}")
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
 fi
@@ -1678,7 +1674,7 @@ fi
 }
 tgnotice(){
 if [[ -f /etc/s-box/sbtg.sh ]]; then
-green "Please wait 5 seconds, the TG robot is ready to push..."
+green "Please wait for 5 seconds, the TG robot is ready to push..."
 sbshare > /dev/null 2>&1
 bash /etc/s-box/sbtg.sh
 else
@@ -2054,7 +2050,7 @@ upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | se
 else
 sb
 fi
-green "Start downloading and updating Sing-box kernel...please wait"
+green "Start downloading and updating Sing-box kernel... Please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
@@ -2350,7 +2346,7 @@ fi
 if [[ -n $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
 echo -e "Sing-box status: $green is running $plain"
 elif [[ -z $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
-echo -e "Sing-box status: $yellow is not started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
+echo -e "Sing-box status: $yellow has not been started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
 else
 echo -e "Sing-box status: $red is not installed $plain"
 fi

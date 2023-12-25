@@ -43,10 +43,8 @@ if [[ $bit = "aarch64" ]]; then
 cpu="arm64"
 elif [[ $bit = "x86_64" ]]; then
 amdv=$(cat /proc/cpuinfo | grep flags | head -n 1 | cut -d: -f2)
-case "$amdv" in
-*avx2*) cpu="amd64v3";;
-*) cpu="amd64";;
-esac
+a=$(cat /proc/cpuinfo | grep flags | head -n 1 | cut -d: -f2)
+[[ $amdv == *avx2* && $amdv == *f16c* ]] && cpu="amd64v3" || cpu="amd64"
 else
 red "Currently the script does not support the $bit architecture" && exit
 fi

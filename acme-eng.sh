@@ -118,7 +118,7 @@ yellow "Currently registered email name: $Aemail"
 green "Start installing the acme.sh certificate application script"
 bash ~/.acme.sh/acme.sh --uninstall >/dev/null 2>&1
 rm -rf ~/.acme.sh acme.sh
-sed -i '/--cron/d' /etc/crontab
+uncronac
 wget -N https://github.com/Neilpang/acme.sh/archive/master.tar.gz >/dev/null 2>&1
 tar -zxvf master.tar.gz >/dev/null 2>&1
 cd acme.sh-master >/dev/null 2>&1
@@ -134,8 +134,7 @@ fi
 }
 checktls(){
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
-sed -i '/--cron/d' /etc/crontab
-echo "0 0 * * * root bash ~/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /etc/crontab
+cronac
 green "The domain name certificate application was successful or already exists! The domain name certificate (cert.crt) and key (private.key) have been saved to the /root/ygkkkca folder" 
 yellow "The crt path of the public key file is as follows and can be copied directly"
 green "/root/ygkkkca/cert.crt"
@@ -143,30 +142,30 @@ yellow "The key file key path is as follows and can be copied directly"
 green "/root/ygkkkca/private.key"
 echo $ym > /root/ygkkkca/ca.log
 if [[ -f '/etc/hysteria/config.json' ]]; then
-blue "The Hysteria-1 proxy protocol is detected. If you installed Yongge's Hysteria-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
+blue "The Hysteria-1 proxy protocol is detected. If you have installed Yongge's Hysteria script, please execute the application/change certificate in the Hysteria script. This certificate will be automatically applied."
 fi
 if [[ -f '/etc/caddy/Caddyfile' ]]; then
-blue "The Naiveproxy proxy protocol is detected. If you installed Yongge’s Naiveproxy-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
+blue "The Naiveproxy proxy protocol is detected. If you have installed Yongge's Naiveproxy script, please execute the application/change certificate in the Naiveproxy script. This certificate will be automatically applied."
 fi
 if [[ -f '/etc/tuic/tuic.json' ]]; then
-blue "The Tuic proxy protocol is detected. If you installed Yongge’s Tuic-yg script, please execute the application/change certificate in this script. This certificate will be automatically applied."
+blue "The Tuic proxy protocol is detected. If you have installed Yongge's Tuic script, please execute the application/change certificate in the Tuic script. This certificate will be automatically applied."
 fi
 if [[ -f '/usr/bin/x-ui' ]]; then
-blue "x-ui (xray proxy protocol) is detected. If you install Yongge’s x-ui-yg script, this certificate will be automatically applied."
+blue "x-ui (xray proxy protocol) is detected. If you install Yongge’s x-ui script and enable the tls option, this certificate will be automatically applied."
 fi
 if [[ -f '/etc/s-box/sb.json' ]]; then
-blue "Sing-box is detected. If you install Yongge’s Sing-box-yg script, this certificate will be automatically applied."
+blue "The Sing-box kernel agent is detected. If you have installed Yongge's Sing-box script, please execute the application/change certificate in the Sing-box script. This certificate will be automatically applied."
 fi
 else
 bash ~/.acme.sh/acme.sh --uninstall >/dev/null 2>&1
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
-sed -i '/--cron/d' /etc/crontab
-red "Sorry, domain name certificate application failed"
-yellow "Suggestion 1: Change the second-level domain name and try to execute the script (important)"
-green "Example: the original second-level domain name x.ygkkk.eu.org or x.ygkkk.cf, rename the x name in cloudflare, confirm and take effect"
+uncronac
+red "Unfortunately, the domain name certificate application failed. The suggestions are as follows:"
+yellow "1. Change the custom name of the second-level domain name and try to execute the script (important)"
+green "Example: the original second-level domain name x.ygkkk.eu.org or x.ygkkk.cf, rename the x name in cloudflare"
 echo
-yellow "Suggestion 2: Change the current local network IP environment and try to execute the script again" && exit
+yellow "2: Because there is a time limit for applying for certificates for the same local IP multiple times in a row, wait for a while and try again." && exit
 fi
 }
 installCA(){
@@ -364,6 +363,19 @@ else
 caacme='未安装acme'
 fi
 }
+cronac(){
+uncronac
+crontab -l > /tmp/crontab.tmp
+echo "0 0 * * * root bash ~/.acme.sh/acme.sh --cron -f >/dev/null 2>&1" >> /tmp/crontab.tmp
+crontab /tmp/crontab.tmp
+rm /tmp/crontab.tmp
+}
+uncronac(){
+crontab -l > /tmp/crontab.tmp
+sed -i '/--cron/d' /tmp/crontab.tmp
+crontab /tmp/crontab.tmp
+rm /tmp/crontab.tmp
+}
 acmerenew(){
 [[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && yellow "The acme.sh certificate application is not installed and cannot be executed." && exit 
 green "The domain names shown below are the domain name certificates that have been successfully applied for."
@@ -395,8 +407,8 @@ curl https://get.acme.sh | sh
 bash ~/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
-sed -i '/--cron/d' /etc/crontab
-[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
+uncronac
+[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
 }
 clear
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"           

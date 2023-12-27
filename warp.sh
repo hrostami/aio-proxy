@@ -574,12 +574,12 @@ case ${socks5} in
 plus) 
 S5Status=$(white "Socks5 WARP+ status: \c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port:\c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-S5Status=$(white "Socks5 WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port:\c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
+S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port:\c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
-S5Status=$(white "Socks5 WARP status: \c" ; yellow "Socks5-WARP client installed but port is closed")
+S5Status=$(white "Socks5 WARP status:\c" ; yellow "Socks5-WARP client installed but port is closed")
 esac 
 else
-S5Status=$(white "Socks5 WARP status: \c" ; red "Socks5-WARP client not installed")
+S5Status=$(white "Socks5 WARP status:\c" ; red "Socks5-WARP client not installed")
 fi
 }
 SOCKS5ins(){
@@ -923,7 +923,7 @@ green "The current native v4+v6 dual-stack vps is installed for the first time w
 wpgo1=$wgo3 && wpgo2=$wgo4 && wpgo3=$wgo8 && WGCFins
 fi
 if [[ -n $v6 && -z $v4 ]]; then
-green "The current native v6 single-stack vps is installed for the first time with warp-go\nWARP IPV4+IPV6 is now added (IP outbound performance: WARP dual-stack IPV4 + IPV6)" && sleep 2
+green "The current native v6 single stack vps is installed for the first time with warp-go\nWARP IPV4+IPV6 is now added (IP outbound performance: WARP dual stack IPV4 + IPV6)" && sleep 2
 wpgo1=$wgo3 && wpgo2=$wgo5 && wpgo3=$wgo7 && nat4 && WGCFins
 fi
 if [[ -z $v6 && -n $v4 ]]; then

@@ -1886,7 +1886,7 @@ white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-yellow "Please wait for 5 seconds to check whether Netflix and ChatGPT are unlocked"
+yellow "Please wait 5 seconds to check whether Netflix and ChatGPT are unlocked"
 echo
 echo
 v4v6

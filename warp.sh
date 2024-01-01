@@ -1041,7 +1041,7 @@ ShowWGCF && lncf && reswarp
 curl -s https://gitlab.com/rwkgyg/CFwarp/-/raw/main/version/version | awk -F "update content" '{print $1}' | head -n 1 > /root/warpip/v
 }
 warpinscha(){
-yellow "Tip: The local outbound IP of the VPS will be taken over by the IP of the warp you choose. If the VPS does not have such an outbound IP locally, it will be taken over by the IP of another generated warp."
+yellow "Tip: The local outbound IP of the VPS will be taken over by the IP of the warp you choose. If the VPS does not have the local outbound IP, it will be taken over by the IP of another generated warp."
 echo
 green "1. Install/switch WARP single-stack IPV4 (press Enter to default)"
 green "2. Install/switch WARP single-stack IPV6"
@@ -1387,7 +1387,7 @@ WARPIPv6Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Ser
 on) 
 WARPIPv6Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status: \c" ; green "$chat");;
 off) 
-WARPIPv6Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address:\c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status: \c" ; yellow "$chat");;
+WARPIPv6Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address: \c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status: \c" ; yellow "$chat");;
 esac 
 else
 WARPIPv6Status=$(white "IPV6 status: \c" ; red "No IPV6 address exists")
@@ -1742,7 +1742,7 @@ rm -rf /usr/local/bin/wgcf /usr/bin/wg-quick /etc/wireguard/wgcf.conf /etc/wireg
 rm -rf /root/warpip /root/WARP+Keys.txt
 }
 warpinscha(){
-yellow "Tip: The local outbound IP of the VPS will be taken over by the IP of the warp you choose. If the VPS does not have such an outbound IP locally, it will be taken over by the IP of another generated warp."
+yellow "Tip: The local outbound IP of the VPS will be taken over by the IP of the warp you choose. If the VPS does not have the local outbound IP, it will be taken over by the IP of another generated warp."
 echo
 green "1. Install/switch wgcf-warp single stack IPV4 (press Enter to default)"
 green "2. Install/switch wgcf-warp single stack IPV6"
@@ -1886,7 +1886,7 @@ white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
 yellow "Translated by Hosy: https://github.com/hrostami"
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-yellow "Please wait 5 seconds to check whether Netflix and ChatGPT are unlocked"
+yellow "Please wait for 5 seconds to check whether Netflix and ChatGPT are unlocked"
 echo
 echo
 v4v6

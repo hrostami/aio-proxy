@@ -83,7 +83,7 @@ display_main_menu() {
     yellow "-----------------Protocols----------------------------"
     green "1. Chisel Tunnel         2. Hysteria V2"
     echo
-    green "3. Tuic                  4. Hiddify Reality Scanner"
+    green "3. Tuic                  4. Naive"
     echo
     green "5. SSH                   6. Reality+Tuic+Hy2+ws+Argo"
     echo
@@ -94,7 +94,7 @@ display_main_menu() {
     echo
     green "11. Show used Ports      12. Set Domains"
     echo
-    green "13. DNS(SmartSNI)"
+    green "13. DNS(SmartSNI)        14. Hiddify Reality Scanner"
     echo
     rred "0. Exit"
     echo "------------------------------------------------------"
@@ -1723,11 +1723,9 @@ while true; do
                 esac
             done
             ;;
-        4) # Reality
+        4) # Naive
             while true; do
-                reality_scanner
-                echo
-                systemctl stop xray
+                bash <(curl -sL https://raw.githubusercontent.com/hrostami/aio-proxy/master/naiveproxy.sh)
                 readp "Press Enter to continue..."
                 break
             done
@@ -1942,6 +1940,15 @@ while true; do
                         readp "Press enter to select again..."
                         ;;
                 esac
+            done
+            ;;
+        14) # Reality
+            while true; do
+                reality_scanner
+                echo
+                systemctl stop xray
+                readp "Press Enter to continue..."
+                break
             done
             ;;
         0) # Exit

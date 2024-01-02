@@ -572,7 +572,7 @@ country=$nonf
 socks5=$(curl -sx socks5h://localhost:$mport www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 2 | grep warp | cut -d= -f2) 
 case ${socks5} in 
 plus) 
-S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port:\c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+S5Status=$(white "Socks5 WARP+ status: \c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port:\c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
 S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port:\c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
@@ -771,11 +771,11 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv4Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
+WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv4Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status: \c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
+WARPIPv4Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status: \c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
 esac 
 else
 WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")

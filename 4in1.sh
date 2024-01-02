@@ -55,6 +55,7 @@ bbr="Openvz version bbr-plus"
 else
 bbr="Openvz/Lxc"
 fi
+hostname=$(hostname)
 if [ ! -f sbyg_update ]; then
 green "Install the necessary dependencies of the Sing-box-yg script for the first time..."
 update(){
@@ -192,7 +193,7 @@ fi
 }
 inssb(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green "1. Start downloading and installing the official version of Sing-box kernel... Please wait."
+green "1. Start downloading and installing the official version of Sing-box kernel... Please wait a moment"
 echo
 sbcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 sbname="sing-box-$sbcore-linux-$cpu"
@@ -808,6 +809,293 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 }
 sb_client(){
+inscore=$(/etc/s-box/sing-box version 2>/dev/null | awk '/version/{print $NF}')
+if [[ "$inscore" == 1.8* ]]; then
+cat > /etc/s-box/sing_box_client.json <<EOF
+{
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "timestamp": true
+  },
+  "experimental": {
+    "clash_api": {
+      "external_controller": "127.0.0.1:9090",
+      "external_ui": "ui",
+      "external_ui_download_url": "",
+      "external_ui_download_detour": "",
+      "secret": "",
+      "default_mode": "Rule"
+       },
+      "cache_file": {
+            "enabled": true,
+            "path": "cache.db",
+            "store_fakeip": true
+        }
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "proxydns",
+                "address": "$sbdnsip",             
+                "detour": "select"
+            },
+            {
+                "tag": "localdns",
+                "address": "h3://223.5.5.5/dns-query",
+                "detour": "direct"
+            },
+            {
+                "address": "rcode://refused",
+                "tag": "block"
+            },
+            {
+                "tag": "dns_fakeip",
+                "address": "fakeip"
+            }
+        ],
+        "rules": [
+            {
+                "outbound": "any",
+                "server": "localdns",
+                "disable_cache": true
+            },
+            {
+                "clash_mode": "Global",
+                "server": "proxydns"
+            },
+            {
+                "clash_mode": "Direct",
+                "server": "localdns"
+            },
+            {
+                "rule_set": "geosite-cn",
+                "server": "localdns"
+            },
+            {
+                 "rule_set": "geosite-geolocation-!cn",
+                 "server": "proxydns"
+            },
+             {
+                "rule_set": "geosite-geolocation-!cn",         
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "dns_fakeip"
+            }
+          ],
+           "fakeip": {
+           "enabled": true,
+           "inet4_range": "198.18.0.0/15",
+           "inet6_range": "fc00::/18"
+         },
+          "independent_cache": true,
+          "final": "proxydns"
+        },
+      "inbounds": [
+    {
+      "type": "tun",
+      "inet4_address": "172.19.0.1/30",
+      "inet6_address": "fdfe:dcba:9876::1/126",
+      "auto_route": true,
+      "strict_route": true,
+      "sniff": true
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "select",
+      "type": "selector",
+      "default": "auto",
+      "outbounds": [
+        "auto",
+        "vless-$hostname",
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname"
+      ]
+    },
+    {
+      "type": "vless",
+      "tag": "vless-$hostname",
+      "server": "$server_ipcl",
+      "server_port": $vl_port,
+      "uuid": "$uuid",
+      "flow": "xtls-rprx-vision",
+      "tls": {
+        "enabled": true,
+        "server_name": "$vl_name",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        },
+      "reality": {
+          "enabled": true,
+          "public_key": "$public_key",
+          "short_id": "$short_id"
+        }
+      }
+    },
+{
+            "server": "$cl_vm_ip",
+            "server_port": $vm_port,
+            "tag": "vmess-$hostname",
+            "tls": {
+                "enabled": $tls,
+                "server_name": "$vm_name",
+                "insecure": false,
+                "utls": {
+                    "enabled": true,
+                    "fingerprint": "chrome"
+                }
+            },
+            "transport": {
+                "headers": {
+                    "Host": [
+                        "$vm_name"
+                    ]
+                },
+                "path": "$uuid-vm",
+                "type": "ws"
+            },
+            "type": "vmess",
+            "security": "auto",
+            "uuid": "$uuid"
+        },
+    {
+        "type": "hysteria2",
+        "tag": "hy2-$hostname",
+        "server": "$cl_hy2_ip",
+        "server_port": $hy2_port,
+        "password": "$uuid",
+        "tls": {
+            "enabled": true,
+            "server_name": "$hy2_name",
+            "insecure": $hy2_ins,
+            "alpn": [
+                "h3"
+            ]
+        }
+    },
+        {
+            "type":"tuic",
+            "tag": "tuic5-$hostname",
+            "server": "$cl_tu5_ip",
+            "server_port": $tu5_port,
+            "uuid": "$uuid",
+            "password": "$uuid",
+            "congestion_control": "bbr",
+            "udp_relay_mode": "native",
+            "udp_over_stream": false,
+            "zero_rtt_handshake": false,
+            "heartbeat": "10s",
+            "tls":{
+                "enabled": true,
+                "server_name": "$tu5_name",
+                "insecure": $tu5_ins,
+                "alpn": [
+                    "h3"
+                ]
+            }
+        },
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "block",
+      "type": "block"
+    },
+    {
+      "tag": "dns-out",
+      "type": "dns"
+    },
+    {
+      "tag": "auto",
+      "type": "urltest",
+      "outbounds": [
+        "vless-$hostname",
+        "vmess-$hostname",
+        "hy2-$hostname",
+        "tuic5-$hostname"
+      ],
+      "url": "https://cp.cloudflare.com/generate_204",
+      "interval": "1m",
+      "tolerance": 50,
+      "interrupt_exist_connections": false
+    }
+  ],
+  "route": {
+      "rule_set": [
+            {
+                "tag": "geosite-geolocation-!cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
+                "download_detour": "select",
+                "update_interval": "1d"
+            },
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-cn.srs",
+                "download_detour": "select",
+                "update_interval": "1d"
+            },
+            {
+                "tag": "geoip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://cdn.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "select",
+                "update_interval": "1d"
+            }
+        ],
+    "auto_detect_interface": true,
+    "final": "select",
+    "rules": [
+      {
+        "outbound": "dns-out",
+        "protocol": "dns"
+      },
+      {
+        "clash_mode": "Direct",
+        "outbound": "direct"
+      },
+      {
+        "clash_mode": "Global",
+        "outbound": "select"
+      },
+      {
+        "rule_set": "geoip-cn",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "geosite-cn",
+        "outbound": "direct"
+      },
+      {
+      "ip_is_private": true,
+      "outbound": "direct"
+      },
+      {
+        "rule_set": "geosite-geolocation-!cn",
+        "outbound": "select"
+      }
+    ]
+  },
+    "ntp": {
+    "enabled": true,
+    "server": "time.apple.com",
+    "server_port": 123,
+    "interval": "30m",
+    "detour": "direct"
+  }
+}
+EOF
+else
 cat > /etc/s-box/sing_box_client.json <<EOF
 {
   "log": {
@@ -1069,6 +1357,7 @@ cat > /etc/s-box/sing_box_client.json <<EOF
   }
 }
 EOF
+fi
 cat > /etc/s-box/clash_meta_client.yaml <<EOF
 port: 7890
 allow-lan: true
@@ -1651,7 +1940,7 @@ fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Hysteria-2 Sharing Link]: Supports nekobox and shadowrocket"$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Tuic-v5 sharing link ]: Support nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m6}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file】: Support SFA, SFI, SFW"$'"'"'\n\n'"'"'"${message_text_m7}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Clash-meta configuration file]: Supports CMFA, CMFW-V, CMFOC"$'"'"'\n\n'"'"'"${message_text_m8}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Supports CMFA, CMFW-V, CMFOC"$'"'"'\n\n'"'"'"${message_text_m8}")
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
 fi
@@ -1672,7 +1961,7 @@ fi
 }
 tgnotice(){
 if [[ -f /etc/s-box/sbtg.sh ]]; then
-green "Please wait for 5 seconds, the TG robot is ready to push..."
+green "Please wait 5 seconds, the TG robot is ready to push..."
 sbshare > /dev/null 2>&1
 bash /etc/s-box/sbtg.sh
 else
@@ -2048,7 +2337,7 @@ upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | se
 else
 sb
 fi
-green "Start downloading and updating Sing-box kernel... Please wait"
+green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then

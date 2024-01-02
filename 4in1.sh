@@ -256,7 +256,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -266,7 +266,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press Enter to default)"
+yellow "1: No! Use self-signed certificate (press enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -2633,7 +2633,7 @@ fi
 if [[ -n $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
 echo -e "Sing-box status: $green is running $plain"
 elif [[ -z $(systemctl status sing-box 2>/dev/null | grep -w active) && -f '/etc/s-box/sb.json' ]]; then
-echo -e "Sing-box status: $yellow has not been started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
+echo -e "Sing-box status: $yellow is not started. You can choose 6 to restart. If it is still the same, choose 10 to view the log and give feedback. It is recommended to uninstall and reinstall Sing-box$plain."
 else
 echo -e "Sing-box status: $red is not installed $plain"
 fi

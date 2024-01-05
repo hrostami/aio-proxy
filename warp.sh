@@ -771,7 +771,7 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; rred "$v4  $country" ; white " Netflix NF unlocking status: \c" ; rred "$NF" ; white " ChatGPT unlocking status: \c" ; rred "$chat");;  
 on) 
 WARPIPv4Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address: \c" ; green "$v4  $country" ; white " Netflix NF unlocking status: \c" ; green "$NF" ; white " ChatGPT unlocking status: \c" ; green "$chat");;
 off) 
@@ -1914,7 +1914,7 @@ echo
 echo
 white "=================================================================="
 yellow " Do you want to install WARP?"
-yellow " Two major advantages at present:"
+yellow " Two current advantages:"
 yellow " 1. Chance to fully unlock Netflix and ChatGPT"
 yellow " 2. You can choose to take over the outbound IP of local IPV4, IPV6, and Socks5"
 echo "-------------------------------------------------------------------"

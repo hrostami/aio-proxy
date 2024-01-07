@@ -2578,7 +2578,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

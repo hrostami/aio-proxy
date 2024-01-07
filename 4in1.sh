@@ -256,7 +256,7 @@ echo
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key && -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]]; then
 yellow "After testing, we have used the Acme-yg script to apply for an Acme domain name certificate: $(cat /root/ygkkkca/ca.log)"
 green "Do you use $(cat /root/ygkkkca/ca.log) domain name certificate?"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use $(cat /root/ygkkkca/ca.log) domain name certificate"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -266,7 +266,7 @@ ymzs
 fi
 else
 green "If there is a domain name that has been resolved, should I apply for an Acme domain name certificate? (Constitutes dual certificate mode, which can coexist with self-signed certificates, and each protocol can be switched independently)"
-yellow "1: No! Use self-signed certificate (press enter to default)"
+yellow "1: No! Use self-signed certificate (press Enter to default)"
 yellow "2: Yes! Use the Acme-yg script to apply for an Acme certificate (supports regular port 80 mode and Dns API mode)"
 readp "please choose:" menu
 if [ -z "$menu" ] || [ "$menu" = "1" ] ; then
@@ -1909,13 +1909,18 @@ readp "Enter Telegram bot user ID:" userid
 telegram_id=$userid
 echo '#!/bin/bash
 export LANG=en_US.UTF-8
+total_lines=$(wc -l < /etc/s-box/sing_box_client.json)
+half=$((total_lines / 2))
+head -n $half /etc/s-box/sing_box_client.json > /etc/s-box/sing_box_client1.txt
+tail -n +$((half + 1)) /etc/s-box/sing_box_client.json > /etc/s-box/sing_box_client2.txt
 m1=$(cat /etc/s-box/vl_reality.txt 2>/dev/null)
 m2=$(cat /etc/s-box/vm_ws.txt 2>/dev/null)
 m3=$(cat /etc/s-box/vm_ws_argo.txt 2>/dev/null)
 m4=$(cat /etc/s-box/vm_ws_tls.txt 2>/dev/null)
 m5=$(cat /etc/s-box/hy2.txt 2>/dev/null)
 m6=$(cat /etc/s-box/tuic5.txt 2>/dev/null)
-m7=$(cat /etc/s-box/sing_box_client.json 2>/dev/null)
+m7=$(cat /etc/s-box/sing_box_client1.txt 2>/dev/null)
+m7_5=$(cat /etc/s-box/sing_box_client2.txt 2>/dev/null)
 m8=$(cat /etc/s-box/clash_meta_client.yaml 2>/dev/null)
 message_text_m1=$(echo "$m1")
 message_text_m2=$(echo "$m2")
@@ -1923,7 +1928,8 @@ message_text_m3=$(echo "$m3")
 message_text_m4=$(echo "$m4")
 message_text_m5=$(echo "$m5")
 message_text_m6=$(echo "$m6")
-message_text_m7=$(echo "$m7" | jq -c .)
+message_text_m7=$(echo "$m7")
+message_text_m7_5=$(echo "$m7_5")
 message_text_m8=$(echo "$m8")
 MODE=HTML
 URL="https://api.telegram.org/bottelegram_token/sendMessage"
@@ -1939,8 +1945,9 @@ res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${M
 fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Hysteria-2 Sharing Link]: Supports nekobox and shadowrocket"$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Tuic-v5 sharing link ]: Support nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m6}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file】: Support SFA, SFI, SFW"$'"'"'\n\n'"'"'"${message_text_m7}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Supports CMFA, CMFW-V, CMFOC"$'"'"'\n\n'"'"'"${message_text_m8}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file (two paragraphs)】: Support SFA, SFI"$'"'"'\n\n'"'"'"${message_text_m7}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m7_5}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Support Clash-meta related clients"$'"'"'\n\n'"'"'"${message_text_m8}")
 if [ $? == 124 ];then
 echo TG_api请求超时,请检查网络是否重启完成并是否能够访问TG
 fi
@@ -1950,6 +1957,7 @@ echo "TG push successful";
 else
 echo "TG push failed, please check the TG robot Token and ID";
 fi
+rm -rf /etc/s-box/sing_box_client1.txt /etc/s-box/sing_box_client2.txt
 ' > /etc/s-box/sbtg.sh
 sed -i "s/telegram_token/$telegram_token/g" /etc/s-box/sbtg.sh
 sed -i "s/telegram_id/$telegram_id/g" /etc/s-box/sbtg.sh

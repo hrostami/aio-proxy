@@ -1641,7 +1641,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1659,7 +1659,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1677,7 +1677,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -1969,7 +1969,7 @@ fi
 }
 tgnotice(){
 if [[ -f /etc/s-box/sbtg.sh ]]; then
-green "Please wait 5 seconds, the TG robot is ready to push..."
+green "Please wait for 5 seconds, the TG robot is ready to push..."
 sbshare > /dev/null 2>&1
 bash /etc/s-box/sbtg.sh
 else
@@ -2345,7 +2345,7 @@ upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | se
 else
 sb
 fi
-green "Start downloading and updating Sing-box kernel... Please wait"
+green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then
@@ -2578,7 +2578,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
+echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

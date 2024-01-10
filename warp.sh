@@ -508,7 +508,7 @@ elif [[ $warptools == 3 ]]; then
 xyz
 readp "When the warp state is running, the interval between rechecking the warp state (default is 600 seconds when you press Enter), please enter the interval (for example: 50 seconds, enter 50):" stop
 [[ -n $stop ]] && sed -i "s/600s/${stop}s/g;s/600s/${stop}s/g" /root/WARP-UP.sh || green "Default interval is 600 seconds"
-readp "When the warp status is interrupted (warp automatically shuts down after 5 consecutive failures and the original VPS IP is restored), continue to detect the WARP status interval (default is 500 seconds by pressing Enter). Please enter the interval time (for example: 50 seconds, enter 50):" goon
+readp "When the warp status is interrupted (the warp automatically closes after 5 consecutive failures and the original VPS IP is restored), continue to detect the WARP status interval (default is 500 seconds by pressing Enter). Please enter the interval time (for example: 50 seconds, enter 50):" goon
 [[ -n $goon ]] && sed -i "s/500s/${goon}s/g;s/500s/${goon}s/g" /root/WARP-UP.sh || green "Default interval is 500 seconds"
 [[ -e /root/WARP-UP.sh ]] && screen -ls | awk '/\.up/ {print $1}' | cut -d "." -f 1 | xargs kill 2>/dev/null ; screen -UdmS up bash -c '/bin/bash /root/WARP-UP.sh'
 green "After the setting is completed, you can view the monitoring time interval in option 1."
@@ -572,7 +572,7 @@ country=$nonf
 socks5=$(curl -sx socks5h://localhost:$mport www.cloudflare.com/cdn-cgi/trace -k --connect-timeout 2 | grep warp | cut -d= -f2) 
 case ${socks5} in 
 plus) 
-S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port: \c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+S5Status=$(white "Socks5 WARP+ status:\c" ; rred "Running, WARP+ account (remaining WARP+ traffic: $((`warp-cli --accept-tos account | grep Quota | awk '{ print $(NF) }'`/1000000000)) GB)" ; white " Socks5 port:\c" ; rred "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
 S5Status=$(white "Socks5 WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Socks5 port:\c" ; green "$mport" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$s5ip  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;  
 *) 
@@ -771,11 +771,11 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
 WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$v4  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv4Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address:\c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
+WARPIPv4Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
 esac 
 else
 WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
@@ -794,14 +794,14 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh
 country=$nonf
 case ${wgcfv6} in 
 plus) 
-WARPIPv6Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; rred "$v6  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; rred "$v6  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv6Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
+WARPIPv6Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv6Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address:\c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");;
+WARPIPv6Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address: \c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");;
 esac 
 else
-WARPIPv6Status=$(white "IPV6 status:\c" ; red "No IPV6 address exists")
+WARPIPv6Status=$(white "IPV6 status: \c" ; red "No IPV6 address exists")
 fi 
 }
 CheckWARP(){
@@ -1043,7 +1043,7 @@ curl -s https://gitlab.com/rwkgyg/CFwarp/-/raw/main/version/version | awk -F "up
 warpinscha(){
 yellow "Tip: The local outbound IP of the VPS will be taken over by the IP of the warp you choose. If the VPS does not have such an outbound IP locally, it will be taken over by the IP of another generated warp."
 echo
-green "1. Install/switch WARP single stack IPV4 (press Enter to default)"
+green "1. Install/switch WARP single-stack IPV4 (press Enter to default)"
 green "2. Install/switch WARP single-stack IPV6"
 green "3. Install/switch WARP dual stack IPV4+IPV6"
 readp "\nPlease select:" wgcfwarp
@@ -1360,11 +1360,11 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh
 country=$nonf
 case ${wgcfv4} in 
 plus) 
-WARPIPv4Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv4Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; rred "$v4  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv4Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$v4  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
+WARPIPv4Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV4 address:\c" ; green "$v4  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv4Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address:\c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
+WARPIPv4Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp4 Get IPV4 address: \c" ; yellow "$v4  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");; 
 esac 
 else
 WARPIPv4Status=$(white "IPV4 status:\c" ; red "No IPV4 address exists")
@@ -1383,14 +1383,14 @@ nonf=$(curl -sm3 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh
 country=$nonf
 case ${wgcfv6} in 
 plus) 
-WARPIPv6Status=$(white "WARP+ status:\c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; rred "$v6  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
+WARPIPv6Status=$(white "WARP+ status: \c" ; rred "Running, $cfplus" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; rred "$v6  $country" ; white " Netflix NF unlocking status:\c" ; rred "$NF" ; white " ChatGPT unlocking status:\c" ; rred "$chat");;  
 on) 
-WARPIPv6Status=$(white "WARP status:\c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address:\c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
+WARPIPv6Status=$(white "WARP status: \c" ; green "Running, WARP ordinary account (unlimited WARP traffic)" ; white " Service provider Cloudflare obtains the IPV6 address: \c" ; green "$v6  $country" ; white " Netflix NF unlocking status:\c" ; green "$NF" ; white " ChatGPT unlocking status:\c" ; green "$chat");;
 off) 
-WARPIPv6Status=$(white "WARP status:\c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address:\c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");;
+WARPIPv6Status=$(white "WARP status: \c" ; yellow "Closed" ; white " Service provider $isp6 Get IPV6 address: \c" ; yellow "$v6  $country" ; white " Netflix NF unlocking status:\c" ; yellow "$NF" ; white " ChatGPT unlocking status:\c" ; yellow "$chat");;
 esac 
 else
-WARPIPv6Status=$(white "IPV6 status:\c" ; red "No IPV6 address exists")
+WARPIPv6Status=$(white "IPV6 status: \c" ; red "No IPV6 address exists")
 fi 
 }
 STOPwgcf(){
@@ -1894,7 +1894,7 @@ UA_Browser="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 if [[ -n $v6 ]]; then
 nonf=$(curl -s6 --user-agent "${UA_Browser}" http://ip-api.com/json/$v6?lang=zh-CN -k | cut -f2 -d"," | cut -f4 -d '"')
 nf6;chatgpt6;checkgpt
-v6Status=$(white "IPV6 address:\c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
+v6Status=$(white "IPV6 address: \c" ; blue "$v6   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
 v6Status=$(white "IPV6 address: \c" ; red "No IPV6 address exists")
 fi
@@ -1903,7 +1903,7 @@ nonf=$(curl -s4 --user-agent "${UA_Browser}" http://ip-api.com/json/$v4?lang=zh-
 nf4;chatgpt4;checkgpt
 v4Status=$(white "IPv4 address: \c" ; blue "$v4   $nonf" ; white " Netflix： \c" ; blue "$NF" ; white " ChatGPT： \c" ; blue "$chat")
 else
-v4Status=$(white "IPv4 address:\c" ; red "No IPV4 address exists")
+v4Status=$(white "IPv4 address: \c" ; red "No IPV4 address exists")
 fi
 echo "-----------------------------------------------------------------------"
 white " ${v4Status}"
@@ -1914,7 +1914,7 @@ echo
 echo
 white "=================================================================="
 yellow " Do you want to install WARP?"
-yellow " Two major advantages at present:"
+yellow " Two current advantages:"
 yellow " 1. Chance to fully unlock Netflix and ChatGPT"
 yellow " 2. You can choose to take over the outbound IP of local IPV4, IPV6, and Socks5"
 echo "-------------------------------------------------------------------"

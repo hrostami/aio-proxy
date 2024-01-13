@@ -1641,7 +1641,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then

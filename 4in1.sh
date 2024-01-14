@@ -1945,7 +1945,7 @@ res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${M
 fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Hysteria-2 Sharing Link]: Supports nekobox and shadowrocket"$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Tuic-v5 sharing link ]: Support nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m6}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Sing-box configuration file (two paragraphs)]: Supports SFA and SFI"$'"'"'\n\n'"'"'"${message_text_m7}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file (two paragraphs)】: Support SFA, SFI"$'"'"'\n\n'"'"'"${message_text_m7}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m7_5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Support Clash-meta related clients"$'"'"'\n\n'"'"'"${message_text_m8}")
 if [ $? == 124 ];then
@@ -2171,7 +2171,7 @@ fi
 elif [ "$menu" = "3" ]; then
 readp "1: Use the complete domain name method\n2: Use the geosite method\n3: Return to the upper level\nPlease select:" menu
 if [ "$menu" = "1" ]; then
-readp "Leave a space between each domain name, and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
+readp "Leave a space between each domain name and press Enter to skip the diversion channel to reset and clear the full domain name of warp-socks5-ipv4:" s4flym
 if [ -z "$s4flym" ]; then
 s4flym='"yg_kkk"'
 else

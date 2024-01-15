@@ -144,7 +144,7 @@ ipv=prefer_ipv6
 else
 endip=162.159.193.10
 ipv=prefer_ipv4
-echo '4' > /etc/s-box/i
+#echo '4' > /etc/s-box/i
 fi
 }
 warpcheck
@@ -756,7 +756,7 @@ qrencode -o - -t ANSIUTF8 "$(cat /etc/s-box/vm_ws_argo.txt)"
 fi
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-red "🚀[ vmess-ws ] The node information is as follows (it is recommended to set it as a CDN priority node):" && sleep 2
+red "🚀【 vmess-ws 】The node information is as follows (it is recommended to set it as a CDN priority node):" && sleep 2
 echo
 echo "Share link [v2rayn, v2rayng, nekobox, shadowrocket]"
 echo -e "${yellow}vmess://$(echo '{"add":"'$server_ip'","aid":"0","host":"'$vm_name'","id":"'$uuid'","net":"ws","path":"'$ws_path'","port":"'$vm_port'","ps":"ygkkk-vm-ws","tls":"","type":"none","v":"2"}' | base64 -w 0)${plain}"
@@ -838,12 +838,14 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "servers": [
             {
                 "tag": "proxydns",
-                "address": "$sbdnsip",             
+                "address": "$sbdnsip", 
+                "strategy": "ipv4_only",
                 "detour": "select"
             },
             {
                 "tag": "localdns",
                 "address": "h3://223.5.5.5/dns-query",
+                "strategy": "ipv4_only",
                 "detour": "direct"
             },
             {
@@ -1108,12 +1110,14 @@ cat > /etc/s-box/sing_box_client.json <<EOF
         "servers": [
             {
                 "tag": "remote",
-                "address": "$sbdnsip",             
+                "address": "$sbdnsip",
+                "strategy": "ipv4_only",
                 "detour": "select"
             },
             {
                 "tag": "local",
                 "address": "h3://223.5.5.5/dns-query",
+                "strategy": "ipv4_only",
                 "detour": "direct"
             },
             {
@@ -1512,9 +1516,9 @@ a=$hy2_ports
 sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
 fi
 sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
-if [[ -f /etc/s-box/i ]]; then
-sed -i 's/"inet6_address":/\/\/&/' /etc/s-box/sing_box_client.json
-fi
+#if [[ -f /etc/s-box/i ]]; then
+#sed -i 's/"inet6_address":/\/\/&/' /etc/s-box/sing_box_client.json
+#fi
 }
 cfargo(){
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
@@ -1645,7 +1649,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1663,7 +1667,7 @@ sed -i "82s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && reshy2 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "4" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -1681,7 +1685,7 @@ sed -i "105s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && restu5 && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
 fi
 else
 sb
@@ -2594,7 +2598,7 @@ echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"
 else
 echo
-echo -e "Currently, Sing-box has installed the official version of the kernel: ${bblue}${inscore}${plain}"
+echo -e "Sing-box currently has the official version of the kernel installed: ${bblue}${inscore}${plain}"
 echo -e "The latest Sing-box official version kernel detected: ${yellow}${latcore}${plain} (8 can be selected for update)"
 echo
 echo -e "Current Sing-box latest beta kernel: ${bblue}${precore}${plain} (switchable)"

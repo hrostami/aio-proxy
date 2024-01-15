@@ -144,6 +144,7 @@ ipv=prefer_ipv6
 else
 endip=162.159.193.10
 ipv=prefer_ipv4
+echo '4' > /etc/s-box/i
 fi
 }
 warpcheck
@@ -1511,6 +1512,9 @@ a=$hy2_ports
 sed -i "/server:/ s/$/$a/" /etc/s-box/v2rayn_hy2.yaml
 fi
 sed -i 's/server: \(.*\)/server: "\1"/' /etc/s-box/v2rayn_hy2.yaml
+if [[ -f /etc/s-box/i ]]; then
+sed -i 's/"inet6_address":/\/\/&/' /etc/s-box/sing_box_client.json
+fi
 }
 cfargo(){
 tls=$(jq -r '.inbounds[1].tls.enabled' /etc/s-box/sb.json)
@@ -1641,7 +1645,7 @@ sed -i "58s#$d#$d_d#" /etc/s-box/sb.json
 systemctl restart sing-box
 result_vl_vm_hy_tu && resvmess && sb_client
 else
-red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to execute Acme certificate application" && sleep 2 && sb
+red "No domain name certificate has been applied for currently and cannot be switched. Select 12 from the main menu to perform Acme certificate application" && sleep 2 && sb
 fi
 elif [ "$menu" = "3" ]; then
 if [ -f /root/ygkkkca/ca.log ]; then
@@ -2337,14 +2341,23 @@ lapre
 [[ $inscore =~ ^[0-9.]+$ ]] && lat="[v$inscore installed]" || pre="[v$inscore installed]"
 green "1: Upgrade/switch to the latest official version of Sing-box v$latcore ${bblue}${lat}${plain}"
 green "2: Upgrade/switch to the latest beta version of Sing-box v$precore ${bblue}${pre}${plain}"
-readp "please choose:" menu
+green "3: To switch between an official version and a beta version of Sing-box, you need to specify the version number."
+green "0: Return to the upper level"
+readp "Please select【0-3】：" menu
 if [ "$menu" = "1" ]; then
 upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | grep -Eo '"[0-9.]+",' | sed -n 1p | tr -d '",')
 elif [ "$menu" = "2" ]; then
 upcore=$(curl -Ls https://data.jsdelivr.com/v1/package/gh/SagerNet/sing-box | sed -n 4p | tr -d ',"' | awk '{print $1}')
+elif [ "$menu" = "3" ]; then
+echo
+red "Note: Please make sure that the version number you are about to enter can be found at https://github.com/SagerNet/sing-box/tags and has the word Downloads."
+green "Official version number format: number.number.number (example: 1.8.0)"
+green "Beta version number format: number.number.number-alpha or rc or beta.number (example: 1.8.0-alpha or rc or beta.1)"
+readp "Please enter the Sing-box version number:" upcore
 else
 sb
 fi
+if [[ -n $upcore ]]; then
 green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
@@ -2358,10 +2371,13 @@ chmod +x /etc/s-box/sing-box
 systemctl restart sing-box
 blue "Successfully upgraded/switched Sing-box kernel version: $(/etc/s-box/sing-box version | awk '/version/{print $NF}')" && sleep 3 && sb
 else
-red "The download of Sing-box kernel is incomplete and the installation failed. Please run the installation again." && upsbcroe
+red "The download of Sing-box kernel is incomplete and the installation failed. Please try again." && upsbcroe
 fi
 else
-red "Failed to download the Sing-box kernel. Please run the installation again and check whether the VPS network can access Github." && exit
+red "Downloading Sing-box kernel failed or does not exist, please try again" && upsbcroe
+fi
+else
+red "Error in version number detection, please try again" && upsbcroe
 fi
 }
 unins(){
@@ -2545,7 +2561,7 @@ green " 4. Change ports and add multi-port hop multiplexing"
 green " 5. Three major channels for custom domain name diversion" 
 green " 6. Close and restart Sing-box"   
 green " 7. Update Sing-box-yg script"
-green "8. Update and switch Sing-box dual core"
+green " 8. Update/switch/specify Sing-box kernel"
 white "----------------------------------------------------------------------------------"
 green " 9. Real-time query/TG notification: sharing link, QR code, Clash-Meta, official SFA/SFI/SFW client configuration"
 green "10. View Sing-box operation log"

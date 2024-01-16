@@ -61,13 +61,13 @@ green "Install the necessary dependencies of the Sing-box-yg script for the firs
 update(){
 if [ -x "$(command -v apt-get)" ]; then
 apt update -y
-apt install wget -y
+apt install jq -y
 elif [ -x "$(command -v yum)" ]; then
 yum update -y && yum install epel-release -y
-yum update wget -y
+yum install jq -y
 elif [ -x "$(command -v dnf)" ]; then
 dnf update -y
-dnf update wget -y
+dnf install jq -y
 fi
 }
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
@@ -79,8 +79,8 @@ yum clean all && yum makecache
 cd
 fi
 update
-packages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "cron")
-inspackages=("curl" "openssl" "jq" "iptables" "iptables-persistent" "tar" "qrencode" "cron")
+packages=("curl" "openssl" "iptables" "iptables-persistent" "tar" "wget" "qrencode" "cron")
+inspackages=("curl" "openssl" "iptables" "iptables-persistent" "tar" "wget" "qrencode" "cron")
 for i in "${!packages[@]}"; do
 package="${packages[$i]}"
 inspackage="${inspackages[$i]}"
@@ -1723,7 +1723,7 @@ fi
 echo
 }
 fport(){
-readp "\nPlease enter a forwarded port (in the range of 1000-65535):" onlyport
+readp "\nPlease enter a forwarded port (within the range of 1000-65535):" onlyport
 if [[ $onlyport -ge 1000 && $onlyport -le 65535 ]]; then
 iptables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
 ip6tables -t nat -A PREROUTING -p udp --dport $onlyport -j DNAT --to-destination :$port
@@ -1901,7 +1901,7 @@ rrpip="ipv6_only" && chip && v4_6="IPV6 only ($v6)"
 else 
 red "The IPV4/IPV6 address you selected does not currently exist, or is entered incorrectly" && changeip
 fi
-blue "Currently changed IP priority: ${v4_6}" && sb
+blue "Current changed IP priority: ${v4_6}" && sb
 }
 tgsbshow(){
 echo
@@ -1952,7 +1952,7 @@ res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${M
 fi
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Hysteria-2 Sharing Link]: Supports nekobox and shadowrocket"$'"'"'\n\n'"'"'"${message_text_m5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Tuic-v5 sharing link ]: Support nekobox, shadowrocket"$'"'"'\n\n'"'"'"${message_text_m6}")
-res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[Sing-box configuration file (two paragraphs)]: Supports SFA and SFI"$'"'"'\n\n'"'"'"${message_text_m7}")
+res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀【Sing-box configuration file (two paragraphs)】: Support SFA, SFI"$'"'"'\n\n'"'"'"${message_text_m7}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=${message_text_m7_5}")
 res=$(timeout 20s curl -s -X POST $URL -d chat_id=telegram_id  -d parse_mode=${MODE} --data-urlencode "text=🚀[ Clash-meta configuration file ]: Support Clash-meta related clients"$'"'"'\n\n'"'"'"${message_text_m8}")
 if [ $? == 124 ];then

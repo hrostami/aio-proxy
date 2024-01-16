@@ -408,7 +408,7 @@ bash ~/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 uncronac
-[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(~/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 }
 clear
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"           
@@ -429,7 +429,7 @@ yellow "hint:"
 yellow "1. The script does not support multi-IP VPS. The IP for SSH login must be consistent with the VPS shared network IP."
 yellow "2. Port 80 mode only supports single domain name certificate application, and supports automatic renewal when port 80 is not occupied."
 yellow "3. The DNS API mode does not support freenom free domain name application. It supports single domain name and pan-domain name certificate applications, and unconditional automatic renewal."
-yellow "4. Before applying for a pan-domain name, you need to set a resolution record with a name of * characters on the resolution platform (input format: *. primary/secondary primary domain)"
+yellow "4. Before applying for a pan-domain name, a resolution record with a name of * characters must be set (input format: *.First-level/second-level primary domain)"
 yellow "Public key file crt storage path: /root/ygkkkca/cert.crt"
 yellow "Key file key storage path: /root/ygkkkca/private.key"
 echo

@@ -2361,7 +2361,7 @@ else
 sb
 fi
 if [[ -n $upcore ]]; then
-green "Start downloading and updating Sing-box kernel... Please wait"
+green "Start downloading and updating Sing-box kernel...please wait"
 sbname="sing-box-$upcore-linux-$cpu"
 wget -q -O /etc/s-box/sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v$upcore/$sbname.tar.gz
 if [[ -f '/etc/s-box/sing-box.tar.gz' ]]; then

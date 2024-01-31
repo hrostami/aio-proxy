@@ -253,7 +253,7 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else

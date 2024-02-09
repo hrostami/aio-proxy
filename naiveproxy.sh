@@ -271,9 +271,9 @@ fi
 certificatec='/root/ygkkkca/cert.crt'
 certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
-readp "Please enter the path to the placed public key file crt (/a/b/…/cert.crt):" cerroad
+readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else
@@ -573,7 +573,7 @@ red "===========================================================================
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
 green "\nThe port currently being used by naiveproxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, save it to /root/naive/v2rayn.json\n"
+green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
 green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2

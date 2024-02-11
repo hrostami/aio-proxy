@@ -271,9 +271,9 @@ fi
 certificatec='/root/ygkkkca/cert.crt'
 certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
-readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
+readp "Please enter the path to the placed public key file crt (/a/b/…/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else
@@ -691,7 +691,7 @@ naiveports=$(cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | 
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 echo -e "Naiveproxy status: $green running $plain Proxy ports: $green $naiveports$plain"
 elif [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $yellow has not been started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
+echo -e "Naiveproxy status: $yellow is not started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
 else
 echo -e "Naiveproxy status: $red is not installed $plain"
 fi

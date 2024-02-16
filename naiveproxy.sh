@@ -271,9 +271,9 @@ fi
 certificatec='/root/ygkkkca/cert.crt'
 certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
-readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
+readp "Please enter the path to the placed public key file crt (/a/b/…/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else

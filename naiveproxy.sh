@@ -273,7 +273,7 @@ certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
 readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -440,7 +440,7 @@ if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/ca
 red "naiveproxy is not installed properly" && exit
 fi
 green "The naiveproxy configuration change options are as follows:"
-readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Re-apply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
+readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Reapply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
 if [ $choose == "1" ];then
 duoport
 elif [ $choose == "2" ];then

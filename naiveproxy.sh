@@ -239,7 +239,7 @@ echo "----------------------------------------------------"
 inscertificate(){
 echo
 yellow "2. The application method for Naiveproxy protocol certificate is as follows:"
-readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate applied with this script will be automatically recognized (press enter to default)\n2. Customized certificate path (not /root/ygkkkca path) \nPlease select:" certificate
+readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate that has been applied for by this script will be automatically recognized (press enter to default)\n2. Customize the certificate path (not /root/ygkkkca path) \nPlease select:" certificate
 if [ -z "${certificate}" ] || [ $certificate == "1" ]; then
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]] && [[ -f /root/ygkkkca/ca.log ]]; then
 blue "After testing, I have used this acme script to apply for a certificate before."
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else

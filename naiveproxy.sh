@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -430,7 +430,7 @@ green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "naiveproxy service is closed\n"
+green "The naiveproxy service is closed\n"
 else
 na
 fi
@@ -440,7 +440,7 @@ if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/ca
 red "naiveproxy is not installed properly" && exit
 fi
 green "The naiveproxy configuration change options are as follows:"
-readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Reapply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
+readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Re-apply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
 if [ $choose == "1" ];then
 duoport
 elif [ $choose == "2" ];then
@@ -573,7 +573,7 @@ red "===========================================================================
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
 green "\nThe port currently being used by naiveproxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, save it to /root/naive/v2rayn.json\n"
+green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
 green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2
@@ -651,7 +651,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (can select 5 for update)"
+echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
 fi
 else

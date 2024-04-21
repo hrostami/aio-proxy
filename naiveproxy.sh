@@ -573,7 +573,7 @@ red "===========================================================================
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
 green "\nThe port currently being used by naiveproxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
+green "The content of the current v2rayn client configuration file v2rayn.json is as follows, save it to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
 green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2
@@ -651,7 +651,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
+echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (can select 5 for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
 fi
 else

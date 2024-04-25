@@ -239,7 +239,7 @@ echo "----------------------------------------------------"
 inscertificate(){
 echo
 yellow "2. The application method for Naiveproxy protocol certificate is as follows:"
-readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate that has been applied for by this script will be automatically recognized (press enter to default)\n2. Customize the certificate path (not /root/ygkkkca path) \nPlease select:" certificate
+readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate applied with this script will be automatically recognized (return to default)\n2. Customized certificate path (not /root/ygkkkca path) \nPlease select:" certificate
 if [ -z "${certificate}" ] || [ $certificate == "1" ]; then
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]] && [[ -f /root/ygkkkca/ca.log ]]; then
 blue "After testing, I have used this acme script to apply for a certificate before."
@@ -562,27 +562,27 @@ systemctl restart caddy
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 green "The naiveproxy service started successfully" && naiveproxyshare
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and give feedback. The script exits." && exit
 fi
 }
 naiveproxyshare(){
 if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/caddy/Caddyfile' ]]; then
-red "naiveproxy is not installed properly" && exit
+red "Naiveproxy was not installed properly." && exit
 fi
 red "======================================================================================"
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
-green "\nThe port currently being used by naiveproxy:" && sleep 2
+green "\nThe port currently used by the naiveproxy proxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
+green "The current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
-green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
+green "The current naiveproxy node sharing link is as follows, saved to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2
 green "The current naiveproxy node QR code sharing link is as follows (Nekobox)"
 qrencode -o - -t ANSIUTF8 "$(cat /root/naive/URL.txt)"
 }
 insna(){
 if [[ -f '/etc/caddy/Caddyfile' ]]; then
-green "Naiveproxy has been installed. Please perform the uninstall function before reinstalling." && exit
+green "Naiveproxy has been installed. Please execute the uninstall function before reinstalling" && exit
 fi
 rm -f /etc/systemd/system/caddy.service
 rm -rf /usr/bin/caddy /etc/caddy /root/naive /usr/bin/na
@@ -590,29 +590,29 @@ v6 ; openyn ; inscaddynaive ; inscertificate ; insport ; insuser ; inspswd ; ins
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 green "The naiveproxy service started successfully"
 lnna
-curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1; exit}' > /etc/caddy/v
+curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "Update content" 'NR>2 {print $1; exit}' > /etc/caddy/v
 cp -f /etc/caddy/Caddyfile /etc/caddy/reCaddyfile >/dev/null 2>&1
 if [[ ! $vi =~ lxc|openvz ]]; then
 sysctl -w net.core.rmem_max=8000000 >/dev/null 2>&1
 sysctl -p >/dev/null 2>&1
 fi
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and give feedback. The script exits" && exit
 fi
 red "======================================================================================"
 url="naive+https://${user}:${pswd}@${ym}:$port?padding=true#Naive-$(hostname)"
 echo ${url} > /root/naive/URL.txt
-green "\nnaiveproxy proxy service installation is complete, the shortcut to generate the script is na" && sleep 3
-green "\nv2rayn client configuration file v2rayn.json is saved to /root/naive/v2rayn.json\n"
+green "\nThe naiveproxy proxy service is installed. The shortcut to the generated script is na" && sleep 3
+green "\nThe v2rayn client configuration file v2rayn.json is saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n"
-green "Share the link and save it to /root/naive/URL.txt" && sleep 3
+green "The sharing link is saved to /root/naive/URL.txt" && sleep 3
 yellow "${url}\n"
 green "The QR code sharing link is as follows (Nekobox)" && sleep 2
 qrencode -o - -t ANSIUTF8 "$(cat /root/naive/URL.txt)"
 }
 nalog(){
 echo
-red "To exit Naiveproxy log viewing, please press Ctrl+c"
+red "Exit To view the Naiveproxy log, press Ctrl+c"
 echo
 journalctl -u caddy --output cat -f
 }
@@ -626,33 +626,32 @@ echo -e "${bblue}     ░██ ${plain}        ░██    ░░██       
 echo -e "${bblue}     ░█${plain}█          ░██ ██ ██         ░██  ░░${red}██     ░██  ░░██     ░██  ░░██ ${plain}  "
 green "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
 white "Yongge Github project: github.com/yonggekkk"
-white "Yongge Blogger Blog: ygkkk.blogspot.com"
-white "Brother Yong’s YouTube channel: www.youtube.com/@ygkkk"
-yellow "Translated by Hosy: https://github.com/hrostami"
-green "After the Naiveproxy-yg script is installed successfully, the shortcut to enter the script again is na"
+white "Yongge Blogger blog: ygkkk.blogspot.com"
+white "Yongge YouTube channel: www.youtube.com/@ygkkk"
+green "After the Naiveproxy-yg script is successfully installed, the shortcut to enter the script again is na"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-green " 1. Install Naiveproxy" 
-green " 2. Uninstall Naiveproxy"
+green "1. Install Naiveproxy" 
+green "2. Uninstall Naiveproxy"
 white "----------------------------------------------------------------------------------"
-green " 3. Change configuration (multi-port reuse, user name and password, certificate, disguised web page)" 
-green " 4. Close and restart Naiveproxy"   
-green " 5. Update Naiveproxy-yg installation script"
-green " 6. Update Naiveproxy kernel version"
+green "3. Change configuration (multi-port multiplexing, username and password, certificate, disguised web page)" 
+green "4. Close and restart Naiveproxy"   
+green "5. Update Naiveproxy-yg installation script"
+green "6. Update Naiveproxy kernel version"
 white "----------------------------------------------------------------------------------"
-green " 7. Display Naiveproxy sharing link, V2rayN configuration file, and QR code"
-green " 8. View the Naiveproxy operation log"
-green " 9. Manage Acme to apply for a domain name certificate"
-green "10. Manage Warp to view Netflix and ChatGPT unlocking status"
+green "7. Display Naiveproxy sharing link, V2rayN configuration file, QR code"
+green "8. View Naiveproxy operation log"
+green "9. Manage Acme to apply for domain name certificate"
+green "10. Manage Warp to view Netflix and ChatGPT unlock status"
 green "11. One-click original BBR+FQ acceleration"
-green " 0. Exit script"
+green "0. Exit script"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 if [ -f /etc/caddy/v ]; then
 if [ "$insV" = "$latestV" ]; then
-echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
+echo -e "Current Naiveproxy-yg script latest version: ${bblue}${insV}${plain} (installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
-echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
+echo -e "Detected the latest Naiveproxy-yg script version number: ${yellow}${latestV}${plain} (5 can be selected for update)"
+echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "Update content" 'NR>2 {print $1}')${plain}"
 fi
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${latestV}${plain}"
@@ -662,13 +661,13 @@ if [ -f /etc/caddy/v ]; then
 if [ "$inscore" = "$latcore" ]; then
 echo -e "Current Naiveproxy latest kernel version: ${bblue}${inscore}${plain} (installed)"
 else
-echo -e "Currently Naiveproxy has installed kernel version: ${bblue}${inscore}${plain}"
-echo -e "The latest Naiveproxy kernel version detected: ${yellow}${latcore}${plain} (optional 6 for update)"
+echo -e "Current Naiveproxy installed kernel version: ${bblue}${inscore}${plain}"
+echo -e "Detected the latest Naiveproxy kernel version: ${yellow}${latcore}${plain} (You can select 6 to update)"
 fi
 fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "The VPS status is as follows:"
-echo -e "System:$blue$op$plain \c";echo -e "Kernel:$blue$version$plain \c";echo -e "Processor:$blue$cpu$plain \c";echo -e "Virtualization:$blue$vi$plain \c";echo -e "BBR algorithm:$blue$bbr$plain"
+echo -e "System: $blue$op$plain \c";echo -e "Kernel: $blue$version$plain \c";echo -e "Processor: $blue$cpu$plain \c";echo -e "Virtualization: $blue$vi$plain \c";echo -e "BBR algorithm: $blue$bbr$plain"
 v4v6
 if [[ "$v6" == "2a09"* ]]; then
 w6="【WARP】"
@@ -689,11 +688,11 @@ fi
 echo -e "Local IPV4 address: $blue$vps_ipv4$w4$plain Local IPV6 address: $blue$vps_ipv6$w6$plain"
 naiveports=$(cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:' | tr '\n' ' ')
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $green running $plain Proxy ports: $green $naiveports$plain"
+echo -e "Naiveproxy status: $green Running$plain Proxy ports: $green$naiveports$plain"
 elif [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $yellow is not started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
+echo -e "Naiveproxy status: $yellow Not started, you can select 4 to restart, and still select 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain"
 else
-echo -e "Naiveproxy status: $red is not installed $plain"
+echo -e "Naiveproxy status: $red Not installed$plain"
 fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo

@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -253,7 +253,7 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
@@ -651,7 +651,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (can select 5 for update)"
+echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
 fi
 else

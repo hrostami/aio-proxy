@@ -39,7 +39,7 @@ fi
 case $(uname -m) in
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
-*) red "Currently the script does not support the $(uname -m) scheme" && exit;;
+*) red "Currently the script does not support the $(uname -m) schema" && exit;;
 esac
 if [ ! -x "$(command -v bzip2)" ]; then
 yellow "Please wait……"

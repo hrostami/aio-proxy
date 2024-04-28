@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -253,7 +253,7 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
@@ -273,7 +273,7 @@ certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
 readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -430,7 +430,7 @@ green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "The naiveproxy service is closed\n"
+green "naiveproxy service is closed\n"
 else
 na
 fi
@@ -597,7 +597,7 @@ sysctl -w net.core.rmem_max=8000000 >/dev/null 2>&1
 sysctl -p >/dev/null 2>&1
 fi
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and provide feedback. The script exits." && exit
 fi
 red "======================================================================================"
 url="naive+https://${user}:${pswd}@${ym}:$port?padding=true#Naive-$(hostname)"
@@ -640,7 +640,7 @@ green " 5. Update Naiveproxy-yg installation script"
 green " 6. Update Naiveproxy kernel version"
 white "----------------------------------------------------------------------------------"
 green " 7. Display Naiveproxy sharing link, V2rayN configuration file, and QR code"
-green " 8. Check the Naiveproxy operation log"
+green " 8. View the Naiveproxy operation log"
 green " 9. Manage Acme to apply for a domain name certificate"
 green "10. Manage Warp to view Netflix and ChatGPT unlock status"
 green "11. One-click original BBR+FQ acceleration"
@@ -651,7 +651,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
+echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (can select 5 for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
 fi
 else
@@ -691,7 +691,7 @@ naiveports=$(cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | 
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 echo -e "Naiveproxy status: $green running $plain Proxy ports: $green $naiveports$plain"
 elif [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $yellow is not started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
+echo -e "Naiveproxy status: $yellow has not been started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
 else
 echo -e "Naiveproxy status: $red is not installed $plain"
 fi

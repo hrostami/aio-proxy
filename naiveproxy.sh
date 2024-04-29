@@ -273,7 +273,7 @@ certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
 readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -605,7 +605,7 @@ echo ${url} > /root/naive/URL.txt
 green "\nnaiveproxy proxy service installation is complete, the shortcut to generate the script is na" && sleep 3
 green "\nv2rayn client configuration file v2rayn.json is saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n"
-green "Share the link and save it to /root/naive/URL.txt" && sleep 3
+green "Save the share link to /root/naive/URL.txt" && sleep 3
 yellow "${url}\n"
 green "The QR code sharing link is as follows (Nekobox)" && sleep 2
 qrencode -o - -t ANSIUTF8 "$(cat /root/naive/URL.txt)"
@@ -642,7 +642,7 @@ white "-------------------------------------------------------------------------
 green " 7. Display Naiveproxy sharing link, V2rayN configuration file, and QR code"
 green " 8. View the Naiveproxy operation log"
 green " 9. Manage Acme to apply for a domain name certificate"
-green "10. Manage Warp to view Netflix and ChatGPT unlock status"
+green "10. Manage Warp to view Netflix and ChatGPT unlocking status"
 green "11. One-click original BBR+FQ acceleration"
 green " 0. Exit script"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -691,7 +691,7 @@ naiveports=$(cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | 
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 echo -e "Naiveproxy status: $green running $plain Proxy ports: $green $naiveports$plain"
 elif [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $yellow has not been started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
+echo -e "Naiveproxy status: $yellow is not started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
 else
 echo -e "Naiveproxy status: $red is not installed $plain"
 fi

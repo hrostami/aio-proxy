@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -253,7 +253,7 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
@@ -562,7 +562,7 @@ systemctl restart caddy
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 green "The naiveproxy service started successfully" && naiveproxyshare
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and provide feedback. The script exits." && exit
 fi
 }
 naiveproxyshare(){
@@ -573,7 +573,7 @@ red "===========================================================================
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
 green "\nThe port currently being used by naiveproxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, save it to /root/naive/v2rayn.json\n"
+green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
 green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2
@@ -597,7 +597,7 @@ sysctl -w net.core.rmem_max=8000000 >/dev/null 2>&1
 sysctl -p >/dev/null 2>&1
 fi
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and provide feedback. The script exits." && exit
 fi
 red "======================================================================================"
 url="naive+https://${user}:${pswd}@${ym}:$port?padding=true#Naive-$(hostname)"
@@ -605,7 +605,7 @@ echo ${url} > /root/naive/URL.txt
 green "\nnaiveproxy proxy service installation is complete, the shortcut to generate the script is na" && sleep 3
 green "\nv2rayn client configuration file v2rayn.json is saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n"
-green "Share the link and save it to /root/naive/URL.txt" && sleep 3
+green "Save the share link to /root/naive/URL.txt" && sleep 3
 yellow "${url}\n"
 green "The QR code sharing link is as follows (Nekobox)" && sleep 2
 qrencode -o - -t ANSIUTF8 "$(cat /root/naive/URL.txt)"
@@ -640,9 +640,9 @@ green " 5. Update Naiveproxy-yg installation script"
 green " 6. Update Naiveproxy kernel version"
 white "----------------------------------------------------------------------------------"
 green " 7. Display Naiveproxy sharing link, V2rayN configuration file, and QR code"
-green " 8. Check the Naiveproxy operation log"
+green " 8. View the Naiveproxy operation log"
 green " 9. Manage Acme to apply for a domain name certificate"
-green "10. Manage Warp to view Netflix and ChatGPT unlock status"
+green "10. Manage Warp to view Netflix and ChatGPT unlocking status"
 green "11. One-click original BBR+FQ acceleration"
 green " 0. Exit script"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"

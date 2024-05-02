@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -239,7 +239,7 @@ echo "----------------------------------------------------"
 inscertificate(){
 echo
 yellow "2. The application method for Naiveproxy protocol certificate is as follows:"
-readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate that has been applied for by this script will be automatically recognized (press enter to default)\n2. Customize the certificate path (not /root/ygkkkca path) \nPlease select:" certificate
+readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate applied with this script will be automatically recognized (return to default)\n2. Customized certificate path (not /root/ygkkkca path) \nPlease select:" certificate
 if [ -z "${certificate}" ] || [ $certificate == "1" ]; then
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]] && [[ -f /root/ygkkkca/ca.log ]]; then
 blue "After testing, I have used this acme script to apply for a certificate before."
@@ -253,7 +253,7 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstallation completed" || red "acme.sh uninstallation failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "6. Set up the disguised URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
+readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else
@@ -430,7 +430,7 @@ green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "naiveproxy service is closed\n"
+green "The naiveproxy service is closed\n"
 else
 na
 fi
@@ -440,7 +440,7 @@ if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/ca
 red "naiveproxy is not installed properly" && exit
 fi
 green "The naiveproxy configuration change options are as follows:"
-readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Reapply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
+readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Re-apply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
 if [ $choose == "1" ];then
 duoport
 elif [ $choose == "2" ];then
@@ -573,7 +573,7 @@ red "===========================================================================
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
 green "\nThe port currently being used by naiveproxy:" && sleep 2
 blue "$naiveports\n"
-green "The content of the current v2rayn client configuration file v2rayn.json is as follows, save it to /root/naive/v2rayn.json\n"
+green "The content of the current v2rayn client configuration file v2rayn.json is as follows, saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n" && sleep 2
 green "The current naiveproxy node sharing link is as follows, save it to /root/naive/URL.txt"
 yellow "$(cat /root/naive/URL.txt)\n" && sleep 2
@@ -640,9 +640,9 @@ green " 5. Update Naiveproxy-yg installation script"
 green " 6. Update Naiveproxy kernel version"
 white "----------------------------------------------------------------------------------"
 green " 7. Display Naiveproxy sharing link, V2rayN configuration file, and QR code"
-green " 8. Check the Naiveproxy operation log"
+green " 8. View the Naiveproxy operation log"
 green " 9. Manage Acme to apply for a domain name certificate"
-green "10. Manage Warp to view Netflix and ChatGPT unlock status"
+green "10. Manage Warp to view Netflix and ChatGPT unlocking status"
 green "11. One-click original BBR+FQ acceleration"
 green " 0. Exit script"
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -651,7 +651,7 @@ if [ "$insV" = "$latestV" ]; then
 echo -e "The latest version of the current Naiveproxy-yg script: ${bblue}${insV}${plain} (already installed)"
 else
 echo -e "Current Naiveproxy-yg script version number: ${bblue}${insV}${plain}"
-echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (5 can be selected for update)"
+echo -e "The latest Naiveproxy-yg script version number detected: ${yellow}${latestV}${plain} (can select 5 for update)"
 echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1}')${plain}"
 fi
 else
@@ -697,7 +697,7 @@ echo -e "Naiveproxy status: $red is not installed $plain"
 fi
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
-readp "Please enter a number【0-11】:" Input
+readp "Please enter a number [0-11]:" Input
 case "$Input" in     
  1 ) insna;;
  2 ) unins;;

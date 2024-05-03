@@ -39,7 +39,7 @@ fi
 latcore=v`curl -Ls https://data.jsdelivr.com/v1/package/gh/klzgrad/naiveproxy | sed -n 4p | tr -d ',"' | awk '{print $1}'`
 inscore=`cat /etc/caddy/version 2>/dev/null | head -n 1`
 insV=$(cat /etc/caddy/v 2>/dev/null)
-latestV=$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "Update content" 'NR>2 {print $1; exit}')
+latestV=$(curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1; exit}')
 version=$(uname -r | cut -d "-" -f1)
 vi=$(systemd-detect-virt 2>/dev/null)
 bit=$(uname -m)
@@ -48,17 +48,17 @@ cpu=amd64
 elif [[ $bit = aarch64 ]]; then
 cpu=arm64
 else
-red "The current script does not support the $bit architecture" && exit
+red "Currently the script does not support the $bit architecture" && exit
 fi
 if [[ -n $(sysctl net.ipv4.tcp_congestion_control 2>/dev/null | awk -F ' ' '{print $3}') ]]; then
 bbr=`sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}'`
 elif [[ -n $(ping 10.0.0.2 -c 2 | grep ttl) ]]; then
-bbr="Openvz version of bbr-plus"
+bbr="Openvz version bbr-plus"
 else
 bbr="Openvz/Lxc"
 fi
 if [ ! -f nayg_update ]; then
-green "Necessary dependencies for the first installation of the Naiveproxy-yg script..."
+green "Install the necessary dependencies of the Naiveproxy-yg script for the first time..."
 if [[ -z $vi ]]; then
 apt update iproute2 systemctl -y
 fi
@@ -108,15 +108,15 @@ fi
 if [[ $vi = openvz ]]; then
 TUN=$(cat /dev/net/tun 2>&1)
 if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then 
-red "It is detected that TUN is not enabled, and now try to add TUN support" && sleep 4
+red "It is detected that TUN is not enabled. Now try to add TUN support." && sleep 4
 cd /dev && mkdir net && mknod net/tun c 10 200 && chmod 0666 net/tun
 TUN=$(cat /dev/net/tun 2>&1)
 if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then 
-green "Adding TUN support failed, it is recommended to communicate with the VPS manufacturer or enable it in the background settings" && exit
+green "Failed to add TUN support. It is recommended to communicate with the VPS manufacturer or enable background settings." && exit
 else
 echo '#!/bin/bash' > /root/tun.sh && echo 'cd /dev && mkdir net && mknod net/tun c 10 200 && chmod 0666 net/tun' >> /root/tun.sh && chmod +x /root/tun.sh
 grep -qE "^ *@reboot root bash /root/tun.sh >/dev/null 2>&1" /etc/crontab || echo "@reboot root bash /root/tun.sh >/dev/null 2>&1" >> /etc/crontab
-green "TUN daemon function has been enabled"
+green "TUN guard function has been started"
 fi
 fi
 fi
@@ -157,18 +157,18 @@ service apache2 stop >/dev/null 2>&1
 systemctl disable apache2 >/dev/null 2>&1
 fi
 sleep 1
-blue "Execute open port, close firewall completed"
+blue "Execute open port and close firewall."
 echo "----------------------------------------------------"
 }
 openyn(){
 red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-readp "Do you want to open the port and close the firewall? \n1. Yes, execute (Enter default)\n2. No, I do it manually\nPlease select:" action
+readp "Do you want to open the port and close the firewall? \n1. Yes, execute (press enter to default)\n2. No, I will do it manually\nPlease select:" action
 if [[ -z $action ]] || [[ "$action" = "1" ]]; then
 close
 elif [[ "$action" = "2" ]]; then
 echo
 else
-red "Input error, please reselect" && openyn
+red "Input error, please choose again" && openyn
 fi
 }
 forwardproxy(){
@@ -178,7 +178,7 @@ go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 }
 rest(){
 if [[ ! -f /root/caddy ]]; then
-red "caddy2-naiveproxy build failed, script exited" && exit
+red "caddy2-naiveproxy build failed and the script exited" && exit
 fi
 chmod +x caddy
 mv caddy /usr/bin/
@@ -186,8 +186,8 @@ mv caddy /usr/bin/
 inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
-yellow "I. Please select the installation or update naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, enter default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, possible compilation failure)\nPlease select:" chcaddynaive
+yellow "1. Please choose to install or update the naiveproxy kernel method:"
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -225,7 +225,7 @@ rest
 lastvsion=v`curl -Ls https://data.jsdelivr.com/v1/package/gh/klzgrad/naiveproxy | sed -n 4p | tr -d ',"' | awk '{print $1}'`
 echo $lastvsion > /root/version
 else 
-red "Input error, please reselect" && inscaddynaive
+red "Input error, please choose again" && inscaddynaive
 fi
 version(){
 if [[ ! -d /etc/caddy/ ]]; then
@@ -238,12 +238,12 @@ echo "----------------------------------------------------"
 }
 inscertificate(){
 echo
-yellow "II. Naiveproxy protocol certificate application method selection is as follows:"
-readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), certificates applied with this script are automatically recognized (enter default)\n2. Customized certificate path (not /root/ygkkkca path)\nPlease select:" certificate
+yellow "2. The application method for Naiveproxy protocol certificate is as follows:"
+readp "1. acme one-click certificate application script (supports regular 80 port mode and dns api mode), the certificate applied with this script will be automatically recognized (return to default)\n2. Customized certificate path (not /root/ygkkkca path) \nPlease select:" certificate
 if [ -z "${certificate}" ] || [ $certificate == "1" ]; then
 if [[ -f /root/ygkkkca/cert.crt && -f /root/ygkkkca/private.key ]] && [[ -s /root/ygkkkca/cert.crt && -s /root/ygkkkca/private.key ]] && [[ -f /root/ygkkkca/ca.log ]]; then
-blue "After detection, this acme script has been used to apply for a certificate before"
-readp "1. Use the original certificate directly (Enter default)\n2. Delete the original certificate and reapply for the certificate\nPlease select:" certacme
+blue "After testing, I have used this acme script to apply for a certificate before."
+readp "1. Use the original certificate directly (press Enter to default)\n2. Delete the original certificate and apply for a new certificate\nPlease choose:" certacme
 if [ -z "${certacme}" ] || [ $certacme == "1" ]; then
 ym=$(cat /root/ygkkkca/ca.log)
 blue "Detected domain name: $ym, directly referenced"
@@ -253,50 +253,50 @@ bash /root/.acme.sh/acme.sh --uninstall
 rm -rf /root/ygkkkca
 rm -rf ~/.acme.sh acme.sh
 sed -i '/--cron/d' /etc/crontab
-[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh uninstall completed" || red "acme.sh uninstall failed"
+[[ -z $(/root/.acme.sh/acme.sh -v 2>/dev/null) ]] && green "acme.sh is uninstalled" || red "acme.sh uninstallation failed"
 sleep 2
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
 if [[ ! -f /root/ygkkkca/cert.crt && ! -f /root/ygkkkca/private.key ]] && [[ ! -s /root/ygkkkca/cert.crt && ! -s /root/ygkkkca/private.key ]]; then
-red "Certificate application failed, script exited" && exit
+red "The certificate application failed and the script exited" && exit
 fi
 fi
 else
 bash <(curl -Ls https://raw.githubusercontent.com/hrostami/aio-proxy/master/acme-eng.sh)
 ym=$(cat /root/ygkkkca/ca.log)
 if [[ ! -f /root/ygkkkca/cert.crt && ! -f /root/ygkkkca/private.key ]] && [[ ! -s /root/ygkkkca/cert.crt && ! -s /root/ygkkkca/private.key ]]; then
-red "Certificate application failed, script exited" && exit
+red "The certificate application failed and the script exited" && exit
 fi
 fi
 certificatec='/root/ygkkkca/cert.crt'
 certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
-readp "Please enter the path of the public key file crt that has been placed (/a/b/……/cert.crt):" cerroad
-blue "Public key file crt path: $cerroad"
-readp "Please enter the path of the key file key that has been placed (/a/b/……/private.key):" keyroad
-blue "Key file key path: $keyroad"
+readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
+blue "The path of the public key file crt: $cerroad"
+readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
 readp "Please enter the resolved domain name:" ym
 blue "Resolved domain name: $ym"
 else 
-red "Input error, please reselect" && inscertificate
+red "Input error, please choose again" && inscertificate
 fi
 echo "----------------------------------------------------"
 }
 insport(){
 echo
-readp "3. Set Naiveproxy port [1-65535] (Enter to skip to a random port between 2000-65535):" port
+readp "3. Set the Naiveproxy port [1-65535] (press Enter to skip to a random port between 2000-65535):" port
 if [[ -z $port ]]; then
 port=$(shuf -i 2000-65535 -n 1)
 until [[ -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] 
 do
-[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\nPort is occupied, please re-enter the port" && readp "Custom port:" port
+[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\nThe port is occupied, please re-enter the port." && readp "Custom port:" port
 done
 else
 until [[ -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]]
 do
-[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\nPort is occupied, please re-enter the port" && readp "Custom port:" port
+[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\nThe port is occupied, please re-enter the port." && readp "Custom port:" port
 done
 fi
 blue "Confirmed port: $port"
@@ -304,30 +304,30 @@ echo "----------------------------------------------------"
 }
 insuser(){
 echo
-readp "4. Set the user name, which must be more than 3 characters (Enter to skip to a random 3-character):" user
+readp "4. Set the user name, which must be more than 3 characters (press Enter to skip to random 3 characters):" user
 if [[ -z ${user} ]]; then
 user=`date +%s%N |md5sum | cut -c 1-3`
 else
 if [[ 3 -ge ${#user} ]]; then
 until [[ 3 -le ${#user} ]]
 do
-[[ 3 -ge ${#user} ]] && yellow "\nThe user name must be more than 3 characters! Please re-enter" && readp "\nSet the user name:" user
+[[ 3 -ge ${#user} ]] && yellow "\nThe username must be more than 3 characters! please enter again" && readp "\nSet username:" user
 done
 fi
 fi
-blue "Confirmed user name: ${user}"
+blue "Confirmed username: ${user}"
 echo "----------------------------------------------------"
 }
 inspswd(){
 echo
-readp "5. Set the password, which must be more than 5 characters (Enter to skip to a random 5-character):" pswd
+readp "5. Set a password, which must be more than 5 characters (press Enter to skip to a random 5 characters):" pswd
 if [[ -z ${pswd} ]]; then
 pswd=`date +%s%N |md5sum | cut -c 1-5`
 else
 if [[ 5 -ge ${#pswd} ]]; then
 until [[ 5 -le ${#pswd} ]]
 do
-[[ 5 -ge ${#pswd} ]] && yellow "\nThe user name must be more than 5 characters! Please re-enter" && readp "\nSet password:" pswd
+[[ 5 -ge ${#pswd} ]] && yellow "\nThe username must be more than 5 characters! please enter again" && readp "\nSet password:" pswd
 done
 fi
 fi
@@ -336,7 +336,7 @@ echo "----------------------------------------------------"
 }
 insweb(){
 echo
-readp "Six, set the disguised URL, note: do not include http(s):// (press Enter to skip, the default is Yongge blog address: ygkkk.blogspot.com):" web
+readp "6. Set the camouflage URL. Note: Do not bring http(s):// (Enter to skip, the default is Yongge’s blog address: ygkkk.blogspot.com):" web
 if [[ -z ${web} ]]; then
 naweb=ygkkk.blogspot.com
 else
@@ -347,20 +347,20 @@ echo "----------------------------------------------------"
 }
 insconfig(){
 echo
-readp "Seven, set the caddy2-naiveproxy listening port [1-65535] (press Enter to skip to a random port between 2000-65535):" caddyport
+readp "7. Set caddy2-naiveproxy listening port [1-65535] (press Enter to skip to a random port between 2000-65535):" caddyport
 if [[ -z $caddyport ]]; then
 caddyport=$(shuf -i 2000-65535 -n 1)
 if [[ $caddyport == $port ]]; then
-yellow "\nThe port is occupied, please re-enter the port" && readp "Customize caddy2-naiveproxy listening port:" caddyport
+yellow "\nThe port is occupied, please re-enter the port." && readp "Custom caddy2-naiveproxy listening port:" caddyport
 fi
 until [[ -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]] 
 do
-[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]] && yellow "\nThe port is occupied, please re-enter the port" && readp "Customize port:" caddyport
+[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]] && yellow "\nThe port is occupied, please re-enter the port." && readp "Custom port:" caddyport
 done
 else
 until [[ -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]]
 do
-[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]] && yellow "\nThe port is occupied, please re-enter the port" && readp "Customize port:" caddyport
+[[ -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$caddyport") ]] && yellow "\nThe port is occupied, please re-enter the port." && readp "Custom port:" caddyport
 done
 fi
 blue "Confirmed port: $caddyport\n"
@@ -418,29 +418,29 @@ systemctl start caddy
 }
 stclre(){
 if [[ ! -f '/etc/caddy/Caddyfile' ]]; then
-green "Naiveproxy was not installed normally" && exit
+green "naiveproxy is not installed properly" && exit
 fi
-green "Perform the following operations for the naiveproxy service"
-readp "1. Restart\n2. Shutdown\n0. Return to the previous page\nPlease select:" action
+green "The naiveproxy service performs the following operations"
+readp "1. Restart\n2. Shut down\n0. Return to the upper level\nPlease select:" action
 if [[ $action == "1" ]]; then
 systemctl enable caddy
 systemctl start caddy
 systemctl restart caddy
-green "Restart naiveproxy service\n"
+green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "Shut down naiveproxy service\n"
+green "The naiveproxy service is closed\n"
 else
 na
 fi
 }
 changeserv(){
 if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/caddy/Caddyfile' ]]; then
-red "Naiveproxy was not installed properly" && exit
+red "naiveproxy is not installed properly" && exit
 fi
-green "The following are the options for changing naiveproxy configuration:"
-readp "1. Add or delete multiple port reuse (add one port each time)\n2. Change the primary port\n3. Change the user name\n4. Change the password\n5. Reapply for a certificate or change the certificate path\n6. Change the disguised web page\n0. Return to the previous page\nPlease select:" choose
+green "The naiveproxy configuration change options are as follows:"
+readp "1. Add or delete multi-port reuse (one port is added each time it is executed)\n2. Change the main port\n3. Change the user name\n4. Change the password\n5. Re-apply for a certificate or change the certificate path\n6. Change the disguised web page \n0. Return to the upper level\nPlease select:" choose
 if [ $choose == "1" ];then
 duoport
 elif [ $choose == "2" ];then
@@ -468,9 +468,9 @@ fi
 }
 duoport(){
 naiveports=`cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | tr -d ',:'`
-green "\nThe port currently being used by the naiveproxy proxy:"
+green "\nThe port currently being used by naiveproxy:"
 blue "$naiveports"
-readp "\n1. Add multiple port reuse\n2. Restore only one primary port\n0. Return to the previous level\nPlease select:" choose
+readp "\n1. Add multi-port multiplexing\n2. Restore only one main port\n0. Return to the upper layer\nPlease select:" choose
 if [ $choose == "1" ]; then
 oldport1=`cat /etc/caddy/reCaddyfile 2>/dev/null | sed -n 4p | awk '{print $1}'| tr -d ',:'`
 insport
@@ -487,7 +487,7 @@ fi
 changeuser(){
 olduserc=`cat /etc/caddy/Caddyfile 2>/dev/null | sed -n 8p | awk '{print $2}'`
 echo
-blue "Currently used user name: $olduserc"
+blue "Username currently in use: $olduserc"
 echo
 insuser
 sed -i "s/$olduserc/${user}/g" /etc/caddy/Caddyfile /etc/caddy/reCaddyfile /root/naive/URL.txt /root/naive/v2rayn.json
@@ -496,7 +496,7 @@ sussnaiveproxy
 changepswd(){
 oldpswdc=`cat /etc/caddy/Caddyfile 2>/dev/null | sed -n 8p | awk '{print $3}'`
 echo
-blue "Currently used password: $oldpswdc"
+blue "Password currently in use: $oldpswdc"
 echo
 inspswd
 sed -i "s/$oldpswdc/${pswd}/g" /etc/caddy/Caddyfile /etc/caddy/reCaddyfile /root/naive/URL.txt /root/naive/v2rayn.json
@@ -505,7 +505,7 @@ sussnaiveproxy
 changeport(){
 oldport1=`cat /etc/caddy/Caddyfile 2>/dev/null | sed -n 4p | awk '{print $1}'| tr -d ',:'`
 echo
-blue "Currently used primary port: $oldport1"
+blue "Main port currently in use: $oldport1"
 echo
 insport
 sed -i "s/$oldport1/$port/g" /etc/caddy/Caddyfile /root/naive/v2rayn.json /root/naive/URL.txt
@@ -514,7 +514,7 @@ sussnaiveproxy
 changeweb(){
 oldweb=`cat /etc/caddy/Caddyfile 2>/dev/null | sed -n 13p | awk '{print $2}'`
 echo
-blue "Currently used disguised URL: $oldweb"
+blue "Currently using the disguised URL: $oldweb"
 echo
 insweb
 sed -i "s/$oldweb/$naweb/g" /etc/caddy/Caddyfile /etc/caddy/reCaddyfile
@@ -535,32 +535,32 @@ chmod +x /usr/bin/na
 }
 upnayg(){
 if [[ ! -f '/etc/caddy/Caddyfile' ]]; then
-red "Naiveproxy-yg was not installed properly" && exit
+red "Naiveproxy-yg is not installed properly" && exit
 fi
 lnna
-curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "Update content" 'NR>2 {print $1; exit}' > /etc/caddy/v
-green "Naiveproxy-yg installation script was successfully upgraded" && sleep 5 && na
+curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | awk -F "update content" 'NR>2 {print $1; exit}' > /etc/caddy/v
+green "Naiveproxy-yg installation script upgraded successfully" && sleep 5 && na
 }
 upnaive(){
 if [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && ! -f '/etc/caddy/Caddyfile' ]]; then
-red "Naiveproxy was not installed properly" && exit
+red "naiveproxy is not installed properly" && exit
 fi
 green "\nUpgrade naiveproxy kernel version\n"
 inscaddynaive
 systemctl restart caddy
-green "Naiveproxy kernel version was successfully upgraded" && na
+green "naiveproxy kernel version upgraded successfully" && na
 }
 unins(){
 systemctl stop caddy >/dev/null 2>&1
 systemctl disable caddy >/dev/null 2>&1
 rm -f /etc/systemd/system/caddy.service
 rm -rf /usr/bin/caddy /etc/caddy /root/naive /usr/bin/na /root/nayg_update
-green "Naiveproxy uninstall completed!"
+green "naiveproxy uninstallation completed!"
 }
 sussnaiveproxy(){
 systemctl restart caddy
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-green "Naiveproxy service started successfully" && naiveproxyshare
+green "The naiveproxy service started successfully" && naiveproxyshare
 else
 red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
 fi

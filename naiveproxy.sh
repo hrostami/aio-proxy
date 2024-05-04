@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -430,7 +430,7 @@ green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "The naiveproxy service is closed\n"
+green "naiveproxy service is closed\n"
 else
 na
 fi
@@ -605,7 +605,7 @@ echo ${url} > /root/naive/URL.txt
 green "\nnaiveproxy proxy service installation is complete, the shortcut to generate the script is na" && sleep 3
 green "\nv2rayn client configuration file v2rayn.json is saved to /root/naive/v2rayn.json\n"
 yellow "$(cat /root/naive/v2rayn.json)\n"
-green "Share the link and save it to /root/naive/URL.txt" && sleep 3
+green "Save the share link to /root/naive/URL.txt" && sleep 3
 yellow "${url}\n"
 green "The QR code sharing link is as follows (Nekobox)" && sleep 2
 qrencode -o - -t ANSIUTF8 "$(cat /root/naive/URL.txt)"
@@ -691,7 +691,7 @@ naiveports=$(cat /etc/caddy/Caddyfile 2>/dev/null | awk '{print $1}' | grep : | 
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 echo -e "Naiveproxy status: $green running $plain Proxy ports: $green $naiveports$plain"
 elif [[ -z $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
-echo -e "Naiveproxy status: $yellow is not started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
+echo -e "Naiveproxy status: $yellow has not been started. You can choose 4 to restart. If it is still the same, choose 8 to view the log and give feedback. It is recommended to uninstall and reinstall Naiveproxy-yg$plain."
 else
 echo -e "Naiveproxy status: $red is not installed $plain"
 fi

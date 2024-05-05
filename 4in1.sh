@@ -39,10 +39,10 @@ fi
 case $(uname -m) in
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
-*) red "Currently the script does not support the $(uname -m) scheme" && exit;;
+*) red "The current script does not support the $(uname -m) architecture" && exit;;
 esac
 if [ ! -x "$(command -v bzip2)" ]; then
-yellow "Please wait……"
+yellow "Please wait..."
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
 cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
 curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
@@ -70,5 +70,5 @@ chmod +x 1sb.sh
 mv 1sb.sh sb.sh
 bash sb.sh
 else
-red "An error occurred when VPS updated dependencies. It is recommended to restart VPS. If the problem persists, it is recommended to replace the system and reinstall the VPS."
+red "An error occurred when updating the VPS dependency, it is recommended to restart the VPS. If it still happens, it is recommended to change the system and reinstall the VPS"
 fi

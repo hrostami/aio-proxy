@@ -597,7 +597,7 @@ sysctl -w net.core.rmem_max=8000000 >/dev/null 2>&1
 sysctl -p >/dev/null 2>&1
 fi
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
 fi
 red "======================================================================================"
 url="naive+https://${user}:${pswd}@${ym}:$port?padding=true#Naive-$(hostname)"

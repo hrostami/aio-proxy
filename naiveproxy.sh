@@ -505,7 +505,7 @@ sussnaiveproxy
 changeport(){
 oldport1=`cat /etc/caddy/Caddyfile 2>/dev/null | sed -n 4p | awk '{print $1}'| tr -d ',:'`
 echo
-blue "Currently used primary port: $oldport1"
+blue "Currently used main port: $oldport1"
 echo
 insport
 sed -i "s/$oldport1/$port/g" /etc/caddy/Caddyfile /root/naive/v2rayn.json /root/naive/URL.txt

@@ -562,7 +562,7 @@ systemctl restart caddy
 if [[ -n $(systemctl status caddy 2>/dev/null | grep -w active) && -f '/etc/caddy/Caddyfile' ]]; then
 green "The naiveproxy service started successfully" && naiveproxyshare
 else
-red "The naiveproxy service failed to start. Please run systemctl status caddy to check the service status and provide feedback. The script exits." && exit
+red "The naiveproxy service failed to start. Please run systemctl status caddy to view the service status and provide feedback. The script exits." && exit
 fi
 }
 naiveproxyshare(){

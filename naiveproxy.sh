@@ -187,7 +187,7 @@ inscaddynaive(){
 echo
 naygvsion=`curl -sL https://gitlab.com/rwkgyg/naiveproxy-yg/-/raw/main/version | head -n 1`
 yellow "1. Please choose to install or update the naiveproxy kernel method:"
-readp "1. Compiled caddy2-naiveproxy version: $naygvsion (quick installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
+readp "1. Compiled caddy2-naiveproxy version: $naygvsion (fast installation, highly recommended, press Enter to default)\n2. Online compiled caddy2-naiveproxy version: $latcore (slow installation, compilation failure may occur)\nPlease select:" chcaddynaive
 if [ -z "$chcaddynaive" ] || [ $chcaddynaive == "1" ]; then
 cd /root
 wget -qN https://gitlab.com/rwkgyg/naiveproxy-yg/raw/main/caddy2-naive-linux-${cpu}.tar.gz
@@ -273,7 +273,7 @@ certificatep='/root/ygkkkca/private.key'
 elif [ $certificate == "2" ]; then
 readp "Please enter the path to the placed public key file crt (/a/b/……/cert.crt):" cerroad
 blue "The path of the public key file crt: $cerroad"
-readp "Please enter the path to the placed key file key (/a/b/……/private.key):" keyroad
+readp "Please enter the path to the placed key file key (/a/b/…/private.key):" keyroad
 blue "Path to key file key: $keyroad"
 certificatec=$cerroad
 certificatep=$keyroad
@@ -430,7 +430,7 @@ green "naiveproxy service restart\n"
 elif [[ $action == "2" ]]; then
 systemctl stop caddy
 systemctl disable caddy
-green "naiveproxy service is closed\n"
+green "The naiveproxy service is closed\n"
 else
 na
 fi
